@@ -15,17 +15,13 @@ else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-
-
 set(CMAKE_BUILD_TYPE Debug)
-
-
-
 
 FILE (GLOB_RECURSE sources src/*.cpp)
 
 add_library (neuroon-alg-core ${sources})
 target_include_directories (neuroon-alg-core PUBLIC src)
+target_include_directories (neuroon-alg-core PUBLIC api)
 
 add_executable(runTests test/tests.cpp)
 target_link_libraries(runTests 
