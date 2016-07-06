@@ -1,26 +1,41 @@
+#include "fft.h"
+
+#include <gtest/gtest.h>
+
 #include <vector>
+#include <cmath>
 #include <iostream>
+#include <algorithm>
 
-void test_spectrogram() {
-	const int size = 2048;
-	const double omega = 0.1;
-	std::vector<double> data(size);
-	std::vector<double> original(size);
+struct SpectorgramTest : public ::testing::Test {
 
-	for (std::size_t i = 0; i != data.size(); ++i) {
-		data[i] = sin(M_PI * omega * i);
-		original[i] = sin(M_PI * omega * i);
+	std::vector<std::vector<double>> spectrogram_data;
+	double omega;
+	int size;
+
+	virtual void SetUp() {
+		size = 2048;
+		omega = 0.1;
+		std::vector<double> data(size);
+
+		std::vector<std::vector<double>> res = spectrogram(data, 128);
 	}
 
-	std::vector<std::vector<double>> res = spectrogram(data, 128);
-	for (int i = 0; i != res.size(); ++i) {
+	void TearDown() {
+		;
+	}
+};
 
-		for (int j = 0; j != res[i].size(); ++j) {
-			std::cout << res[i][j];
-			if (j != res[i].size() -1) {
-				 std::cout << ',';
-			}
-		}
-		std::cout << std::endl;
+TEST_F(SpectorgramTest, test_correct_size) {
+	for (std::size_t i = 0; i != spectrogram_data.size(); ++i) {
+		EXPECT_EQ(spectrogram_data[i].size(), size);
+	}
+}
+
+TEST_F(SpectorgramTest, test_correct_strongest_freq) {
+	for (std::size_t i = 0; i != spectrogram_data.size(); ++i) {
+		auto& fft_result = spectrogram_data[i];
+		auto max_it = std::max_element(fft_result.begin(), fft_result.begin() + fft_result.size() / 2);
+		EXPECT_EQ(spectrogram_data[i].size(), size);
 	}
 }

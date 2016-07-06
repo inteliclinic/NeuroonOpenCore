@@ -1,0 +1,9 @@
+#include <gtest/gtest.h>
+
+#include "fft_test.h"
+#include "spectrogram_test.h"
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
