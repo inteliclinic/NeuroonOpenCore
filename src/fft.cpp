@@ -21,12 +21,16 @@ std::vector<double> fft(const std::vector<double>& data, int begin, int end) {
 	return res;
 }
 
-std::vector<std::vector<double>> spectrogram(const std::vector<double>& signal, int window) {
-	int spec_length = signal.size() / window;
+std::vector<std::vector<double>> spectrogram(const std::vector<double>& signal,
+		int window, int noverlap) {
+
+	int spec_length = signal.size() / (window - noverlap);
 	std::vector<std::vector<double>> result(spec_length);
 
 	for (int i = 0; i != spec_length; ++i) {
-		std::vector<double> fft_res = fft(signal, i * window, (i+1) * window);
+		int start = i * (window - noverlap);
+		int end = start + window;
+		std::vector<double> fft_res = fft(signal, start, end);
 		result[i] = fft_res;
 	}
 
