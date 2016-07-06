@@ -5,7 +5,7 @@
 
 void four1(std::vector<double>& data, unsigned long nn);
 
-std::vector<double> fft(std::vector<double>& data, int begin, int end) {
+std::vector<double> fft(const std::vector<double>& data, int begin, int end) {
 
 	if (end == -1) {
 		end = data.size();
@@ -21,7 +21,7 @@ std::vector<double> fft(std::vector<double>& data, int begin, int end) {
 	return res;
 }
 
-std::vector<std::vector<double>> spectrogram(std::vector<double> signal, int window) {
+std::vector<std::vector<double>> spectrogram(const std::vector<double>& signal, int window) {
 	int spec_length = signal.size() / window;
 	std::vector<std::vector<double>> result(spec_length);
 
