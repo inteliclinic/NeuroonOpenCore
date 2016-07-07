@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 #include <dlib/matrix.h>
 
