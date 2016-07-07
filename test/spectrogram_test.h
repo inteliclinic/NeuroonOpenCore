@@ -1,4 +1,4 @@
-#include "fft.h"
+
 #include "Spectrogram.h"
 
 #include <gtest/gtest.h>
@@ -24,10 +24,10 @@ struct SpectrogramTest : public ::testing::Test {
 		omega = 0.1;
 		window = 128;
 		overlap = 64;
-		std::vector<double> data(size);
+		dlib::matrix<double> data(size, 1);
 
 		for (std::size_t i = 0; i != data.size(); ++i) {
-			data[i] = sin(M_PI * omega * i);
+			data(i,0) = sin(M_PI * omega * i);
 		}
 
 		spectrogram_data.reset(new Spectrogram(data, 1, window, 0));
@@ -40,41 +40,25 @@ struct SpectrogramTest : public ::testing::Test {
 };
 
 TEST_F(SpectrogramTest, correct_size) {
-	for (std::size_t i = 0; i != spectrogram_data->size(); ++i) {
-		EXPECT_EQ(spectrogram_data->fft_at(i).size(), window);
-	}
+	EXPECT_EQ(spectrogram_data->data().nr(), size / window);
+	EXPECT_EQ(spectrogram_data->data().nc(), window);
 }
 
-std::vector<double> to_absolute_val(const std::vector<double>& data){
-	std::vector<double> result(data.size());
-	for (std::size_t i = 0; i != data.size(); ++i) {
-		result[i] = fabs(data[i]);
-	}
-	return result;
-}
 
 TEST_F(SpectrogramTest, correct_strongest_freq) {
 	for (std::size_t i = 0; i != spectrogram_data->size(); ++i) {
-		const auto& fft_result = spectrogram_data->fft_at(i);
-		auto abs_fft = to_absolute_val(fft_result);
+		dlib::matrix<double> fft_result = dlib::rowm(spectrogram_data->data(), i);
+		dlib::matrix<double> abs_fft = dlib::abs(fft_result);
 		auto max_it = std::max_element(abs_fft.begin(), abs_fft.begin() + abs_fft.size() / 2);
-		int expected_main_freq = round(omega * window);
+		int expected_main_freq = round(omega * window / 2);
 
-		bool success = expected_main_freq == max_it - abs_fft.begin() ||
-				expected_main_freq == 1 + max_it - abs_fft.begin();
-
-		EXPECT_TRUE(success);
+		EXPECT_EQ(expected_main_freq, max_it - abs_fft.begin());
 	}
 }
 
 TEST_F(SpectrogramTest, correct_size_with_overlap) {
-	for (std::size_t i = 0; i != overlap_spectrogram->size(); ++i) {
-		EXPECT_EQ(overlap_spectrogram->fft_at(i).size(), window);
-	}
-}
-
-TEST_F(SpectrogramTest, number_of_windows_overlap) {
-	EXPECT_EQ(overlap_spectrogram->size(), size / (window - overlap));
+	EXPECT_EQ(overlap_spectrogram->data().nr(), (size - overlap) / (window - overlap));
+	EXPECT_EQ(overlap_spectrogram->data().nc(), window);
 }
 
 TEST_F(SpectrogramTest, print_spectrogram_to_file) {
@@ -82,3 +66,7 @@ TEST_F(SpectrogramTest, print_spectrogram_to_file) {
 	std::ofstream out(path);
 	spectrogram_data->print(out);
 }
+
+//TEST_F(SpectrogramTest, big_integration_test) {
+//
+//}

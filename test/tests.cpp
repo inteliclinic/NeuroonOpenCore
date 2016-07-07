@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "fft_test.h"
 #include "spectrogram_test.h"
 
 int main(int argc, char **argv) {

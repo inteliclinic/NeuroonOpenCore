@@ -10,14 +10,16 @@
 
 #include <vector>
 #include <ostream>
+#include <dlib/matrix.h>
+
 class Spectrogram {
 private:
-	std::vector<std::vector<double>> buffer;
-	std::vector<double> timestamps;
-	std::vector<double> frequencies;
+	dlib::matrix<double> buffer;
+	dlib::matrix<double> timestamps;
+	dlib::matrix<double> frequencies;
 
 public:
-	Spectrogram(const std::vector<double>& signal, int sampling_frequency,
+	Spectrogram(const dlib::matrix<double>& signal, int sampling_frequency,
 			int window, int noverlap=0);
 
 	virtual ~Spectrogram();
@@ -28,16 +30,21 @@ public:
 		return timestamps.size();
 	}
 
-	const std::vector<double>& fft_at(int t) const {
-		return buffer[t];
-	}
 
-	const std::vector<double>& get_frequencies() const {
+//	const dlib::matrix<double> & fft_at(int t) const {
+//		return dlib::rowm(buffer, t);
+//	}
+
+	const dlib::matrix<double>& get_frequencies() const {
 		return frequencies;
 	}
 
-	const std::vector<double>& get_timestamps() const {
+	const dlib::matrix<double>& get_timestamps() const {
 		return timestamps;
+	}
+
+	const dlib::matrix<double>& data() const {
+		return buffer;
 	}
 
 	void print(std::ostream& out);
