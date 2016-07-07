@@ -5,7 +5,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 add_subdirectory(3rd_party/dlib)
-add_subdirectory(tools)
+#add_subdirectory(tools)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
