@@ -30,11 +30,27 @@ class RollingPriority: public IRbAlgorithm{
   double _prev_last;
   size_t _windows_length;
 
+ public:
+
+ RollingPriority(function<bool (double, double)> cmp_fun) :
+  _cmp_fun(cmp_fun), _set(set<double, function<bool (double, double)> >(cmp_fun)) {}
+
+  void init(size_t n, const RollWindow &window ) override;
+  double step(const vector<double> &v, StepType type) override;
+
+};
+
+class RollingSumOrMean: public IRbAlgorithm{
 public:
+  enum class Type{SUM,MEAN};
 
-  RollingPriority(function<bool (double, double)> cmp_fun) :
-    _cmp_fun(cmp_fun), _set(set<double, function<bool (double, double)> >(cmp_fun)) {}
+  double _sum=0;
+  size_t _prev_win_length;
+  double _prev_last;
+  Type _type;
 
+public:
+  RollingSumOrMean(Type sum_or_mean=Type::SUM) : _type(sum_or_mean) {}
   void init(size_t n, const RollWindow &window ) override;
   double step(const vector<double> &v, StepType type) override;
 

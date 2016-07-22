@@ -9,16 +9,12 @@ vector<double> Rolling::apply(std::function<double (const vector<double>&)> f) {
 }
 
 vector<double> Rolling::sum() {
-  auto ra = RollingApply([] (const vector<double> & v){
-      return accumulate(v.begin(), v.end(), 0);
-  });
+  auto ra =  RollingSumOrMean();
   return this->run_algorithm(ra);
 }
 
 vector<double> Rolling::mean() {
-  auto ra = RollingApply([] (const vector<double> & v){
-      return accumulate(v.begin(), v.end(), 0)/(double)v.size();
-    });
+  auto ra = RollingSumOrMean(RollingSumOrMean::Type::MEAN);
   return this->run_algorithm(ra);
 }
 
