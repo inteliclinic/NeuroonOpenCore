@@ -2,6 +2,7 @@
 
 #include "spectrogram_test.h"
 #include "rolling_test.h"
+#include "union_test.h"
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
