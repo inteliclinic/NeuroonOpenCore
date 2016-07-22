@@ -4,7 +4,7 @@
 #include "IRbAlgorithm.h"
 #include <functional>
 #include <vector>
-#include <queue>
+#include <set>
 
 using namespace std;
 
@@ -25,13 +25,15 @@ public:
 
 class RollingPriority: public IRbAlgorithm{
 
-  function<int (double, double)> _cmp_fun = nullptr;
-
+  function<bool (double, double)> _cmp_fun = nullptr;
+  set<double, function<bool (double, double)> > _set;
+  double _prev_last;
+  size_t _windows_length;
 
 public:
 
-  RollingPriority(function<int (double, double)> cmp_fun) :
-    _cmp_fun(cmp_fun) {}
+  RollingPriority(function<bool (double, double)> cmp_fun) :
+    _cmp_fun(cmp_fun), _set(set<double, function<bool (double, double)> >(cmp_fun)) {}
 
   void init(size_t n, const RollWindow &window ) override;
   double step(const vector<double> &v, StepType type) override;

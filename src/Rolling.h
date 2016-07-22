@@ -25,6 +25,7 @@ public:
   vector<double> mean();
   vector<double> min();
   vector<double> max();
+  vector<double> priority(std::function<bool (double, double) > f);
   vector<double> apply(std::function<double (const vector<double> &) > f);
 };
 

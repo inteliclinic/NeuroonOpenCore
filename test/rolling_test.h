@@ -20,9 +20,11 @@ void EXPECT_EQ_VECTORS(const vector<double> & v1,shared_ptr< const vector<double
 struct RollingTest : public ::testing::Test {
 
   shared_ptr< const vector<double> > rolling1;
+  shared_ptr< const vector<double> > rolling2;
 
 	virtual void SetUp() {
     rolling1.reset(new vector<double>{1,2,3,4,5,6,7,8,9,10});
+    rolling2.reset(new vector<double>{1,2,-1,-0.5,100,-100,0,3});
 	}
 
 	void TearDown() {
@@ -82,4 +84,37 @@ TEST_F(RollingTest, rolling_mean) {
   vector<double>&& ret = Rolling(rolling1, 2).mean();
   shared_ptr<const vector<double> > means_sp(new vector<double>{1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10});
   EXPECT_EQ_VECTORS(ret, means_sp);
+}
+
+// priority
+TEST_F(RollingTest, rolling_priority_trivial) {
+
+  // rolling mean
+  vector<double>&& ret = Rolling(rolling1, 1).priority([](double v1, double v2){return v1 < v2;});
+  EXPECT_EQ_VECTORS(ret, rolling1);
+}
+
+TEST_F(RollingTest, rolling_priority) {
+
+  // rolling mean
+  vector<double>&& ret = Rolling(rolling1, 2).priority([](double v1, double v2){return v1 > v2;});
+  shared_ptr<const vector<double> > shoulds_sp(new vector<double>{2,3,4,5,6,7,8,9,10,10});
+  EXPECT_EQ_VECTORS(ret, shoulds_sp);
+}
+
+TEST_F(RollingTest, rolling_min) {
+
+  // rolling mean
+  vector<double>&& ret = Rolling(rolling2, RollWindow(5,RollWindow::Type::CENTER)).min();
+  shared_ptr<const vector<double> > shoulds_sp(new vector<double>{-1,-1,-1,-100,-100,-100,-100,-100});
+  EXPECT_EQ_VECTORS(ret, shoulds_sp);
+}
+
+TEST_F(RollingTest, rolling_max) {
+
+  // rolling mean
+  vector<double>&& ret = Rolling(rolling2, RollWindow(3,RollWindow::Type::RIGHT)).max();
+  rolling2.reset(new vector<double>{1,2,-1,-0.5,100,-100,0,3});
+  shared_ptr<const vector<double> > shoulds_sp(new vector<double>{1,2,2,2,100,100,100,3});
+  EXPECT_EQ_VECTORS(ret, shoulds_sp);
 }

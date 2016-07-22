@@ -22,6 +22,21 @@ vector<double> Rolling::mean() {
   return this->run_algorithm(ra);
 }
 
+vector<double> Rolling::priority(std::function<bool (double, double) > f){
+  auto ra = RollingPriority(f);
+  return this->run_algorithm(ra);
+}
+
+vector<double> Rolling::min(){
+  auto ra = RollingPriority([](double d1, double d2){ return d1<d2;});
+  return this->run_algorithm(ra);
+}
+
+vector<double> Rolling::max(){
+  auto ra = RollingPriority([](double d1, double d2){ return d1>d2;});
+  return this->run_algorithm(ra);
+}
+
 vector<double> Rolling::run_algorithm(IRbAlgorithm& alg) {
   size_t n = this->_v->size();
   size_t winsz = this->_window.length();
