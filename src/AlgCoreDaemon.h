@@ -1,5 +1,6 @@
 #ifndef __ALGCOREDAEMON__
 #define __ALGCOREDAEMON__
+
 #include "InMsg.h"
 #include <vector>
 #include <memory>

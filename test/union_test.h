@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "InMsg.h"
+#include "InValue.h"
 
 struct TempTest : public ::testing::Test {
 
@@ -18,15 +18,15 @@ TEST_F(TempTest, inmsg_getvalue) {
   // length of a window
   // trivial
 
-  auto msg = InMsg("msg");
+  auto msg = InValue("msg");
   auto str = msg.string_value();
   EXPECT_EQ(str,"msg");
 
-  auto msg1 = InMsg(2.5,10);
+  auto msg1 = InValue(2.5);
   auto d = msg1.double_value();
   EXPECT_EQ(d,2.5);
 
-  auto msg2 = InMsg(1,10);
+  auto msg2 = InValue(1);
   auto i = msg2.int_value();
   EXPECT_EQ(i,1);
 }
@@ -35,21 +35,21 @@ TEST_F(TempTest, inmsg_copy_constructor) {
   // length of a window
   // trivial
   {
-  InMsg msg = InMsg("msg",10);
+  InValue msg = InValue("msg");
   ASSERT_NO_THROW({
-      auto msgc = InMsg(msg);
+      auto msgc = InValue(msg);
     });
   }
   {
-    InMsg msg = InMsg(1,10);
+    InValue msg = InValue(1);
     ASSERT_NO_THROW({
-        auto msgc = InMsg(msg);
+        auto msgc = InValue(msg);
       });
   }
   {
-    InMsg msg = InMsg(2.5,10);
+    InValue msg = InValue(2.5);
     ASSERT_NO_THROW({
-        auto msgc = InMsg(msg);
+        auto msgc = InValue(msg);
       });
   }
 }

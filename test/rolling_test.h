@@ -1,4 +1,4 @@
-#include "Rolling.h"
+#include "../src/Rolling.h"
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -7,15 +7,9 @@
 #include <numeric>
 #include <algorithm>
 
-using namespace std;
+#include "test_utils.h"
 
-void EXPECT_EQ_VECTORS(const vector<double> & v1,shared_ptr< const vector<double> > v2){
-  vector<double>::size_type i = 0;
-  for(const auto& v : v1){
-    EXPECT_EQ(v, (*v2)[i]);
-    i++;
-  }
-}
+using namespace std;
 
 struct RollingTest : public ::testing::Test {
 
