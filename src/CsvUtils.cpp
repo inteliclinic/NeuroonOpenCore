@@ -92,31 +92,31 @@ dlib::matrix<double> CsvReader::read_csv_double_matrix(istream& in, vector<strin
 }
 
 map<string, vector<InValue> > CsvReader::read_csv_with_headers(const string& inp){
-  auto ss = stringstream(inp);
+  stringstream ss(inp);
   return read_csv_with_headers(ss);
 }
 
 vector<vector<InValue> > CsvReader::read_csv_no_headers(const string& inp){
-  auto ss = stringstream(inp);
+  stringstream ss(inp);
   return read_csv_no_headers(ss);
 }
 
 dlib::matrix<double> CsvReader::read_csv_double_matrix(const string& inp, vector<string>* out_headers){
-  auto ss = stringstream(inp);
+  stringstream ss(inp);
   return read_csv_double_matrix(ss, out_headers);
 }
 
 map<string, vector<InValue> > CsvReader::read_csv_with_headers_from_path(const string& path){
-  auto ifs = ifstream(path);
+  ifstream ifs (path);
   return read_csv_with_headers(ifs);
 }
 
 vector<vector<InValue> > CsvReader::read_csv_no_headers_from_path(const string& path){
-  auto ifs = ifstream(path);
+  ifstream ifs(path);
   return read_csv_no_headers(ifs);
 }
 
 dlib::matrix<double> CsvReader::read_csv_double_matrix_from_path(const string& path, vector<string>* out_headers){
-  auto ifs = ifstream(path);
+  ifstream ifs(path);
   return read_csv_double_matrix(ifs, out_headers);
 }

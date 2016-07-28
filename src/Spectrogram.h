@@ -13,13 +13,24 @@
 #include <dlib/matrix.h>
 
 class Spectrogram {
+
+friend class SpectrogramFilter;
+
 private:
 	dlib::matrix<double> buffer;
 	dlib::matrix<double> timestamps;
 	dlib::matrix<double> frequencies;
 
+	Spectrogram();
+
+protected:
+	const dlib::matrix<double>& data() const {
+		return buffer;
+	}
+
+
 public:
-	Spectrogram(const dlib::matrix<double>& signal, int sampling_frequency,
+	Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap=0);
 
 	virtual ~Spectrogram();
@@ -43,11 +54,24 @@ public:
 		return timestamps;
 	}
 
-	const dlib::matrix<double>& data() const {
+
+	dlib::matrix<double>& data() {
 		return buffer;
 	}
 
-	void print(std::ostream& out);
+	std::pair<double, double> freq_indices(double low, double high) const;
+
+	dlib::matrix<double> get_band(double low, double high) const;
+
+	Spectrogram create_from_band(double low, double high) const;
+
+	dlib::matrix<double> get_freq_band(double low, double high) const;
+
+	dlib::matrix<double> compute_moment(int degree) const;
+
+	dlib::matrix<double> compute_moment(const std::vector<int>& degrees) const;
+
+	void print(std::ostream& out) const;
 };
 
 #endif /* SRC_SPECTROGRAM_H_ */
