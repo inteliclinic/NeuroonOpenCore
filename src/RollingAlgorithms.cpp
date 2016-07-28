@@ -3,14 +3,14 @@
 #include <vector>
 
 
-void RollingApply::init(size_t n, const RollWindow &window ) {}
+void RollingApply::init(size_t , const RollWindow &) {}
 
-double RollingApply::step(const std::vector<double> &v, StepType type){
+double RollingApply::step(const std::vector<double> &v, StepType){
   return _apply_fun(v);
 }
 
 
-void RollingPriority::init(size_t n, const RollWindow &window ) {
+void RollingPriority::init(size_t , const RollWindow &window ) {
   _windows_length = window.length();
 }
 
@@ -33,7 +33,7 @@ double RollingPriority::step(const std::vector<double> &v, StepType type){
   return *_set.begin();
 }
 
-void RollingSumOrMean::init(size_t n, const RollWindow &window ) {}
+void RollingSumOrMean::init(size_t , const RollWindow &) {}
 
 double RollingSumOrMean::step(const std::vector<double> &v, StepType type){
   switch(type){
