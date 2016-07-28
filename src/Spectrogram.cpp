@@ -12,6 +12,10 @@
 
 #include <dlib/matrix.h>
 
+Spectrogram::Spectrogram() {
+
+}
+
 Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap) {
 
@@ -20,15 +24,16 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 
 	buffer = dlib::matrix<double>(nrows, ncols);
 
-	int n_epochs = (signal.size() / (window - noverlap));
-	timestamps = dlib::matrix<double>(n_epochs, 1);
-	set_colm(timestamps, 0) = dlib::trans(dlib::range(0, n_epochs - 1));
+	timestamps = dlib::matrix<double>(nrows, 1);
+	set_colm(timestamps, 0) = dlib::trans(dlib::range(0, nrows - 1));
 	timestamps *= sampling_frequency;
 
 	int n_freqs = window / 2;
 	frequencies = dlib::matrix<double> (n_freqs, 1);
 	set_colm(frequencies, 0) = dlib::trans(dlib::range(0, n_freqs - 1));
 	frequencies *= sampling_frequency / window;
+
+	//std::cout << frequencies;
 
 	for (int i = 0; i != nrows; ++i) {
 		int start = i * (window - noverlap);
@@ -75,6 +80,38 @@ dlib::matrix<double> Spectrogram::get_band(double low, double high) const {
 dlib::matrix<double> Spectrogram::get_freq_band(double low, double high) const {
 	auto range_indices = freq_indices(low, high);
 	return dlib::rowm(frequencies, dlib::range(range_indices.first, range_indices.second - 1));
+}
+
+Spectrogram Spectrogram::create_from_band(double low, double high) const {
+	Spectrogram result;
+
+	result.frequencies = this->get_freq_band(low, high);
+	result.buffer = this->get_band(low, high);
+	result.timestamps = this->timestamps;
+
+	return result;
+}
+
+dlib::matrix<double> Spectrogram::compute_moment(int degree) const {
+	dlib::matrix<double> moment = dlib::matrix<double> (timestamps.size(), 1);
+	for (int i = 0; i != timestamps.size(); ++i) {
+		dlib::matrix<double> row = dlib::rowm(buffer, i);
+		row = dlib::pow(row, degree);
+		double numerator = dlib::dot(row, frequencies);
+		double denominator = dlib::sum(row);
+
+		moment(i, 0) = numerator / denominator;
+	}
+	return moment;
+}
+
+dlib::matrix<double> Spectrogram::compute_moment(const std::vector<int>& degrees) const {
+	dlib::matrix<double> moments = dlib::matrix<double>(timestamps.size(), degrees.size());
+	for (int i = 0; i != degrees.size(); ++i) {
+		set_colm(moments, i) = compute_moment(degrees[i]);
+	}
+
+	return moments;
 }
 
 void Spectrogram::print(std::ostream& out) const {
