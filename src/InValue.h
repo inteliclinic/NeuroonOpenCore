@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
+using std::string;
 
 class InValue{
 public:
@@ -15,7 +15,7 @@ private:
   union{
     double d;
     int i;
-    string s;
+    std::string s;
   };
 public:
 
@@ -38,6 +38,7 @@ public:
     }
   }
   ~InValue(){
+    using std::string;
     if(type_tag == STRING){
       this->s.~string();
     }
@@ -47,7 +48,6 @@ public:
       s = o.s;
       return *this;
     }
-
     if (type_tag==Type::STRING) s.~string();
 
     switch (o.type_tag) {
@@ -61,17 +61,17 @@ public:
 
   InValue(double d) : type_tag(DOUBLE), d(d) {}
   InValue(int l) : type_tag(INT), i(l) {}
-  InValue(string str) : type_tag(STRING), s(str) {}
+  InValue(std::string str) : type_tag(STRING), s(str) {}
 
   Type type() const{return type_tag;}
   int int_value() const{return i; }
   double double_value() const{return d; }
-  string string_value() const{return s; }
+  std::string string_value() const{return s; }
 
-  // will parse from string, trying in order: integer, double, string
-  static InValue parse(const string & inp);
+  // will parse from std::string, trying in order: integer, double, std::string
+  static InValue parse(const std::string & inp);
 
-  friend ostream& operator<<(ostream& os, const InValue& inv);
+  friend std::ostream& operator<<(std::ostream& os, const InValue& inv);
 
 };
 

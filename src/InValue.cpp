@@ -4,7 +4,7 @@
 #include "Exceptions.h"
 
 
-int parse_integer(const string & str_inp, bool* error){
+int parse_integer(const std::string & str_inp, bool* error){
   char *ep=0;
   const char* str = str_inp.c_str();
   int ret = strtol(str, &ep, 0);
@@ -15,7 +15,7 @@ int parse_integer(const string & str_inp, bool* error){
   return ret;
 }
 
-double parse_double(const string & str_inp, bool* error){
+double parse_double(const std::string & str_inp, bool* error){
   char *ep=0;
   const char* str = str_inp.c_str();
   double ret = strtod(str, &ep);
@@ -26,7 +26,7 @@ double parse_double(const string & str_inp, bool* error){
   return ret;
 }
 
-InValue InValue::parse(const string & inp){
+InValue InValue::parse(const std::string & inp){
   auto str = trim(inp);
   bool error = 0;
   int r1 = parse_integer(str, &error);
@@ -37,7 +37,7 @@ InValue InValue::parse(const string & inp){
   return InValue(str);
 }
 
-ostream& operator<<(ostream& os, const InValue& inv){
+std::ostream& operator<<(std::ostream& os, const InValue& inv){
   switch(inv.type()){
   case InValue::Type::INT:
     os << inv.int_value();

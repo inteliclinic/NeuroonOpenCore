@@ -2,11 +2,10 @@
 #include <numeric>
 #include <vector>
 
-using namespace std;
 
 void RollingApply::init(size_t n, const RollWindow &window ) {}
 
-double RollingApply::step(const vector<double> &v, StepType type){
+double RollingApply::step(const std::vector<double> &v, StepType type){
   return _apply_fun(v);
 }
 
@@ -16,7 +15,7 @@ void RollingPriority::init(size_t n, const RollWindow &window ) {
 }
 
 
-double RollingPriority::step(const vector<double> &v, StepType type){
+double RollingPriority::step(const std::vector<double> &v, StepType type){
   switch(type){
   case StepType::START:
     _set.insert(v.begin(),v.end());
@@ -36,7 +35,7 @@ double RollingPriority::step(const vector<double> &v, StepType type){
 
 void RollingSumOrMean::init(size_t n, const RollWindow &window ) {}
 
-double RollingSumOrMean::step(const vector<double> &v, StepType type){
+double RollingSumOrMean::step(const std::vector<double> &v, StepType type){
   switch(type){
   case StepType::START:
     _sum = accumulate(v.begin(), v.end(), 0);
