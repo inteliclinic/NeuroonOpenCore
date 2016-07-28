@@ -41,7 +41,7 @@ struct SpectrogramTest : public ::testing::Test {
 
 TEST_F(SpectrogramTest, correct_size) {
 	EXPECT_EQ(spectrogram_data->data().nr(), size / window);
-	EXPECT_EQ(spectrogram_data->data().nc(), window);
+	EXPECT_EQ(spectrogram_data->data().nc(), window / 2);
 }
 
 
@@ -58,14 +58,31 @@ TEST_F(SpectrogramTest, correct_strongest_freq) {
 
 TEST_F(SpectrogramTest, correct_size_with_overlap) {
 	EXPECT_EQ(overlap_spectrogram->data().nr(), (size - overlap) / (window - overlap));
-	EXPECT_EQ(overlap_spectrogram->data().nc(), window);
+	EXPECT_EQ(overlap_spectrogram->data().nc(), window / 2);
 }
+
+
+
+TEST_F(SpectrogramTest, basic_get_band) {
+	dlib::matrix<double> small_band = spectrogram_data->get_band(0.0, 1.0);
+	EXPECT_EQ(small_band.nc(), spectrogram_data->data().nc());
+	EXPECT_EQ(small_band.nr(), spectrogram_data->data().nr());
+}
+
+TEST_F(SpectrogramTest, small_band) {
+	dlib::matrix<double> small_band = spectrogram_data->get_band(0.124999, 0.125001);
+	EXPECT_EQ(small_band.nc(), 1);
+	EXPECT_EQ(small_band.nr(), spectrogram_data->data().nr());
+}
+
 
 TEST_F(SpectrogramTest, print_spectrogram_to_file) {
 	std::string path("./spectrogram.csv");
 	std::ofstream out(path);
 	spectrogram_data->print(out);
 }
+
+
 
 //TEST_F(SpectrogramTest, big_integration_test) {
 //

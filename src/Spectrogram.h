@@ -19,7 +19,7 @@ private:
 	dlib::matrix<double> frequencies;
 
 public:
-	Spectrogram(const dlib::matrix<double>& signal, int sampling_frequency,
+	Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap=0);
 
 	virtual ~Spectrogram();
@@ -47,7 +47,13 @@ public:
 		return buffer;
 	}
 
-	void print(std::ostream& out);
+	std::pair<double, double> freq_indices(double low, double high) const;
+
+	dlib::matrix<double> get_band(double low, double high) const;
+
+	dlib::matrix<double> get_freq_band(double low, double high) const;
+
+	void print(std::ostream& out) const;
 };
 
 #endif /* SRC_SPECTROGRAM_H_ */
