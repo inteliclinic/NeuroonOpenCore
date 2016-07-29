@@ -12,6 +12,7 @@
 #include "signal_utils.h"
 
 #include "SpectrogramFilter.h"
+
 SpectrogramFilter::SpectrogramFilter() {
 	// TODO Auto-generated constructor stub
 

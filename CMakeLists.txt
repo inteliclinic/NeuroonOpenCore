@@ -5,7 +5,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 add_subdirectory(3rd_party/dlib)
-#add_subdirectory(tools)
+add_subdirectory(tools)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -20,12 +20,13 @@ endif()
 
 set(CMAKE_BUILD_TYPE Debug)
 
-FILE (GLOB_RECURSE sources src/*.cpp src/utils/*.cpp)
+FILE (GLOB_RECURSE sources src/*.cpp src/utils/*.cpp src/sleep_staging/*.cpp)
 
 add_library (neuroon-alg-core ${sources})
 
 target_include_directories (neuroon-alg-core PUBLIC src)
 target_include_directories (neuroon-alg-core PUBLIC src/util)
+target_include_directories (neuroon-alg-core PUBLIC src/sleep_staging)
 target_include_directories (neuroon-alg-core PUBLIC api)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/dlib)
 

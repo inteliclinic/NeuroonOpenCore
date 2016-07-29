@@ -24,12 +24,13 @@ private:
 	Spectrogram();
 
 protected:
-	const dlib::matrix<double>& data() const {
+
+	dlib::matrix<double>& data() {
 		return buffer;
 	}
 
-
 public:
+
 	Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap=0);
 
@@ -54,8 +55,7 @@ public:
 		return timestamps;
 	}
 
-
-	dlib::matrix<double>& data() {
+	const dlib::matrix<double>& data() const {
 		return buffer;
 	}
 

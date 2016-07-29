@@ -7,7 +7,9 @@
 #include "union_test.h"
 
 #include "filter_test.h"
+#include "eeg_features_test.h"
 
+#include "eeg_features_functional_test.h"
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

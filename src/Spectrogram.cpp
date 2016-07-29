@@ -11,11 +11,23 @@
 #include <algorithm>
 #include <numeric>
 #include <dlib/matrix.h>
+#include <exception>
+
 
 Spectrogram::Spectrogram() {
 
 }
 
+/*
+ * currently this is designed and tested to compute the exact C++ equivalent of scipy's:
+ * t, f, Sxx = spectrogram(signal, nperseg=window, noverlap=noverlap, mode='magnitude',
+ * 						   scaling='spectrum', window=get_window('boxcar'))
+ *
+ *
+ * covering other values of 'mode', 'scaling' and 'window' parameters should be easy, but it requires certain
+ * knowledge in signal processing and some time. Since these parameters won't be used for a while, they're
+ * currently not implemented
+ */
 Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap) {
 
@@ -33,8 +45,6 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 	set_colm(frequencies, 0) = dlib::trans(dlib::range(0, n_freqs - 1));
 	frequencies *= sampling_frequency / window;
 
-	//std::cout << frequencies;
-
 	for (int i = 0; i != nrows; ++i) {
 		int start = i * (window - noverlap);
 		int end = start + window - 1;
@@ -43,6 +53,18 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 		dlib::matrix<std::complex<double>> fft_res = fft(windowed_complex_signal);
 		int last_frequency = (fft_res.size() / 2) - 1;
 		fft_res = dlib::rowm(fft_res, dlib::range(0, last_frequency));
+		// TODO: PROBABLY SHOULD BE +1 in order to get fs/2 also.
+
+		bool psd_mode = false;
+		bool magnitude_mode = true;
+		if (psd_mode) {
+		  fft_res = (fft_res / window);
+		  fft_res = pointwise_multiply(fft_res, fft_res);//dlib::pow(fft_res, 2);
+		  fft_res = 2 * fft_res;
+		} else if (magnitude_mode) {
+		  fft_res = 2 * fft_res;
+		}
+
 		dlib::set_rowm(buffer, i) = dlib::trans(dlib::abs(fft_res));
 	}
 }
@@ -73,6 +95,10 @@ std::pair<double, double> Spectrogram::freq_indices(double low, double high) con
 }
 
 dlib::matrix<double> Spectrogram::get_band(double low, double high) const {
+	if (low > frequencies(frequencies.nr() - 1, 0)) {
+		throw std::out_of_range("low band freq too big");
+	}
+
 	auto range_indices = freq_indices(low, high);
 	return dlib::colm(buffer, dlib::range(range_indices.first, range_indices.second - 1));
 }
@@ -115,5 +141,5 @@ dlib::matrix<double> Spectrogram::compute_moment(const std::vector<int>& degrees
 }
 
 void Spectrogram::print(std::ostream& out) const {
-	out << buffer;
+	out << dlib::csv << buffer;
 }

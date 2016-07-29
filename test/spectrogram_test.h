@@ -9,11 +9,11 @@
 #include <algorithm>
 #include <fstream>
 #include <memory>
+#include <exception>
 
 struct SpectrogramTest : public ::testing::Test {
-
-	std::unique_ptr<Spectrogram> spectrogram_data;
-	std::unique_ptr<Spectrogram> overlap_spectrogram;
+	std::unique_ptr<const Spectrogram> spectrogram_data;
+	std::unique_ptr<const Spectrogram> overlap_spectrogram;
 	double f;
 	int size;
 	int overlap;
@@ -69,8 +69,15 @@ TEST_F(SpectrogramTest, small_band) {
 	EXPECT_EQ(small_band.nr(), spectrogram_data->data().nr());
 }
 
+TEST_F(SpectrogramTest, throws_when_out_of_range) {
+	ASSERT_NO_THROW(spectrogram_data->get_band(0.49, 0.6));
+	ASSERT_THROW(spectrogram_data->get_band(0.51, 0.6), std::out_of_range);
+}
+
+
+
 TEST_F(SpectrogramTest, basic_create_from_band) {
-	Spectrogram band = spectrogram_data->create_from_band(0.124999, 0.125001);
+	const Spectrogram band = spectrogram_data->create_from_band(0.124999, 0.125001);
 
 	EXPECT_EQ(band.data().nc(), 1);
 	EXPECT_EQ(band.data().nr(), spectrogram_data->data().nr());

@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	f.filter(s);
 
 	if (command == "spectrogram") {
-		std::cout << dlib::csv << s.data() << std::endl;
+		s.print(std::cout);
 	} else if (command == "moment"){
 		std::string arg_moment = argv[3];
 		int degree = std::stoi(arg_moment);
