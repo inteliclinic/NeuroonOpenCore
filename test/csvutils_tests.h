@@ -8,8 +8,6 @@
 #include <algorithm>
 #include "test_utils.h"
 
-using namespace std;
-
 struct CsvUtilsTest : public ::testing::Test {
 
   const char* sample_no_headers_fname = "sample_no_headers.csv";
@@ -22,16 +20,16 @@ struct CsvUtilsTest : public ::testing::Test {
   const string sample_with_headers = "int,double,string\n" + sample_no_headers;
 
   void create_sample_files(){
-    ofstream ofs(sample_with_headers_fname);
+    std::ofstream ofs(sample_with_headers_fname);
     ofs << sample_with_headers;
     ofs.close();
-    ofstream ofs2(sample_no_headers_fname);
+    std::ofstream ofs2(sample_no_headers_fname);
     ofs2 << sample_no_headers;
     ofs2.close();
-    ofstream ofs3(sample_for_matrix_no_headers_fname);
+    std::ofstream ofs3(sample_for_matrix_no_headers_fname);
     ofs3 << sample_for_matrix_no_headers;
     ofs3.close();
-    ofstream ofs4(sample_for_matrix_with_headers_fname);
+    std::ofstream ofs4(sample_for_matrix_with_headers_fname);
     ofs4 << sample_for_matrix_with_headers;
     ofs4.close();
   }
@@ -118,16 +116,16 @@ TEST_F(CsvUtilsTest, read_csv_double_matrix_no_headers){
   EXPECT_EQ(true, a==b);
 }
 TEST_F(CsvUtilsTest, read_csv_double_matrix_with_headers_nothrow){
-  vector<string> asd;
+  std::vector<string> asd;
   ASSERT_NO_THROW({
       auto a = CsvReader::read_csv_double_matrix(sample_for_matrix_with_headers, &asd);
     });
 }
 
 TEST_F(CsvUtilsTest, read_csv_double_matrix_with_headers){
-  vector<string> asd;
+  std::vector<string> asd;
   auto a = CsvReader::read_csv_double_matrix(sample_for_matrix_with_headers, &asd);
-  vector<string> bsd = {"col1","col2","col3"};
+  std::vector<string> bsd = {"col1","col2","col3"};
   EXPECT_EQ_VECTORS(bsd,asd);
   dlib::matrix<double> b(2,3);
   b = 1,3.0,2.5, -30,-3e-3,3.43;
@@ -140,7 +138,7 @@ TEST_F(CsvUtilsTest, read_csv_double_matrix_no_headers_from_file_nothrow){
 }
 
 TEST_F(CsvUtilsTest, read_csv_double_matrix_with_headers_from_file_nothrow){
-  vector<string> asd;
+  std::vector<string> asd;
   ASSERT_NO_THROW({
       auto a = CsvReader::read_csv_double_matrix_from_path(sample_for_matrix_with_headers_fname,&asd);
     });

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "SpectrogramFilter.h"
-#include "Spectrogram.h"
+#include "../src/SpectrogramFilter.h"
+#include "../src/Spectrogram.h"
 
 struct SpectrogramFilterTest : public ::testing::Test {
 

@@ -3,43 +3,43 @@
 #include <numeric>
 #include <algorithm>
 
-vector<double> Rolling::apply(std::function<double (const vector<double>&)> f) {
+std::vector<double> Rolling::apply(std::function<double (const std::vector<double>&)> f) {
   auto ra = RollingApply(f);
   return this->run_algorithm(ra);
 }
 
-vector<double> Rolling::sum() {
+std::vector<double> Rolling::sum() {
   auto ra =  RollingSumOrMean();
   return this->run_algorithm(ra);
 }
 
-vector<double> Rolling::mean() {
+std::vector<double> Rolling::mean() {
   auto ra = RollingSumOrMean(RollingSumOrMean::Type::MEAN);
   return this->run_algorithm(ra);
 }
 
-vector<double> Rolling::priority(std::function<bool (double, double) > f){
+std::vector<double> Rolling::priority(std::function<bool (double, double) > f){
   auto ra = RollingPriority(f);
   return this->run_algorithm(ra);
 }
 
-vector<double> Rolling::min(){
+std::vector<double> Rolling::min(){
   auto ra = RollingPriority([](double d1, double d2){ return d1<d2;});
   return this->run_algorithm(ra);
 }
 
-vector<double> Rolling::max(){
+std::vector<double> Rolling::max(){
   auto ra = RollingPriority([](double d1, double d2){ return d1>d2;});
   return this->run_algorithm(ra);
 }
 
-vector<double> Rolling::run_algorithm(IRbAlgorithm& alg) {
+std::vector<double> Rolling::run_algorithm(IRbAlgorithm& alg) {
   size_t n = this->_v->size();
   size_t winsz = this->_window.length();
   alg.init(n, this->_window);
 
-  vector<double> v = *(this->_v);
-  vector<double> ret = vector<double>(n);
+  std::vector<double> v = *(this->_v);
+  std::vector<double> ret = std::vector<double>(n);
 
   int offs =0;
   switch(this->_window.type()){
@@ -71,7 +71,7 @@ vector<double> Rolling::run_algorithm(IRbAlgorithm& alg) {
     size_t b = clamp((int)i + offs);
     size_t e = clamp((int)i + (int)winsz + offs);
     // TODO: change to non-copying allocator
-    ret[i]=alg.step(vector<double>(v.begin()+b,v.begin()+e), step_type);
+    ret[i]=alg.step(std::vector<double>(v.begin()+b,v.begin()+e), step_type);
     // move rolling window
     if(e<n){
       e++;

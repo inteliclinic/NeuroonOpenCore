@@ -5,14 +5,14 @@
 #include <sstream>
 #include <fstream>
 
-vector<vector<InValue> > CsvReader::read_csv_no_headers(istream& inp){
-  string line;
-  vector<vector<InValue> > ret;
+std::vector<std::vector<InValue> > CsvReader::read_csv_no_headers(std::istream& inp){
+  std::string line;
+  std::vector<std::vector<InValue> > ret;
 
   bool fst = true;
   while(getline(inp,line)) {
-    stringstream  lineStream(line);
-    string        cell;
+    std::stringstream  lineStream(line);
+    std::string        cell;
 
     size_t i = 0;
     while(getline(lineStream,cell,',')) {
@@ -31,27 +31,27 @@ vector<vector<InValue> > CsvReader::read_csv_no_headers(istream& inp){
   return ret;
 }
 
-map<string, vector<InValue> > CsvReader::read_csv_with_headers(istream& inp){
-  string line;
+std::map<std::string, std::vector<InValue> > CsvReader::read_csv_with_headers(std::istream& inp){
+  std::string line;
   // read headers row
-  vector<string> headers;
+  std::vector<std::string> headers;
   if(getline(inp,line)){
-    string        cell;
-    stringstream  lineStream(line);
+    std::string        cell;
+    std::stringstream  lineStream(line);
     while(getline(lineStream,cell,',')){
       headers.push_back(trim(cell));
     }
   }
-  // create returned map
-  map<string, vector<InValue> > ret;
+  // create returned std::map
+  std::map<std::string, std::vector<InValue> > ret;
   for(auto s : headers){
-    ret[s] = vector<InValue>();
+    ret[s] = std::vector<InValue>();
   }
 
   // first line would be parsed slower to get types right
   while(getline(inp,line)) {
-    stringstream  lineStream(line);
-    string        cell;
+    std::stringstream  lineStream(line);
+    std::string        cell;
 
     size_t i = 0;
     while(getline(lineStream,cell,',')) {
@@ -64,14 +64,14 @@ map<string, vector<InValue> > CsvReader::read_csv_with_headers(istream& inp){
   return ret;
 }
 
-dlib::matrix<double> CsvReader::read_csv_double_matrix(istream& in, vector<string>* out_headers){
+dlib::matrix<double> CsvReader::read_csv_double_matrix(std::istream& in, std::vector<std::string>* out_headers){
 
   // read headers row
   if(out_headers != nullptr){
-    string line;
+    std::string line;
     if(getline(in,line)){
-      string        cell;
-      stringstream  lineStream(line);
+      std::string        cell;
+      std::stringstream  lineStream(line);
       while(getline(lineStream,cell,',')){
         out_headers->push_back(trim(cell));
       }
@@ -91,32 +91,32 @@ dlib::matrix<double> CsvReader::read_csv_double_matrix(istream& in, vector<strin
   return data;
 }
 
-map<string, vector<InValue> > CsvReader::read_csv_with_headers(const string& inp){
-  stringstream ss(inp);
+std::map<std::string, std::vector<InValue> > CsvReader::read_csv_with_headers(const std::string& inp){
+  std::stringstream ss(inp);
   return read_csv_with_headers(ss);
 }
 
-vector<vector<InValue> > CsvReader::read_csv_no_headers(const string& inp){
-  stringstream ss(inp);
+std::vector<std::vector<InValue> > CsvReader::read_csv_no_headers(const std::string& inp){
+  std::stringstream ss(inp);
   return read_csv_no_headers(ss);
 }
 
-dlib::matrix<double> CsvReader::read_csv_double_matrix(const string& inp, vector<string>* out_headers){
-  stringstream ss(inp);
+dlib::matrix<double> CsvReader::read_csv_double_matrix(const std::string& inp, std::vector<std::string>* out_headers){
+  std::stringstream ss(inp);
   return read_csv_double_matrix(ss, out_headers);
 }
 
-map<string, vector<InValue> > CsvReader::read_csv_with_headers_from_path(const string& path){
-  ifstream ifs (path);
+std::map<std::string, std::vector<InValue> > CsvReader::read_csv_with_headers_from_path(const std::string& path){
+  std::ifstream ifs (path);
   return read_csv_with_headers(ifs);
 }
 
-vector<vector<InValue> > CsvReader::read_csv_no_headers_from_path(const string& path){
-  ifstream ifs(path);
+std::vector<std::vector<InValue> > CsvReader::read_csv_no_headers_from_path(const std::string& path){
+  std::ifstream ifs(path);
   return read_csv_no_headers(ifs);
 }
 
-dlib::matrix<double> CsvReader::read_csv_double_matrix_from_path(const string& path, vector<string>* out_headers){
-  ifstream ifs(path);
+dlib::matrix<double> CsvReader::read_csv_double_matrix_from_path(const std::string& path, std::vector<std::string>* out_headers){
+  std::ifstream ifs(path);
   return read_csv_double_matrix(ifs, out_headers);
 }

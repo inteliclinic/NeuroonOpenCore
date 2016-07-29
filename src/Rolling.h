@@ -5,28 +5,26 @@
 #include <memory>
 #include "IRbAlgorithm.h"
 
-using namespace std;
-
 class Rolling{
 
-  shared_ptr<const vector<double> > _v;
+  std::shared_ptr<const std::vector<double> > _v;
   RollWindow _window;
 
 public:
 
-  Rolling(shared_ptr<const vector<double> > v, size_t window_length) :
+  Rolling(std::shared_ptr<const std::vector<double> > v, size_t window_length) :
     _v(v), _window(RollWindow(window_length)) {}
-  Rolling(shared_ptr<const vector<double> > v, const RollWindow &window) :
+  Rolling(std::shared_ptr<const std::vector<double> > v, const RollWindow &window) :
     _v(v), _window(window) {}
 
-  vector<double> run_algorithm(IRbAlgorithm & );
+  std::vector<double> run_algorithm(IRbAlgorithm & );
 
-  vector<double> sum();
-  vector<double> mean();
-  vector<double> min();
-  vector<double> max();
-  vector<double> priority(std::function<bool (double, double) > f);
-  vector<double> apply(std::function<double (const vector<double> &) > f);
+  std::vector<double> sum();
+  std::vector<double> mean();
+  std::vector<double> min();
+  std::vector<double> max();
+  std::vector<double> priority(std::function<bool (double, double) > f);
+  std::vector<double> apply(std::function<double (const std::vector<double> &) > f);
 };
 
 #endif

@@ -11,7 +11,6 @@
 #include "../3rd_party/dlib/dlib/matrix.h"
 #include "InValue.h"
 
-using namespace std;
 
 class CsvReader{
 
@@ -20,21 +19,20 @@ private:
 
 public:
 
-  static map<string, vector<InValue> > read_csv_with_headers(istream& inp);
-  static vector<vector<InValue> > read_csv_no_headers(istream& inp);
-  static dlib::matrix<double> read_csv_double_matrix(istream& inp, vector<string>* out_headers=nullptr);
+  static std::map<std::string, std::vector<InValue> > read_csv_with_headers(std::istream& inp);
+  static std::vector<std::vector<InValue> > read_csv_no_headers(std::istream& inp);
+  static dlib::matrix<double> read_csv_double_matrix(std::istream& inp, std::vector<std::string>* out_headers=nullptr);
 
-  static map<string, vector<InValue> > read_csv_with_headers(const string& inp);
-  static vector<vector<InValue> > read_csv_no_headers(const string& inp);
-  static dlib::matrix<double> read_csv_double_matrix(const string& inp,
-                                                     vector<string>* out_headers=nullptr);
+  static std::map<std::string, std::vector<InValue> > read_csv_with_headers(const std::string& inp);
+  static std::vector<std::vector<InValue> > read_csv_no_headers(const std::string& inp);
+  static dlib::matrix<double> read_csv_double_matrix(const std::string& inp,
+                                                     std::vector<std::string>* out_headers=nullptr);
 
-  static map<string, vector<InValue> > read_csv_with_headers_from_path(const string& path);
-  static vector<vector<InValue> > read_csv_no_headers_from_path(const string& path);
-  static dlib::matrix<double> read_csv_double_matrix_from_path(const string& path,
-                                                               vector<string>* out_headers=nullptr);
+  static std::map<std::string, std::vector<InValue> > read_csv_with_headers_from_path(const std::string& path);
+  static std::vector<std::vector<InValue> > read_csv_no_headers_from_path(const std::string& path);
+  static dlib::matrix<double> read_csv_double_matrix_from_path(const std::string& path,
+                                                               std::vector<std::string>* out_headers=nullptr);
 
 };
-
 
 #endif

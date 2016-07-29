@@ -23,7 +23,7 @@ std::vector<std::pair<double, double>> create_bands(const std::vector<double>& b
 void dump_spectrogram(const Spectrogram& s) {
 	std::ofstream out("./functional_test_results/spectrogram.csv");
 	if(!out.good()) {
-		throw logic_error("Could not open the file");
+		throw std::logic_error("Could not open the file");
 	}
 	out << dlib::csv << s.data();
 }
