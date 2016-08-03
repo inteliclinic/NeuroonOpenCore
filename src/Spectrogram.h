@@ -14,7 +14,7 @@
 
 class Spectrogram {
 
-friend class SpectrogramFilter;
+friend class SimpleSpectrogramFilter;
 
 private:
 	dlib::matrix<double> buffer;

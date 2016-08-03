@@ -7,9 +7,9 @@
 #include <iostream>
 #include <dlib/matrix.h>
 #include <complex>
+#include "../../src/SimpleSpectrogramFilter.h"
 
 #include "Spectrogram.h"
-#include "SpectrogramFilter.h"
 #include "signal_utils.h"
 
 int main(int argc, char* argv[]) {
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 
 	Spectrogram s(signal, sampling_f, window, overlap);
 	s = s.create_from_band(low, high);
-	SpectrogramFilter f;
+	SimpleSpectrogramFilter f;
 	f.filter(s);
 
 	if (command == "spectrogram") {

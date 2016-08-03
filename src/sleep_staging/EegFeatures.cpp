@@ -9,6 +9,10 @@
 #include "Spectrogram.h"
 #include <cmath>
 #include <algorithm>
+#include <iostream>
+#include <signal_utils.h>
+#include <exception>
+#include <functional>
 
 EegFeatures::EegFeatures() {
 	// TODO Auto-generated constructor stub
@@ -39,25 +43,13 @@ dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, std::vector
 }
 
 
-dlib::matrix<int> nonnan_rows(const dlib::matrix<double> input) {
-	std::vector<int> v;
-
-	for (std::size_t i = 0; i != input.nr(); ++i) {
-		bool has_nan = dlib::is_finite(dlib::rowm(input, i));
-		if (has_nan) {
-			v.push_back(i);
-		}
-	}
-
-	dlib::matrix<int> result(v.size(), 1);
-	for (std::size_t i = 0; i != v.size(); ++i) {
-		result(i,0) = v[i];
-	}
-	return result;
-}
-
 //centered, inserts NaNs in the beginning and in the end
 dlib::matrix<double> EegFeatures::rolling_mean(const dlib::matrix<double> &signal, int window_size) {
+
+	if (signal.nr() < window_size) {
+		throw std::logic_error("rolling_mean: window bigger than signal!");
+	}
+
 	dlib::matrix<double> result(signal.nr(), 1);
 	dlib::set_all_elements(result, NAN);
 	for (size_t i = 0; i != signal.nr() - window_size; ++i) {
@@ -70,19 +62,45 @@ dlib::matrix<double> EegFeatures::rolling_mean(const dlib::matrix<double> &signa
 	return result;
 }
 
+dlib::matrix<double> EegFeatures::rolling_std(const dlib::matrix<double> &signal, int window_size) {
+	dlib::matrix<double> result(signal.nr(), 1);
+	dlib::set_all_elements(result, NAN);
+	for (size_t i = 0; i != signal.nr() - window_size; ++i) {
+		const dlib::matrix<double> window = dlib::rowm(signal, dlib::range(i, i+window_size-1));
+
+		double sd = standard_deviation(window);
+		result(i + (window_size/2), 0) = sd;
+	}
+	return result;
+}
+
+
+
 //doesn't take NaNs into consideration, takes neighbouring values instead
-dlib::matrix<double> EegFeatures::sparse_rolling_mean(const dlib::matrix<double> &signal, int window_size) {
+dlib::matrix<double> EegFeatures::sparse_rolling(const dlib::matrix<double> &signal, int window_size,
+												 std::function<dlib::matrix<double> (const dlib::matrix<double>&, int)> rolling_operation) {
+
 	dlib::matrix<double> index(signal.nr(), 1);
 	dlib::set_colm(index, 0) = dlib::trans(dlib::range(0, signal.nr() - 1));
 	dlib::matrix<int> nonnans = nonnan_rows(signal);
 
-	dlib::matrix<double> rolling_mean_input = dlib::rowm(signal, nonnans);
-
 	dlib::matrix<double> result(signal.nr(), signal.nc());
 	dlib::set_all_elements(result, NAN);
-	dlib::set_rowm(result, nonnans) = rolling_mean(rolling_mean_input, window_size);
+
+	if (nonnans.size() > 0) {
+		dlib::matrix<double> rolling_input = dlib::rowm(signal, nonnans);
+		dlib::set_rowm(result, nonnans) = rolling_operation(rolling_input, window_size);
+	}
 
 	return result;
+}
+
+dlib::matrix<double> EegFeatures::sparse_rolling_mean(const dlib::matrix<double> &signal, int window_size) {
+	return EegFeatures::sparse_rolling(signal, window_size, rolling_mean);
+}
+
+dlib::matrix<double> EegFeatures::sparse_rolling_std(const dlib::matrix<double> &signal, int window_size) {
+	return EegFeatures::sparse_rolling(signal, window_size, rolling_std);
 }
 
 
@@ -97,6 +115,42 @@ dlib::matrix<double> EegFeatures::n_max_to_median(const dlib::matrix<double> &da
 		double median = row(row.nr() / 2, 0);
 		double n_max_sum = dlib::sum(dlib::colm(row, dlib::range(row.nc() - n, row.nc() - 1)));
 		result(i, 0) = n_max_sum / median;
+	}
+
+	return result;
+}
+
+
+dlib::matrix<double> EegFeatures::standardize(const dlib::matrix<double> &signal) {
+	dlib::matrix<int> nonnans = nonnan_rows(signal);
+
+	if (nonnans.nr() == 0) {
+		dlib::matrix<double> result(signal.nr(), signal.nc());
+		dlib::set_all_elements(result, NAN);
+		return result;
+	} else {
+		dlib::matrix<double> correct_rows = dlib::rowm(signal, nonnans);
+		double mean = dlib::mean(correct_rows);
+		double sd = standard_deviation(correct_rows);
+		std::cout << "mean: " << mean << "; std: " << sd << std::endl;
+		dlib::matrix<double> result = (signal - mean) / sd;
+		return result;
+	}
+}
+
+dlib::matrix<double> EegFeatures::standardize_in_window(const dlib::matrix<double> &signal, int window_size) {
+	dlib::matrix<double> rolling_mean = sparse_rolling_mean(signal, window_size);
+	dlib::matrix<double> rolling_std = sparse_rolling_std(signal, window_size);
+
+	//throw std::logic_error("Not implemented");
+	//TODO: don't return dummy result
+	dlib::matrix<double> result(signal.nr(), 1);
+	result = signal;
+	result = result - rolling_mean;
+
+	//no poinwise divide in dlib
+	for (int i = 0; i != result.nr(); ++i) {
+		result(i, 0) = result(i, 0) / rolling_std(i, 0);
 	}
 
 	return result;

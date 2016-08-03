@@ -1,5 +1,9 @@
 #include <gtest/gtest.h>
 
+/*
+ * ======= UNIT TESTS ===================
+ */
+
 #include "spectrogram_test.h"
 
 #include "csvutils_tests.h"
@@ -8,8 +12,14 @@
 
 #include "filter_test.h"
 #include "eeg_features_test.h"
+#include "staging_preprocessor_test.h"
+#include "amplitude_filter_test.h"
+/*
+ * ====== FUNCTIONAL TESTS ===============
+ */
 
 #include "eeg_features_functional_test.h"
+
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
