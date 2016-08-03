@@ -4,6 +4,8 @@
  *  Created on: Jul 8, 2016
  *      Author: tomek
  */
+#include "SimpleSpectrogramFilter.h"
+
 #include <iostream>
 
 #include <dlib/matrix.h>
@@ -11,18 +13,17 @@
 #include "Spectrogram.h"
 #include "signal_utils.h"
 
-#include "SpectrogramFilter.h"
 
-SpectrogramFilter::SpectrogramFilter() {
+SimpleSpectrogramFilter::SimpleSpectrogramFilter() {
 	// TODO Auto-generated constructor stub
 
 }
 
-SpectrogramFilter::~SpectrogramFilter() {
+SimpleSpectrogramFilter::~SimpleSpectrogramFilter() {
 	// TODO Auto-generated destructor stub
 }
 
-void SpectrogramFilter::filter(Spectrogram& s) {
+void SimpleSpectrogramFilter::filter(Spectrogram& s) {
 	int thresh = percentile(s.data(), 0.50);
 	for (int r = 0; r != s.data().nr(); ++r) {
 		dlib::matrix<double> row = dlib::rowm(s.data(), r);

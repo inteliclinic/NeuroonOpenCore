@@ -18,6 +18,16 @@ Spectrogram::Spectrogram() {
 
 }
 
+
+int smaller_power_of_2(int x) {
+	int log2 = 0;
+	while (x >>= 1) ++log2;
+
+	int result = 1;
+	result = result << log2;
+	return result;
+}
+
 /*
  * currently this is designed and tested to compute the exact C++ equivalent of scipy's:
  * t, f, Sxx = spectrogram(signal, nperseg=window, noverlap=noverlap, mode='magnitude',
@@ -27,12 +37,23 @@ Spectrogram::Spectrogram() {
  * covering other values of 'mode', 'scaling' and 'window' parameters should be easy, but it requires certain
  * knowledge in signal processing and some time. Since these parameters won't be used for a while, they're
  * currently not implemented
+ *
+ *
+ * WARNING -- this function doesn't compute exact spectrograms for non-power-of-2 window sizes.
+ * In those cases it just truncates the window to the closest power of 2 and computes the FFTs with this 'effective_window',
+ * the original window is still used for 'moving' the 'effective_window' in subsequent iterations. See the code for details.
+ *
  */
 Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap) {
 
+	if (signal.size() < noverlap) {
+		throw std::logic_error("noverlap greater than signal length");
+	}
+
 	int nrows = (signal.size() - noverlap)/ (window - noverlap);
-	int ncols = window / 2;
+	int effective_window = smaller_power_of_2(window);
+	int ncols = effective_window / 2;
 
 	buffer = dlib::matrix<double>(nrows, ncols);
 
@@ -40,14 +61,14 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 	set_colm(timestamps, 0) = dlib::trans(dlib::range(0, nrows - 1));
 	timestamps *= sampling_frequency;
 
-	int n_freqs = window / 2;
+	int n_freqs = effective_window / 2;
 	frequencies = dlib::matrix<double> (n_freqs, 1);
 	set_colm(frequencies, 0) = dlib::trans(dlib::range(0, n_freqs - 1));
-	frequencies *= sampling_frequency / window;
+	frequencies *= sampling_frequency / effective_window;
 
 	for (int i = 0; i != nrows; ++i) {
 		int start = i * (window - noverlap);
-		int end = start + window - 1;
+		int end = start + effective_window - 1;
 		dlib::matrix<double> windowed_signal = dlib::rowm(signal, dlib::range(start, end));
 		dlib::matrix<std::complex<double>> windowed_complex_signal = dlib::matrix_cast<std::complex<double>> (windowed_signal);
 		dlib::matrix<std::complex<double>> fft_res = fft(windowed_complex_signal);
@@ -58,7 +79,7 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 		bool psd_mode = false;
 		bool magnitude_mode = true;
 		if (psd_mode) {
-		  fft_res = (fft_res / window);
+		  fft_res = (fft_res / effective_window);
 		  fft_res = pointwise_multiply(fft_res, fft_res);//dlib::pow(fft_res, 2);
 		  fft_res = 2 * fft_res;
 		} else if (magnitude_mode) {

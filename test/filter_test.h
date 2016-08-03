@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "SpectrogramFilter.h"
+#include "../src/SimpleSpectrogramFilter.h"
 #include "Spectrogram.h"
 
 struct SpectrogramFilterTest : public ::testing::Test {
@@ -32,7 +32,7 @@ struct SpectrogramFilterTest : public ::testing::Test {
 };
 
 TEST_F(SpectrogramFilterTest, basic_filtering_test) {
-	SpectrogramFilter f;
+	SimpleSpectrogramFilter f;
 	f.filter(*spectrogram_data);
 
 }
