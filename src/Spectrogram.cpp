@@ -58,8 +58,10 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 	buffer = dlib::matrix<double>(nrows, ncols);
 
 	timestamps = dlib::matrix<double>(nrows, 1);
-	set_colm(timestamps, 0) = dlib::trans(dlib::range(0, nrows - 1));
-	timestamps *= sampling_frequency;
+
+	//ugly hack that makes it exactly as in scipy's spectrogram
+	set_colm(timestamps, 0) = dlib::trans(dlib::range(2, nrows +1));
+	timestamps *= (window - noverlap) / sampling_frequency;
 
 	int n_freqs = effective_window / 2;
 	frequencies = dlib::matrix<double> (n_freqs, 1);

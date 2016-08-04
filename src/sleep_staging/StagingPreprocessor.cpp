@@ -14,6 +14,8 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+
+#include "EntropyFilter.h"
 StagingPreprocessor::StagingPreprocessor() {
 	// TODO Auto-generated constructor stub
 
@@ -59,12 +61,20 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 	eeg_sums = f.transform(eeg_sums);
 	std::cout << "after filter: " << nan_ratio(eeg_sums) << std::endl;
 
+
+// =================== PULSE FEATURES =================================
+
 	const Spectrogram pulse_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, IR_FFT_OVERLAP);
-	const int N_MAX_FOR_SPREAD = 3;
+	const int N_MAX_FOR_SPREAD = 1;
 	//TODO: filter the pulse here
-	dlib::matrix<double> n_max_to_med = EegFeatures::n_max_to_median(pulse_spectrogram.data(), N_MAX_FOR_SPREAD);
+	dlib::matrix<double> pulse_band = pulse_spectrogram.get_band(0.6, 1.5625);
+	const double CRITICAL_PULSE_SPECTROGRAM_ENTROPY = 4.1;
+	EntropyFilter pulse_filter(CRITICAL_PULSE_SPECTROGRAM_ENTROPY);
+	pulse_band = pulse_filter.transform(pulse_band);
+	dlib::matrix<double> n_max_to_med = EegFeatures::n_max_to_median(pulse_band, N_MAX_FOR_SPREAD);
+	const int IR_ROLLING_MEAN_WINDOW = 50;
+	n_max_to_med = EegFeatures::sparse_rolling_mean(n_max_to_med, IR_ROLLING_MEAN_WINDOW);
 	n_max_to_med = EegFeatures::standardize(n_max_to_med);
-	n_max_to_med = EegFeatures::sparse_rolling_mean(n_max_to_med, ROLLING_MEAN_WINDOW);
 
 	if (n_max_to_med.nr() != eeg_sums.nr()) {
 		std::stringstream s;
@@ -72,14 +82,15 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 		  << n_max_to_med.nr() << " (IR) vs. " << eeg_sums.nr() << " (EEG)" << std::endl;
 		throw std::logic_error(s.str());
 	}
-
+// =================== PULSE FEATURES END =============================
 	//TODO: standardize the bands
 
 	dlib::matrix<double> features(eeg_spectrogram.size(), NUMBER_OF_FEATURES);
 	int feature_index = 0;
 	for (; feature_index != eeg_sums.nc(); ++feature_index) {
-		dlib::set_colm(features, feature_index) = EegFeatures::sparse_rolling_mean(EegFeatures::standardize(dlib::colm(eeg_sums, feature_index)),
-																ROLLING_MEAN_WINDOW);
+		dlib::set_colm(features, feature_index) = EegFeatures::sparse_rolling_mean(dlib::colm(eeg_sums, feature_index), ROLLING_MEAN_WINDOW);
+
+		dlib::set_colm(features, feature_index) = EegFeatures::standardize(dlib::colm(features, feature_index));
 	}
 	std::cout << "after rolling and standardize: " << nan_ratio(features) << std::endl;
 
@@ -89,14 +100,14 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 			THETA_STANDARDIZATION_WINDOW_SIZE);
 	dlib::set_colm(features, feature_index) = EegFeatures::sparse_rolling_mean(dlib::colm(features, feature_index), ROLLING_MEAN_WINDOW);
 
-
 	++feature_index;
 
 	dlib::set_colm(features, feature_index) = n_max_to_med;
 	++feature_index;
 
-	dlib::matrix<double> time = dlib::matrix<double>(features.nr(), 1);
-	dlib::set_colm(time, 0) = dlib::trans(dlib::range(0, features.nr() - 1));
+
+	dlib::matrix<double> time = eeg_spectrogram.get_timestamps();//dlib::matrix<double>(features.nr(), 1);
+	//dlib::set_colm(time, 0) = dlib::trans(dlib::range(0, features.nr() - 1));
 	const double TIME_SCALING_FACTOR = 15000;
 	time = time / TIME_SCALING_FACTOR;
 	dlib::set_colm(features, feature_index) = time;

@@ -65,3 +65,37 @@ double nan_ratio(const dlib::matrix<double>& input) {
 
 	return double(nans) / input.nr();
 }
+
+
+dlib::matrix<int> rows_greater_than(const dlib::matrix<double> &signal, double threshold) {
+	std::vector<int> rows;
+
+	for (int i = 0; i != signal.nr(); ++i) {
+		double value = signal(i, 0);
+		if (value > threshold) {
+			rows.push_back(i);
+		}
+	}
+
+	dlib::matrix<int> result(rows.size(), 1);
+	for (std::size_t i = 0; i != rows.size(); ++i) {
+		result(i, 0) = rows[i];
+	}
+
+	return result;
+}
+
+
+dlib::matrix<double> normalize(const dlib::matrix<double> &signal) {
+	//TODO: make sure it works with negative values also
+	double sum = dlib::sum(signal);
+	return signal / sum;
+}
+
+double entropy(const dlib::matrix<double> &signal) {
+	dlib::matrix<double> normalized = normalize(signal);
+	dlib::matrix<double> to_sum = dlib::pointwise_multiply(normalized, dlib::log(normalized));
+	double result = (-1) * dlib::sum(to_sum);
+	return result;
+}
+

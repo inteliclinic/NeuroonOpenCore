@@ -8,6 +8,7 @@
 #include "AmplitudeFilter.h"
 #include <cmath>
 #include <vector>
+#include "signal_utils.h"
 
 AmplitudeFilter::AmplitudeFilter(double critical_value, int column)
 	: m_critical_value(critical_value)
@@ -19,24 +20,6 @@ AmplitudeFilter::AmplitudeFilter(double critical_value, int column)
 
 AmplitudeFilter::~AmplitudeFilter() {
 	// TODO Auto-generated destructor stub
-}
-
-dlib::matrix<int> AmplitudeFilter::rows_greater_than(const dlib::matrix<double> &signal, double threshold) {
-	std::vector<int> rows;
-
-	for (int i = 0; i != signal.nr(); ++i) {
-		double value = signal(i, 0);
-		if (value > threshold) {
-			rows.push_back(i);
-		}
-	}
-
-	dlib::matrix<int> result(rows.size(), 1);
-	for (std::size_t i = 0; i != rows.size(); ++i) {
-		result(i, 0) = rows[i];
-	}
-
-	return result;
 }
 
 dlib::matrix<double> AmplitudeFilter::transform(const dlib::matrix<double> &data) {

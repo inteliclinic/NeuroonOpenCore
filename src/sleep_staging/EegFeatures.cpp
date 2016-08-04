@@ -103,6 +103,15 @@ dlib::matrix<double> EegFeatures::sparse_rolling_std(const dlib::matrix<double> 
 	return EegFeatures::sparse_rolling(signal, window_size, rolling_std);
 }
 
+double median_sorted(const dlib::matrix<double> &signal) {
+	if (signal.nr() % 2 == 1) {
+		return signal( signal.nr() / 2, 0);
+	} else {
+		double m1 = signal((signal.nr() / 2), 0);
+		double m2 = signal((signal.nr() / 2) + 1, 0);
+		return (m1 + m2) / 2;
+	}
+}
 
 dlib::matrix<double> EegFeatures::n_max_to_median(const dlib::matrix<double> &data, int n) {
 	dlib::matrix<double> input = data;
@@ -112,8 +121,9 @@ dlib::matrix<double> EegFeatures::n_max_to_median(const dlib::matrix<double> &da
 		dlib::matrix<double> row = dlib::rowm(input, i);
 		std::sort(row.begin(), row.end());
 
-		double median = row(row.nr() / 2, 0);
-		double n_max_sum = dlib::sum(dlib::colm(row, dlib::range(row.nc() - n, row.nc() - 1)));
+		double median = median_sorted(dlib::trans(row));
+		dlib::matrix<double> n_max = dlib::colm(row, dlib::range(row.nc() - n, row.nc() - 1));
+		double n_max_sum = dlib::sum(n_max);
 		result(i, 0) = n_max_sum / median;
 	}
 

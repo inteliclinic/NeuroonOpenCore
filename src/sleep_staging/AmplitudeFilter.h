@@ -20,8 +20,6 @@ public:
 private:
 	double m_critical_value;
 	int m_column;
-
-	dlib::matrix<int> rows_greater_than(const dlib::matrix<double> &signal, double threshold);
 };
 
 #endif /* SRC_SLEEP_STAGING_AMPLITUDEFILTER_H_ */

@@ -4,6 +4,7 @@
  * ======= UNIT TESTS ===================
  */
 
+#include "signal_utils_test.h"
 #include "spectrogram_test.h"
 
 #include "csvutils_tests.h"
@@ -14,6 +15,8 @@
 #include "eeg_features_test.h"
 #include "staging_preprocessor_test.h"
 #include "amplitude_filter_test.h"
+#include "entropy_filter_test.h"
+
 /*
  * ====== FUNCTIONAL TESTS ===============
  */
