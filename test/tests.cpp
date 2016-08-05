@@ -18,6 +18,7 @@
 #include "entropy_filter_test.h"
 #include "multilayer_perceptron_test.h"
 #include "mlp_classifier_test.h"
+#include "staging_classifier_test.h"
 /*
  * ====== FUNCTIONAL TESTS ===============
  */

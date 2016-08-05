@@ -21,7 +21,7 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<dlib::matrix<double>> wei
 
 bool MultilayerPerceptron::check_matrices_dimensions() {
 	if (m_weights.size() != m_intercepts.size()) {
-		throw std::logic_error("weights and intercepts vector sizes don't agree");
+		throw std::logic_error("weights and intercepts vector sizes don't agree ");
 	}
 
 	if (m_weights.size() != m_activations.size()) {
@@ -31,7 +31,9 @@ bool MultilayerPerceptron::check_matrices_dimensions() {
 	for (size_t i = 0; i != m_weights.size() -1; ++i) {
 		if (m_weights[i].nc() != m_weights[i+1].nr()) {
 			std::stringstream ss;
-			ss << "The dimensions of the matrices in layers: " << i << " and " << i + 1 << " don't agree";
+			ss << "The dimensions of the matrices in layers: " << i << " and " << i + 1 << " don't agree: " << std::endl
+			   << "w1: " << m_weights[i].nr() << "x" << m_weights[i].nc() << std::endl
+			   << "w2: " << m_weights[i+1].nr() << "x" << m_weights[i+1].nc() << std::endl;
 			throw std::logic_error(ss.str());
 		}
 	}

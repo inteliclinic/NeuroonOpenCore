@@ -14,6 +14,7 @@
 
 class MlpClassifier {
 private:
+
 	MultilayerPerceptron m_mlp;
 
 public:

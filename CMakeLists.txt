@@ -34,6 +34,12 @@ target_link_libraries(neuroon-alg-core
     dlib
     )
 
+add_custom_command(
+        TARGET neuroon-alg-core POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/src/sleep_staging/model
+                ${CMAKE_CURRENT_BINARY_DIR}/res/model)
+
 
 
 add_executable(runTests test/tests.cpp)
@@ -44,6 +50,10 @@ target_link_libraries(runTests
      dlib
      )
 
+file(MAKE_DIRECTORY ./build)
+file(MAKE_DIRECTORY ./build/functional_test_results)
+file(MAKE_DIRECTORY ./build/res)
+file(MAKE_DIRECTORY ./build/res/model)
      
      
 SET(CMAKE_COLOR_MAKEFILE ON)

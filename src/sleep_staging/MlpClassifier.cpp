@@ -24,3 +24,4 @@ dlib::matrix<int> MlpClassifier::predict(const dlib::matrix<double>& input) {
 	return classes_output;
 }
 
+
