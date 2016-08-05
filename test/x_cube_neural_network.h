@@ -2,14 +2,7 @@
 #define X_CUBE_NEURAL_NETWORK_H
 
 #include <vector>
-
-dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input) {
-	dlib::matrix<double> result(input.size(), 1);
-	for (std::size_t i = 0; i != input.size(); ++i) {
-		result(i, 0) = input[i];
-	}
-	return result;
-}
+#include "signal_utils.h"
 
 
 /**

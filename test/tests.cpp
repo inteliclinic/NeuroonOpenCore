@@ -17,6 +17,7 @@
 #include "amplitude_filter_test.h"
 #include "entropy_filter_test.h"
 #include "multilayer_perceptron_test.h"
+#include "mlp_classifier_test.h"
 /*
  * ====== FUNCTIONAL TESTS ===============
  */

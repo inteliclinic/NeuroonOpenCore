@@ -29,6 +29,47 @@ TEST(MultilayerPerceptronTest, basic_predict_test1) {
 	}
 }
 
+TEST(MultilayerPerceptronTest, throws_when_wrong_input_size) {
+	dlib::matrix<double> input(10, 3);
+	dlib::set_all_elements(input, 99);
+
+	dlib::matrix<double> W1(2, 100);
+	dlib::set_all_elements(W1, 0);
+	dlib::matrix<double> W2(100, 1);
+	dlib::set_all_elements(W2, 0);
+
+	dlib::matrix<double> I1(1, 100);
+	dlib::set_all_elements(I1, 0);
+	dlib::matrix<double> I2(1, 1);
+	dlib::set_all_elements(I2, 0);
+
+	std::vector<dlib::matrix<double>> weights({W1, W2});
+	std::vector<dlib::matrix<double>> intercepts({I1, I2});
+	MultilayerPerceptron mlp(weights, intercepts);
+
+	EXPECT_THROW(dlib::matrix<double> output = mlp.predict(input), std::logic_error);
+}
+
+TEST(MultilayerPerceptronTest, throws_when_wrong_weight_dimensions) {
+	dlib::matrix<double> W1(2, 100);
+	dlib::set_all_elements(W1, 0);
+
+	//105 != 100, so it should throw in the constructor
+	dlib::matrix<double> W2(105, 1);
+	dlib::set_all_elements(W2, 0);
+
+	dlib::matrix<double> I1(1, 100);
+	dlib::set_all_elements(I1, 0);
+	dlib::matrix<double> I2(1, 1);
+	dlib::set_all_elements(I2, 0);
+
+	std::vector<dlib::matrix<double>> weights({W1, W2});
+	std::vector<dlib::matrix<double>> intercepts({I1, I2});
+	EXPECT_THROW(MultilayerPerceptron mlp(weights, intercepts), std::logic_error);
+}
+
+
+
 TEST(MultilayerPerceptronTest, basic_predict_test2) {
 	dlib::matrix<double> input(3, 1);
 	input(0, 0) = 1;
@@ -69,7 +110,6 @@ TEST(MultilayerPerceptronTest, x_cube_network_test) {
 	dlib::matrix<double> output = mlp->predict(input);
 	dlib::matrix<double> residuals = output - input_cubed;
 
-	//std::cout << residuals;
 	for (int i = 0; i != residuals.size(); ++i) {
 		bool relative_less_than_001 = residuals(i,0) / input_cubed(i,0) < 0.01;
 		bool absolute_less_than_1 = residuals(i,0) / 1;

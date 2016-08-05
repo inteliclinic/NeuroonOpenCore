@@ -86,6 +86,20 @@ dlib::matrix<int> rows_greater_than(const dlib::matrix<double> &signal, double t
 }
 
 
+dlib::matrix<int> argmax(const dlib::matrix<double>& input) {
+	dlib::matrix<int> result(input.nr(), 1);
+	for (int i = 0; i != input.nr(); ++i) {
+		int max_ind = 0;
+		for (int j = 0; j != input.nc(); ++j) {
+			if (input(i, j) > input(i, max_ind)) {
+				max_ind = j;
+			}
+		}
+		result(i, 0) = max_ind;
+	}
+	return result;
+}
+
 dlib::matrix<double> normalize(const dlib::matrix<double> &signal) {
 	//TODO: make sure it works with negative values also
 	double sum = dlib::sum(signal);
@@ -96,6 +110,14 @@ double entropy(const dlib::matrix<double> &signal) {
 	dlib::matrix<double> normalized = normalize(signal);
 	dlib::matrix<double> to_sum = dlib::pointwise_multiply(normalized, dlib::log(normalized));
 	double result = (-1) * dlib::sum(to_sum);
+	return result;
+}
+
+dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input) {
+	dlib::matrix<double> result(input.size(), 1);
+	for (std::size_t i = 0; i != input.size(); ++i) {
+		result(i, 0) = input[i];
+	}
 	return result;
 }
 

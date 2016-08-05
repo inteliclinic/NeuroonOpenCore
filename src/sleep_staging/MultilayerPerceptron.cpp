@@ -6,13 +6,37 @@
  */
 
 #include "MultilayerPerceptron.h"
+#include <sstream>
 
 MultilayerPerceptron::MultilayerPerceptron(std::vector<dlib::matrix<double>> weights, std::vector<dlib::matrix<double>> intercepts)
 : m_weights(weights)
 ,  m_intercepts(intercepts)
 {
+	//CURRENTLY ONLY TWO HIDDEN LAYERS ARE SUPPORTED BUT THIS CAN BE EASILY CHANGED
 	m_activations.push_back(new RectifiedLinearActivationFunction());
 	m_activations.push_back(new LinearActivationFunction());
+
+	check_matrices_dimensions();
+}
+
+bool MultilayerPerceptron::check_matrices_dimensions() {
+	if (m_weights.size() != m_intercepts.size()) {
+		throw std::logic_error("weights and intercepts vector sizes don't agree");
+	}
+
+	if (m_weights.size() != m_activations.size()) {
+		throw std::logic_error("weights and activations vector sizes don't agree");
+	}
+
+	for (size_t i = 0; i != m_weights.size() -1; ++i) {
+		if (m_weights[i].nc() != m_weights[i+1].nr()) {
+			std::stringstream ss;
+			ss << "The dimensions of the matrices in layers: " << i << " and " << i + 1 << " don't agree";
+			throw std::logic_error(ss.str());
+		}
+	}
+
+	return true;
 }
 
 MultilayerPerceptron::~MultilayerPerceptron() {
@@ -40,6 +64,13 @@ dlib::matrix<double> MultilayerPerceptron::LinearActivationFunction::operator()(
 }
 
 dlib::matrix<double> MultilayerPerceptron::predict(const dlib::matrix<double>& input) {
+
+	if(input.nc() != m_weights[0].nr()) {
+		std::stringstream ss;
+		ss << "This network has " << m_weights[0].nr() << " input neurons";
+		throw std::logic_error(ss.str());
+	}
+
 	dlib::matrix<double> current_layer_output = input;
 	for (int i = 0; i != m_weights.size(); ++i) {
 		current_layer_output = current_layer_output * m_weights[i];

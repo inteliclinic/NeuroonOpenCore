@@ -15,9 +15,12 @@ double nan_ratio(const dlib::matrix<double>& input);
 
 dlib::matrix<int> rows_greater_than(const dlib::matrix<double> &signal, double threshold);
 
+dlib::matrix<int> argmax(const dlib::matrix<double>& input);
+
 dlib::matrix<double> normalize(const dlib::matrix<double> &signal);
 
 double entropy(const dlib::matrix<double> &signal);
 
+dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input);
 
 #endif

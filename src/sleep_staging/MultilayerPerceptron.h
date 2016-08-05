@@ -31,6 +31,8 @@ class MultilayerPerceptron {
 	std::vector<dlib::matrix<double>> m_intercepts;
 	std::vector<ActivationFunction*> m_activations;
 
+	bool check_matrices_dimensions();
+
 public:
 
 	MultilayerPerceptron(std::vector<dlib::matrix<double>> weights, std::vector<dlib::matrix<double>> intercepts);
