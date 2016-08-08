@@ -19,12 +19,13 @@
 #include "multilayer_perceptron_test.h"
 #include "mlp_classifier_test.h"
 #include "staging_classifier_test.h"
+
 /*
  * ====== FUNCTIONAL TESTS ===============
  */
 
 #include "eeg_features_functional_test.h"
-
+#include "staging_functional_test.h"
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

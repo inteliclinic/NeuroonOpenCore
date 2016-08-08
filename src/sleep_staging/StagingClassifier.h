@@ -16,9 +16,6 @@ class StagingClassifier {
 	StagingClassifier();
 	static StagingClassifier* m_instance;
 
-	dlib::matrix<double> load_matrix(std::istream &input);
-	dlib::matrix<double> load_matrix(const std::string& filename);
-
 	MlpClassifier* m_mlp;
 public:
 

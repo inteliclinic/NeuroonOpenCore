@@ -23,7 +23,6 @@ TEST(StagingFunctionalTest, full_offline_staging_functional_test) {
 	dlib::matrix<double> ir = get_ir_data();
 
 	StagingPreprocessor pre;
-
 	dlib::matrix<double> features = pre.transform(eeg, ir);
 
 	StagingClassifier* clf = StagingClassifier::get_instance();
@@ -34,7 +33,4 @@ TEST(StagingFunctionalTest, full_offline_staging_functional_test) {
 		throw std::logic_error("Could not open the file");
 	}
 	out << dlib::csv << stages;
-
-
-	std::cout << stages;
 }

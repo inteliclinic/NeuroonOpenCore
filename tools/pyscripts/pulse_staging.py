@@ -12,7 +12,7 @@ s = pd.read_csv(spectrogram_file, header=None)
 s = s.apply(pd.to_numeric)
 m = pd.read_csv(feature_file, header = None)
 
-fig, axarr = plt.subplots(2,1, sharex=True)
+fig, axarr = plt.subplots(2,1, sharex=True, figsize=(18,15))
 axarr[0].pcolormesh(s.T, vmin=0, vmax=np.max(np.max(s)) / 2)
 axarr[0].set_title(spectrogram_file)
 

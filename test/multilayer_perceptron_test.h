@@ -13,7 +13,7 @@ TEST(MultilayerPerceptronTest, basic_predict_test1) {
 	dlib::matrix<double> W2(100, 1);
 	dlib::set_all_elements(W2, 0);
 
-	dlib::matrix<double> I1(1, 100);
+	dlib::matrix<double> I1(100, 1);
 	dlib::set_all_elements(I1, 0);
 	dlib::matrix<double> I2(1, 1);
 	dlib::set_all_elements(I2, 42);
@@ -38,7 +38,7 @@ TEST(MultilayerPerceptronTest, throws_when_wrong_input_size) {
 	dlib::matrix<double> W2(100, 1);
 	dlib::set_all_elements(W2, 0);
 
-	dlib::matrix<double> I1(1, 100);
+	dlib::matrix<double> I1(100, 1);
 	dlib::set_all_elements(I1, 0);
 	dlib::matrix<double> I2(1, 1);
 	dlib::set_all_elements(I2, 0);
@@ -58,7 +58,7 @@ TEST(MultilayerPerceptronTest, throws_when_wrong_weight_dimensions) {
 	dlib::matrix<double> W2(105, 1);
 	dlib::set_all_elements(W2, 0);
 
-	dlib::matrix<double> I1(1, 100);
+	dlib::matrix<double> I1(100, 1);
 	dlib::set_all_elements(I1, 0);
 	dlib::matrix<double> I2(1, 1);
 	dlib::set_all_elements(I2, 0);
@@ -86,7 +86,7 @@ TEST(MultilayerPerceptronTest, basic_predict_test2) {
 	W2(0, 0) = 1;
 	W2(1, 0) = 1;
 
-	dlib::matrix<double> I1(1, 2);
+	dlib::matrix<double> I1(2, 1);
 	dlib::set_all_elements(I1, 0);
 	dlib::matrix<double> I2(1, 1);
 	dlib::set_all_elements(I2, 0);

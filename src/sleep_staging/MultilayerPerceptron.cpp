@@ -78,7 +78,7 @@ dlib::matrix<double> MultilayerPerceptron::predict(const dlib::matrix<double>& i
 		current_layer_output = current_layer_output * m_weights[i];
 
 		for (int j = 0; j != current_layer_output.nr(); ++j) {
-			dlib::set_rowm(current_layer_output, j) = dlib::rowm(current_layer_output, j) + m_intercepts[i];
+			dlib::set_rowm(current_layer_output, j) = dlib::rowm(current_layer_output, j) + dlib::trans(m_intercepts[i]);
 		}
 
 		current_layer_output = m_activations[i]->operator()(current_layer_output);

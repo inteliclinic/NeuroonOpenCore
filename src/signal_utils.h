@@ -23,4 +23,11 @@ double entropy(const dlib::matrix<double> &signal);
 
 dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input);
 
+dlib::matrix<double> load_matrix(const std::string& filename);
+
+dlib::matrix<double> load_matrix(std::istream &input);
+
+template <typename T>
+void dump_matrix(const dlib::matrix<T> &data, const std::string &filename);
+
 #endif

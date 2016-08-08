@@ -19,7 +19,7 @@ MlpClassifier* create_example_classifier() {
 
 	std::vector<double> i1({2.86251402, -2.7785396 , -0.63567161,  2.05278654,  3.02311063});
 	dlib::matrix<double> I1 = vector_to_dlib_matrix(i1);
-	I1 = dlib::reshape(I1, 1, 5);
+	I1 = dlib::reshape(I1, 5, 1);
 
 	std::vector<double> w2({1.37242151e-001,   1.18938028e+000,   5.66438814e-001, -2.38229357e+000,
 							-5.28775220e-001,  -2.93381516e+000,   2.07970147e+000, -6.43388925e-013,
@@ -31,7 +31,7 @@ MlpClassifier* create_example_classifier() {
 
 	std::vector<double> i2({0.73985231,  2.06724105, -2.12685892, -1.13602575});
 	dlib::matrix<double> I2 = vector_to_dlib_matrix(i2);
-	I2 = dlib::reshape(I2, 1, 4);
+	I2 = dlib::reshape(I2, 4, 1);
 
 	std::vector<dlib::matrix<double>> weights({W1, W2});
 	std::vector<dlib::matrix<double>> intercepts({I1, I2});

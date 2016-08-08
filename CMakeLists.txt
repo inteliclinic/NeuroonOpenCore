@@ -7,6 +7,13 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_subdirectory(3rd_party/dlib)
 add_subdirectory(tools)
 
+
+set (MODEL_RES_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}/res/model\")
+message (${MODEL_RES_DIRECTORY})
+add_definitions(-DMODEL_RES_DIRECTORY=${MODEL_RES_DIRECTORY})
+
+
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)

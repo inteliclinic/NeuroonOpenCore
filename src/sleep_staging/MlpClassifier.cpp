@@ -20,6 +20,7 @@ MlpClassifier::~MlpClassifier() {
 
 dlib::matrix<int> MlpClassifier::predict(const dlib::matrix<double>& input) {
 	dlib::matrix<double> mlp_output = m_mlp.predict(input);
+	std::cout << "stages nan ratio: " << nan_ratio(mlp_output) << std::endl;
 	dlib::matrix<int> classes_output = argmax(mlp_output);
 	return classes_output;
 }

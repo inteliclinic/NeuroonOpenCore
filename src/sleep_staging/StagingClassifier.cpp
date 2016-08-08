@@ -12,6 +12,8 @@
 #include <istream>
 #include <sstream>
 
+#include "signal_utils.h"
+
 StagingClassifier* StagingClassifier::m_instance = nullptr;
 
 StagingClassifier* StagingClassifier::get_instance() {
@@ -21,22 +23,6 @@ StagingClassifier* StagingClassifier::get_instance() {
 	return m_instance;
 }
 
-dlib::matrix<double> StagingClassifier::load_matrix(const std::string& filename) {
-	std::ifstream input(filename);
-	if(!input.is_open()) {
-		std::stringstream ss;
-		ss << "Cannot open file: " << filename;
-		throw std::logic_error(ss.str());
-	}
-
-	return load_matrix(input);
-}
-
-dlib::matrix<double> StagingClassifier::load_matrix(std::istream &input) {
-	dlib::matrix<double> result;
-	input >> result;
-	return result;
-}
 
 StagingClassifier::StagingClassifier()
 : m_mlp(nullptr)
@@ -44,10 +30,10 @@ StagingClassifier::StagingClassifier()
 	std::vector<dlib::matrix<double>> weights(2);
 	std::vector<dlib::matrix<double>> intercepts(2);
 
-	std::string W1_MATRIX_FILENAME("./res/model/w1.csv");
-	std::string W2_MATRIX_FILENAME("./res/model/w2.csv");
-	std::string I1_MATRIX_FILENAME("./res/model/i1.csv");
-	std::string I2_MATRIX_FILENAME("./res/model/i2.csv");
+	std::string W1_MATRIX_FILENAME(MODEL_RES_DIRECTORY "/w1.csv");
+	std::string W2_MATRIX_FILENAME(MODEL_RES_DIRECTORY "/w2.csv");
+	std::string I1_MATRIX_FILENAME(MODEL_RES_DIRECTORY "/i1.csv");
+	std::string I2_MATRIX_FILENAME(MODEL_RES_DIRECTORY "/i2.csv");
 
 	weights[0] = load_matrix(W1_MATRIX_FILENAME);
 	weights[1] = load_matrix(W2_MATRIX_FILENAME);

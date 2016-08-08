@@ -72,7 +72,6 @@ MultilayerPerceptron* get_xcube_mlp() {
 			   -0.18093568, -7.31446352, -0.11802968, -7.90353278, -6.14305207});
 
 	dlib::matrix<double> I1 = vector_to_dlib_matrix(i1);
-	I1 = dlib::trans(I1);
 
 	static std::vector<double> w2({		-2.21682966e-005,  -7.44692563e+000,  -5.70804311e+000,
 								 9.33298959e+000,  -3.27192947e+000,  -5.22341291e+000,

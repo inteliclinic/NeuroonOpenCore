@@ -34,22 +34,28 @@ std::vector<std::pair<double, double>> create_bands(const std::vector<double>& b
 	return result;
 }
 
+Spectrogram StagingPreprocessor::get_eeg_spectrogram(const dlib::matrix<double> eeg_signal) {
+	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, EEG_FFT_OVERLAP);
+	return eeg_spectrogram;
+}
+
+Spectrogram StagingPreprocessor::get_ir_spectrogram(const dlib::matrix<double> ir_signal) {
+	const Spectrogram pulse_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, IR_FFT_OVERLAP);
+	return pulse_spectrogram;
+}
+
 dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& eeg_signal,
 													const dlib::matrix<double>& ir_signal) {
 
-	const int NUMBER_OF_FEATURES = 7;
+	Spectrogram eeg_spectrogram = get_eeg_spectrogram(eeg_signal);
+	Spectrogram pulse_spectrogram = get_ir_spectrogram(ir_signal);
 
-	const int EEG_FFT_WINDOW = 10 * 1024;
-	const int EEG_FFT_OVERLAP = (EEG_FFT_WINDOW * 3) / 4;
+	dlib::matrix<double> features = transform(eeg_spectrogram, pulse_spectrogram);
+	return features;
+}
 
-	const int IR_FFT_WINDOW = EEG_FFT_WINDOW / 5;
-	const int IR_FFT_OVERLAP = EEG_FFT_OVERLAP / 5;
-
-	const int ROLLING_MEAN_WINDOW = 20;
-
+dlib::matrix<double> StagingPreprocessor::transform(const Spectrogram &eeg_spectrogram, const Spectrogram &pulse_spectrogram) {
 	std::vector<double> borders({2.5, 7.5, 10, 14, 21});
-	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, EEG_FFT_OVERLAP);
-
 	dlib::matrix<double> eeg_sums = EegFeatures::sum_in_bands(eeg_spectrogram, create_bands(borders));
 	eeg_sums = dlib::log(eeg_sums);
 	const double EEG_FILTER_CRITICAL = 19;
@@ -64,7 +70,6 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 
 // =================== PULSE FEATURES =================================
 
-	const Spectrogram pulse_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, IR_FFT_OVERLAP);
 	const int N_MAX_FOR_SPREAD = 1;
 	//TODO: filter the pulse here
 	dlib::matrix<double> pulse_band = pulse_spectrogram.get_band(0.6, 1.5625);
@@ -96,9 +101,10 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 
 	const int SPINDLE_BAND_INDEX = 2;
 	const int THETA_STANDARDIZATION_WINDOW_SIZE = 100;
-	dlib::set_colm(features, feature_index) = EegFeatures::standardize_in_window(dlib::colm(eeg_sums, SPINDLE_BAND_INDEX),
-			THETA_STANDARDIZATION_WINDOW_SIZE);
+	dlib::set_colm(features, feature_index) = dlib::colm(eeg_sums, SPINDLE_BAND_INDEX);
 	dlib::set_colm(features, feature_index) = EegFeatures::sparse_rolling_mean(dlib::colm(features, feature_index), ROLLING_MEAN_WINDOW);
+	dlib::set_colm(features, feature_index) = EegFeatures::standardize_in_window(dlib::colm(features, feature_index),
+			THETA_STANDARDIZATION_WINDOW_SIZE);
 
 	++feature_index;
 
@@ -115,10 +121,6 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 
 	assert(feature_index == NUMBER_OF_FEATURES);
 
-	//TODO: additional feature - standardize the spindle bandwidth in a window (100 spectrogram rows?)
 
-	//TODO: compute the time
-
-	//TODO: combine and return the result matrix
 	return features;
 }

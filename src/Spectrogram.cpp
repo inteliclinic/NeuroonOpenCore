@@ -47,6 +47,10 @@ int smaller_power_of_2(int x) {
 Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap) {
 
+	if (signal.nc() != 1) {
+		throw std::logic_error("Only 1D spectrograms are supported. Please provide a column vector.");
+	}
+
 	if (signal.size() < noverlap) {
 		throw std::logic_error("noverlap greater than signal length");
 	}
@@ -74,7 +78,7 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 		dlib::matrix<double> windowed_signal = dlib::rowm(signal, dlib::range(start, end));
 		dlib::matrix<std::complex<double>> windowed_complex_signal = dlib::matrix_cast<std::complex<double>> (windowed_signal);
 		dlib::matrix<std::complex<double>> fft_res = fft(windowed_complex_signal);
-		int last_frequency = (fft_res.size() / 2) - 1;
+		int last_frequency = (fft_res.nr() / 2) - 1;
 		fft_res = dlib::rowm(fft_res, dlib::range(0, last_frequency));
 		// TODO: PROBABLY SHOULD BE +1 in order to get fs/2 also.
 

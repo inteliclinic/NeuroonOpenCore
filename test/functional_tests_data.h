@@ -36,4 +36,11 @@ dlib::matrix<double> get_ir_data() {
 	return read_signal_from_file(FILENAME);
 }
 
+dlib::matrix<double> get_python_features() {
+	std::string TEST_FEATURES_FILENAME("../test/test_data/LL_200516_python_features.csv");
+	dlib::matrix<double> features = load_matrix(TEST_FEATURES_FILENAME);
+	return features;
+}
+
+
 #endif

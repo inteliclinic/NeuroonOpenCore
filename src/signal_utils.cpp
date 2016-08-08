@@ -54,6 +54,7 @@ dlib::matrix<int> nonnan_rows(const dlib::matrix<double>& input) {
 	return result;
 }
 
+
 double nan_ratio(const dlib::matrix<double>& input) {
 	int nans = 0;
 	for (std::size_t i = 0; i != input.nr(); ++i) {
@@ -89,6 +90,12 @@ dlib::matrix<int> rows_greater_than(const dlib::matrix<double> &signal, double t
 dlib::matrix<int> argmax(const dlib::matrix<double>& input) {
 	dlib::matrix<int> result(input.nr(), 1);
 	for (int i = 0; i != input.nr(); ++i) {
+
+		if (!dlib::is_finite(dlib::rowm(input, i))) {
+			result(i, 0) = -1; //NaN
+			continue;
+		}
+
 		int max_ind = 0;
 		for (int j = 0; j != input.nc(); ++j) {
 			if (input(i, j) > input(i, max_ind)) {
@@ -120,4 +127,38 @@ dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input) {
 	}
 	return result;
 }
+
+
+
+dlib::matrix<double> load_matrix(const std::string& filename) {
+	std::ifstream input(filename);
+	if(!input.is_open()) {
+		std::stringstream ss;
+		ss << "Cannot open file: " << filename;
+		throw std::logic_error(ss.str());
+	}
+
+	return load_matrix(input);
+}
+
+dlib::matrix<double> load_matrix(std::istream &input) {
+	dlib::matrix<double> result;
+	input >> result;
+	return result;
+}
+
+template <typename T>
+void dump_matrix(const dlib::matrix<T> &data, const std::string &filename) {
+	std::ofstream out(filename);
+	if(!out.good()) {
+		throw std::logic_error("Could not open the file");
+	}
+	out << dlib::csv << data;
+	out.close();
+}
+
+template void dump_matrix<double>(const dlib::matrix<double>&, const std::string&);
+template void dump_matrix<int>(const dlib::matrix<int>&, const std::string&);
+
+
 
