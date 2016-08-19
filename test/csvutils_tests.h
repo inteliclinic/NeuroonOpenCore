@@ -61,10 +61,10 @@ TEST_F(CsvUtilsTest, read_csv_no_headers) {
   //   }
   //   cout << endl;
   // }
-  EXPECT_EQ(InValue::Type::INT, a[0][0].type());
+  EXPECT_EQ(InValue::Type::LLONG, a[0][0].type());
   EXPECT_EQ(InValue::Type::DOUBLE, a[1][0].type());
   EXPECT_EQ(InValue::Type::STRING, a[2][0].type());
-  EXPECT_EQ(InValue::Type::INT, a[0][1].type());
+  EXPECT_EQ(InValue::Type::LLONG, a[0][1].type());
   EXPECT_EQ(InValue::Type::DOUBLE, a[1][1].type());
   EXPECT_EQ(InValue::Type::STRING, a[2][1].type());
 }
@@ -83,10 +83,10 @@ TEST_F(CsvUtilsTest, read_csv_with_headers) {
   //   }
   //   cout << endl;
   // }
-  EXPECT_EQ(InValue::Type::INT, a["int"][0].type());
+  EXPECT_EQ(InValue::Type::LLONG, a["int"][0].type());
   EXPECT_EQ(InValue::Type::DOUBLE, a["double"][0].type());
   EXPECT_EQ(InValue::Type::STRING, a["string"][0].type());
-  EXPECT_EQ(InValue::Type::INT, a["int"][1].type());
+  EXPECT_EQ(InValue::Type::LLONG, a["int"][1].type());
   EXPECT_EQ(InValue::Type::DOUBLE, a["double"][1].type());
   EXPECT_EQ(InValue::Type::STRING, a["string"][1].type());
 }

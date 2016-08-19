@@ -108,15 +108,24 @@ dlib::matrix<double> CsvReader::read_csv_double_matrix(const std::string& inp, s
 
 std::map<std::string, std::vector<InValue> > CsvReader::read_csv_with_headers_from_path(const std::string& path){
   std::ifstream ifs (path);
+  if(ifs.fail()){
+    throw std::runtime_error("Failed opening file.");
+  }
   return read_csv_with_headers(ifs);
 }
 
 std::vector<std::vector<InValue> > CsvReader::read_csv_no_headers_from_path(const std::string& path){
   std::ifstream ifs(path);
+  if(ifs.fail()){
+    throw std::runtime_error("Failed opening file.");
+  }
   return read_csv_no_headers(ifs);
 }
 
 dlib::matrix<double> CsvReader::read_csv_double_matrix_from_path(const std::string& path, std::vector<std::string>* out_headers){
   std::ifstream ifs(path);
+  if(ifs.fail()){
+    throw std::runtime_error("Failed opening file.");
+  }
   return read_csv_double_matrix(ifs, out_headers);
 }

@@ -1,0 +1,28 @@
+#include "EegQualityStream.h"
+#include <random>
+
+void EegQualityStream::process_input(const NeuroonSignals & ns){
+  // TODO: now is dummy implementation
+
+  // number of windows for computing signal quality value
+  auto windows_count = (ns.received_samples(SignalOrigin::EEG) - _last_counter) / (_window_size - _overlap);
+
+  for(std::size_t i=0; i<windows_count; i++){
+    // every full window
+    auto start_iterator = ns[SignalOrigin::EEG].begin() + _last_counter;
+    auto r = compute_quality({start_iterator, start_iterator+_window_size});
+    feed_all_sinks(&r);
+    // move counter by processed samples count
+    _last_counter += _window_size - _overlap;
+  }
+
+}
+
+EegQualityStream::EegQuality EegQualityStream::compute_quality(VectorView<double>&&){
+  // TODO
+  return (EegQuality)(std::rand() % 4);
+}
+
+void EegQualityStream::reset_state(){
+  _last_counter = 0;
+}

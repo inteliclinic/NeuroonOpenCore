@@ -4,6 +4,7 @@
  * ======= UNIT TESTS ===================
  */
 
+#include "csvsimulator_tests.h"
 #include "signal_utils_test.h"
 #include "spectrogram_test.h"
 

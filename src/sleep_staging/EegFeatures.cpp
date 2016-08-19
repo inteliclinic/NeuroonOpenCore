@@ -24,12 +24,7 @@ EegFeatures::~EegFeatures() {
 }
 
 dlib::matrix<double> EegFeatures::sum_in_band(const Spectrogram& s, double low, double high) {
-	int nrows = s.size();
-	int ncols = 1;
-
-	dlib::matrix<double> result = dlib::sum_cols(s.get_band(low, high));
-
-	return result;
+  return dlib::sum_cols(s.get_band(low, high));
 }
 
 dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, std::vector<std::pair<double, double>> bands) {

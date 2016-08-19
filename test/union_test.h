@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "CommonTypedefs.h"
 #include "InValue.h"
 
 struct TempTest : public ::testing::Test {
@@ -26,8 +27,8 @@ TEST_F(TempTest, inmsg_getvalue) {
   auto d = msg1.double_value();
   EXPECT_EQ(d,2.5);
 
-  auto msg2 = InValue(1);
-  auto i = msg2.int_value();
+  auto msg2 = InValue((llong)1);
+  auto i = msg2.llong_value();
   EXPECT_EQ(i,1);
 }
 
@@ -41,7 +42,7 @@ TEST_F(TempTest, inmsg_copy_constructor) {
     });
   }
   {
-    InValue msg = InValue(1);
+    InValue msg = InValue(1LL);
     ASSERT_NO_THROW({
         auto msgc = InValue(msg);
       });

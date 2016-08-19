@@ -4,10 +4,10 @@
 #include "Exceptions.h"
 
 
-int parse_integer(const std::string & str_inp, bool* error){
+int parse_llong(const std::string & str_inp, bool* error){
   char *ep=0;
   const char* str = str_inp.c_str();
-  int ret = strtol(str, &ep, 0);
+  int ret = strtoll(str, &ep, 0);
   if(ep!=str + str_inp.length()){
     if(error) *error = 1;
     return 0;
@@ -29,7 +29,7 @@ double parse_double(const std::string & str_inp, bool* error){
 InValue InValue::parse(const std::string & inp){
   auto str = trim(inp);
   bool error = 0;
-  int r1 = parse_integer(str, &error);
+  llong r1 = parse_llong(str, &error);
   if(!error) return InValue(r1);
   error = 0;
   double r2 = parse_double(str, &error);
@@ -39,8 +39,8 @@ InValue InValue::parse(const std::string & inp){
 
 std::ostream& operator<<(std::ostream& os, const InValue& inv){
   switch(inv.type()){
-  case InValue::Type::INT:
-    os << inv.int_value();
+  case InValue::Type::LLONG:
+    os << inv.llong_value();
     break;
   case InValue::Type::DOUBLE:
     os << inv.double_value();
