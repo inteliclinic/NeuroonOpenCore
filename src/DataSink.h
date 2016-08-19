@@ -1,7 +1,7 @@
 #ifndef __DATA_SINK__
 #define __DATA_SINK__
 
-#include "NeuroonSignals.h"
+#include "Signal.h"
 #include <functional>
 
 class DataSink{
@@ -16,14 +16,31 @@ public:
 // WARNING use it only if you know that passed pointer points
 // to SignalFrame!
 class SignalFrameDataSink : public DataSink{
-  std::function<void (SignalFrame*)> _frame_consume_fun;
  public:
   // consume_function should be lightweight in order to not cause delays
   // in realtime streaming
-  SignalFrameDataSink(std::function<void (SignalFrame*)> consume_function) :
-    _frame_consume_fun(consume_function) {}
+  SignalFrameDataSink() : DataSink () {}
 
-  virtual void consume(void*) override;
+  virtual void consume(SignalFrame* sfr) = 0;
+
+  void consume(void* sfp) override{
+    consume((SignalFrame*)sfp);
+  }
 };
+
+
+class LambdaSignalFrameDataSink : public SignalFrameDataSink{
+  std::function<void (SignalFrame*)> _frame_consume_fun = nullptr;
+ public:
+  // consume_function should be lightweight in order to not cause delays
+  // in realtime streaming
+  LambdaSignalFrameDataSink(std::function<void (SignalFrame*)> consume_function) :
+  _frame_consume_fun(consume_function) {}
+
+  void consume(SignalFrame* ptr) override{
+    _frame_consume_fun(ptr);
+  }
+};
+
 
 #endif

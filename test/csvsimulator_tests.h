@@ -12,6 +12,7 @@
 #include "../src/CsvSignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
+#include "../src/NeuroonSignals.h"
 
 #include <gtest/gtest.h>
 /* #include <vector> */
@@ -36,7 +37,7 @@ struct CsvSourceAndSimulatorTests : public ::testing::Test {
   std::unique_ptr<CsvSignalSource> eeg_source_sample2;
   std::unique_ptr<CsvSignalSource> irled_source_sample2;
 
-  SignalFrameDataSink _frames_to_vector_sink = SignalFrameDataSink([=](SignalFrame* sfp){
+  LambdaSignalFrameDataSink _frames_to_vector_sink = LambdaSignalFrameDataSink([=](SignalFrame* sfp){
       // printf("Consuming frame: ");
       for(auto s : sfp->signal){
         // printf("%d ",s);
@@ -45,7 +46,7 @@ struct CsvSourceAndSimulatorTests : public ::testing::Test {
       // printf("\n");
     });
 
-  SignalFrameDataSink _frames_to_vector_split_sink = SignalFrameDataSink([=](SignalFrame* sfp){
+  LambdaSignalFrameDataSink _frames_to_vector_split_sink = LambdaSignalFrameDataSink([=](SignalFrame* sfp){
       // printf("Consuming frame: ");
       // std::string fname = sfp->origin == SignalOrigin::EEG ? "eeg" : "irled";
       // printf("%s",fname.c_str());

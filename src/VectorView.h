@@ -17,6 +17,8 @@ public:
   cit begin() const { return this->_begin; }
   cit end()   const { return this->_end; }
   const T& operator[](std::size_t index) { return this->_begin[index]; }
+
+  std::size_t size() const{ return _end - _begin;}
 };
 
 // template <typename T>

@@ -4,44 +4,15 @@
 #include "CommonTypedefs.h"
 #include <vector>
 #include <map>
+#include <functional>
 #include "VectorView.h"
-#include "InValue.h"
+#include "Signal.h"
+#include "DataSink.h"
 
-
-// source of signal in Neuroon Mask
-enum SignalOrigin{ EEG, ACCELEROMETER, IR_LED, TEMPERATURE};
-
-// structure holding data from the mask
-struct SignalFrame{
-  SignalOrigin origin;
-  ullong timestamp;
-  VectorView<int> signal;
-};
-
-// class holding characteristics of signal
-class SignalSpec{
-private:
-  int _sampling_rate;
-  SignalOrigin _signal_origin;
- public:
-
-  SignalSpec(SignalOrigin signal_origin, int sampling_rate) :
-    _sampling_rate(sampling_rate), _signal_origin(signal_origin) {}
-
-  SignalOrigin signal_origin() const { return _signal_origin;}
-
-  // sampling rate of signal in Hz
-  int sampling_rate() const { return _sampling_rate; }
-
-  // time interval between two samples of signal in miliseconds
-  int ms_per_sample() const { return (int)(1000.0 / this->sampling_rate()); }
-
-};
-
-
-class NeuroonSignals{
+class NeuroonSignals : public SignalFrameDataSink{
 
   static const std::map<SignalOrigin, SignalSpec> _signal_specs;
+  std::function<void (std::vector<double>&, const VectorView<int>&, ullong,ullong,ullong)> _filling_hole_function = nullptr;
 
   std::map<SignalOrigin, std::vector<double>> _signals = {
     {SignalOrigin::EEG,           {}},
@@ -50,14 +21,50 @@ class NeuroonSignals{
     {SignalOrigin::TEMPERATURE,   {}}
   };
 
+  std::map<SignalOrigin, ullong> _last_timestamps = {
+    {SignalOrigin::EEG,           0},
+    {SignalOrigin::IR_LED,        0},
+    {SignalOrigin::ACCELEROMETER, 0},
+    {SignalOrigin::TEMPERATURE,   0}
+  };
+
+  // default filling function
+  void fill_with_nans(std::vector<double> & signal,
+                      const VectorView<int> &new_data,
+                      ullong begin_hole,
+                      ullong end_hole,
+                      ullong ms_per_sample);
 public:
 
+  NeuroonSignals() : SignalFrameDataSink() {}
+
+  // sets hole filling function,
+  // the function should accept index of last samples before the hole,
+  // vector with signal, till the beginning of the hole
+  // vectorview  of signal just aquired (marking the end of the hole)
+  // timestamps of the last sample befor the hole
+  // timestamps of newly aquired samples (end of the hole),
+  // ms_per_sample parameter of the signal
+  // basing on that it should fill the hole in the signal passed as first
+  // parameter
+  // it defaults to filling it with std::nan
+  void set_hole_filling_function(std::function<void (std::vector<double>&, const VectorView<int>&, ullong,ullong,ullong)> f){
+    _filling_hole_function = f;
+  }
+
+  void consume(SignalFrame * frame) override{
+    receive_frame(frame);
+  }
   // receive frame of data
   void receive_frame(SignalFrame * frame);
 
   // get vectors of received samples
   const std::vector<double> & operator[](SignalOrigin ss) const {
     return _signals.at(ss);
+  }
+
+  ullong last_timestamp(SignalOrigin so) const {
+    return _last_timestamps.at(so);
   }
 
   // get specification of signals by its source
