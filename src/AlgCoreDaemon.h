@@ -45,6 +45,10 @@ public:
   // Receive a frame of signal from Neuron mask.
   void receive_stream_frame(SignalFrame * sf, bool streaming_algs_step=true);
 
+  void add_streaming_algorithms(std::unique_ptr<StreamingAlgorithm> & saup);
+
+  void add_streaming_algorithms(std::vector<std::unique_ptr<StreamingAlgorithm>> saups);
+
 
   // // ----- in case we need some message receiving by the daemon
   // void post_msg(std::string key, InValue m){

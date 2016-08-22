@@ -22,3 +22,11 @@ void AlgCoreDaemon::receive_stream_frame(SignalFrame * sf, bool streaming_algs_s
     _make_streaming_algorithms_step();
   }
 }
+
+void AlgCoreDaemon::add_streaming_algorithms(std::unique_ptr<StreamingAlgorithm> & saup){
+  _stream_algorithms.push_back(std::move(saup));
+}
+
+void AlgCoreDaemon::add_streaming_algorithms(std::vector<std::unique_ptr<StreamingAlgorithm>> saups) {
+  for(auto & saup : saups) add_streaming_algorithms(saup);
+}
