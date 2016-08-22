@@ -1,8 +1,8 @@
 #ifndef __DATA_SINK__
 #define __DATA_SINK__
 
-#include "Signal.h"
 #include <functional>
+#include "SignalTypes.h"
 
 class DataSink{
 public:

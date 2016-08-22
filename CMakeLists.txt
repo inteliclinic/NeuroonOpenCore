@@ -29,7 +29,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 FILE (GLOB_RECURSE sources src/*.cpp src/utils/*.cpp src/sleep_staging/*.cpp)
 
-add_library (neuroon-alg-core ${sources})
+add_library (neuroon-alg-core SHARED ${sources})
 
 target_include_directories (neuroon-alg-core PUBLIC src)
 target_include_directories (neuroon-alg-core PUBLIC src/util)
