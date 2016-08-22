@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.0)
 link_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+option(desktop_build "desktop_build" ON)
+
+message("-- desktop_build: " ${desktop_build})
+
+if (desktop_build)
+endif()
 
 add_subdirectory(3rd_party/dlib)
-add_subdirectory(tools)
-
-
 set (MODEL_RES_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}/res/model\")
-message (${MODEL_RES_DIRECTORY})
+message ("-- model directory: " ${MODEL_RES_DIRECTORY})
 add_definitions(-DMODEL_RES_DIRECTORY=${MODEL_RES_DIRECTORY})
-
 
 
 include(CheckCXXCompilerFlag)
@@ -48,14 +48,20 @@ add_custom_command(
                 ${CMAKE_CURRENT_BINARY_DIR}/res/model)
 
 
-
-add_executable(runTests test/tests.cpp)
-target_link_libraries(runTests 
-    ${GTEST_LIBRARIES}
-     neuroon-alg-core
-     pthread
-     dlib
-     )
+if (desktop_build)
+   find_package(GTest REQUIRED)
+   include_directories(${GTEST_INCLUDE_DIRS})
+  
+   add_executable(runTests test/tests.cpp)
+   target_link_libraries(runTests 
+       ${GTEST_LIBRARIES}
+        neuroon-alg-core
+        pthread
+        dlib
+        )
+        
+    add_subdirectory(tools)
+endif()
 
 file(MAKE_DIRECTORY ./build)
 file(MAKE_DIRECTORY ./build/functional_test_results)
