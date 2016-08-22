@@ -74,7 +74,11 @@ OnLineViterbiSearch::PathElement OnLineViterbiSearch::find_path_leading_here(int
 }
 
 void OnLineViterbiSearch::stop() {
-	//TODO: implement this!
+	for (int state = 0; state != m_states.size(); ++state) {
+		m_paths[m_current_step][state].log_prob += std::log(m_final_p(state, 0));
+	}
+
+	print_path_matrix();
 }
 
 int OnLineViterbiSearch::most_probable_final() const {
