@@ -38,7 +38,7 @@ target_include_directories (neuroon-alg-core PUBLIC api)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/dlib)
 
 target_link_libraries(neuroon-alg-core
-    dlib
+    dlib_shared
     )
 
 add_custom_command(

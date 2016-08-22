@@ -20,7 +20,8 @@
 #include "multilayer_perceptron_test.h"
 #include "mlp_classifier_test.h"
 #include "staging_classifier_test.h"
-
+#include "expanding_mean_test.h"
+#include "online_viterbi_search_test.h"
 /*
  * ====== FUNCTIONAL TESTS ===============
  */
