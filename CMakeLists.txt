@@ -5,9 +5,6 @@ option(desktop_build "desktop_build" ON)
 
 message("-- desktop_build: " ${desktop_build})
 
-if (desktop_build)
-endif()
-
 add_subdirectory(3rd_party/dlib)
 set (MODEL_RES_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}/res/model\")
 message ("-- model directory: " ${MODEL_RES_DIRECTORY})
