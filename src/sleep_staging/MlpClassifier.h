@@ -19,11 +19,13 @@ private:
 
 public:
 
-
 	MlpClassifier(std::vector<dlib::matrix<double>> weights, std::vector<dlib::matrix<double>> intercepts);
+
 	virtual ~MlpClassifier();
 
 	dlib::matrix<int> predict(const dlib::matrix<double>& input);
+
+	dlib::matrix<double> predict_proba(const dlib::matrix<double>& input);
 };
 
 #endif /* SRC_SLEEP_STAGING_MLPCLASSIFIER_H_ */

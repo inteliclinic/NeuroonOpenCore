@@ -161,4 +161,17 @@ template void dump_matrix<double>(const dlib::matrix<double>&, const std::string
 template void dump_matrix<int>(const dlib::matrix<int>&, const std::string&);
 
 
+dlib::matrix<double> logistic(const dlib::matrix<double>& input) {
+	dlib::matrix<double> result = 1 / (1 + dlib::exp(-input));
+	return result;
+}
 
+dlib::matrix<double> softmax(const dlib::matrix<double>& input) {
+	dlib::matrix<double> nominator = dlib::exp(input);
+
+	dlib::matrix<double> denominator = 1 / dlib::sum_cols(nominator);
+	for (int c = 0; c != nominator.nc(); ++c) {
+		dlib::set_colm(nominator, c) = dlib::pointwise_multiply(dlib::colm(nominator, c), denominator) ;
+	}
+	return nominator;
+}

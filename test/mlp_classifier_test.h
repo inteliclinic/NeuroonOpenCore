@@ -67,3 +67,29 @@ TEST(MlpClassifierTest, basic_predict_test) {
 
 	delete classifier;
 }
+
+
+TEST(MlpClassifierTest, basic_predict_proba_test) {
+	MlpClassifier* classifier = create_example_classifier();
+	dlib::matrix<double> input = dlib::trans(dlib::linspace(-5, 5, 100));
+
+	dlib::matrix<int> output_classes = classifier->predict(input);
+	dlib::matrix<double> output_proba = classifier->predict_proba(input);
+
+	EXPECT_EQ(output_proba.nr(), input.nr());
+	EXPECT_EQ(output_proba.nc(), 4);
+
+	dlib::matrix<double> sums_in_rows = dlib::sum_cols(output_proba);
+	for (int r = 0; r != sums_in_rows.nr(); ++r) {
+		EXPECT_DOUBLE_EQ(sums_in_rows(r, 0), 1);
+		for (int c = 0; c != output_proba.nc(); ++c) {
+			EXPECT_TRUE(output_proba(r, c) < 1);
+			EXPECT_TRUE(output_proba(r, c) > 0);
+		}
+	}
+
+	auto classes_from_proba = argmax(output_proba);
+	for (int r = 0; r != classes_from_proba.nr(); ++r) {
+		EXPECT_DOUBLE_EQ(classes_from_proba(r,0), output_classes(r, 0));
+	}
+}

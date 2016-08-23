@@ -25,4 +25,8 @@ dlib::matrix<int> MlpClassifier::predict(const dlib::matrix<double>& input) {
 	return classes_output;
 }
 
-
+dlib::matrix<double> MlpClassifier::predict_proba(const dlib::matrix<double>& input) {
+	dlib::matrix<double> mlp_output = m_mlp.predict(input);
+	dlib::matrix<double> probabilities = softmax(mlp_output);
+	return probabilities;
+}

@@ -30,4 +30,8 @@ dlib::matrix<double> load_matrix(std::istream &input);
 template <typename T>
 void dump_matrix(const dlib::matrix<T> &data, const std::string &filename);
 
+dlib::matrix<double> logistic(const dlib::matrix<double>& input);
+
+dlib::matrix<double> softmax(const dlib::matrix<double>& input);
+
 #endif

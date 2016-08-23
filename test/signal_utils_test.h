@@ -26,3 +26,18 @@ TEST(SignalUtilsTest, uniform_entropy_test) {
 		EXPECT_FLOAT_EQ(entr_exponentiated, s);
 	}
 }
+
+TEST(SignalUtilsTest, basic_logistic_test) {
+	dlib::matrix<double> input = dlib::linspace(-10, 10, 1000);
+	auto result = logistic(input);
+
+	for (int i = 0; i != result.nr() - 1; ++i) {
+		for (int j = 0; j != result.nc(); ++j) {
+			EXPECT_TRUE(result(i,j) < 1);
+			EXPECT_TRUE(result(i,j) > 0);
+			EXPECT_TRUE(result(i-1, j) < result(i,j));
+		}
+	}
+	EXPECT_EQ(result.nr(), input.nr());
+	EXPECT_EQ(result.nc(), input.nc());
+}

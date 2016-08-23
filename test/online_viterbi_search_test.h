@@ -96,5 +96,4 @@ TEST(OnLineViterbiSearch, big_viterbi_test) {
 	}
 	viterbi.stop();
 //	print_sequence(viterbi.best_sequence());
-
 }

@@ -11,7 +11,7 @@
 #include <fstream>
 #include <memory>
 #include <exception>
-
+#include <sstream>
 struct SpectrogramTest : public ::testing::Test {
 	std::unique_ptr<const Spectrogram> spectrogram_data;
 	std::unique_ptr<const Spectrogram> overlap_spectrogram;
@@ -126,6 +126,11 @@ TEST_F(SpectrogramTest, basic_fft_test) {
 
 	dlib::matrix<std::complex<double>> complex_signal = dlib::matrix_cast<std::complex<double>> (signal);
 	auto res = fft(complex_signal);
+	std::complex<double> sum = dlib::sum(dlib::abs(res));
+	std::stringstream ss;
+	ss << "result from dlib: " << sum << std::endl;
+	std::string result_from_algorithms(ss.str());
+	std::cout << result_from_algorithms;
 	EXPECT_EQ(res.nr(), 8192);
 	EXPECT_EQ(res.nc(), 1);
 }
