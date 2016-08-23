@@ -2,6 +2,7 @@
 #include "Spectrogram.h"
 
 #include <gtest/gtest.h>
+#include <dlib/matrix.h>
 
 #include <vector>
 #include <cmath>
@@ -117,7 +118,17 @@ TEST_F(SpectrogramTest, print_spectrogram_to_file) {
 	spectrogram_data->print(out);
 }
 
+TEST_F(SpectrogramTest, basic_fft_test) {
+	dlib::matrix<double> signal(8192, 1);
+	for (int i = 0 ; i != signal.nr(); ++i) {
+		signal(i, 0) = sin(i * 0.01);
+	}
 
+	dlib::matrix<std::complex<double>> complex_signal = dlib::matrix_cast<std::complex<double>> (signal);
+	auto res = fft(complex_signal);
+	EXPECT_EQ(res.nr(), 8192);
+	EXPECT_EQ(res.nc(), 1);
+}
 
 //TEST_F(SpectrogramTest, big_integration_test) {
 //

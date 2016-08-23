@@ -11,6 +11,7 @@
 #include <vector>
 #include <dlib/matrix.h>
 #include <limits>
+#include <utility>
 
 class OnLineViterbiSearch {
 
@@ -42,11 +43,10 @@ public:
 	double log_prob();
 
 private:
-	void start();
-	PathElement find_path_leading_here(int next_state) const ;
+	std::pair<int, double> find_path_leading_here(int next_state) const;
 	int most_probable_final() const;
 	void appendNewStep();
-	void print_path_matrix(); //for debug only
+	void print_path_matrix() const; //for debug only
 
 	std::vector<std::vector<PathElement>> m_paths;
 	int m_current_step;

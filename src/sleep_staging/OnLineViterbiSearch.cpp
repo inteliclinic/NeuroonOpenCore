@@ -24,8 +24,10 @@ void OnLineViterbiSearch::appendNewStep() {
 	++m_current_step;
 }
 
-void OnLineViterbiSearch::print_path_matrix() {
+// debug only
+void OnLineViterbiSearch::print_path_matrix() const {
 	for (int i = 0; i != m_paths.size(); ++i) {
+		std::cout << i << ". ";
 		for (int j = 0; j != m_states.size(); ++j) {
 			OnLineViterbiSearch::PathElement e = m_paths[i][j];
 			std::cout << e.previous_state << "->" << e.state <<": " << e.log_prob << '\t';
@@ -37,7 +39,6 @@ void OnLineViterbiSearch::print_path_matrix() {
 void OnLineViterbiSearch::step(const dlib::matrix<double>& emission_probabilities) {
 	appendNewStep();
 
-	std::cout << "step: " << m_current_step << "emissions: " << emission_probabilities << std::endl;
 	assert(dlib::sum(emission_probabilities) != 0);
 
 	for (int state = 0; state != m_states.size(); ++state) {
@@ -50,27 +51,31 @@ void OnLineViterbiSearch::step(const dlib::matrix<double>& emission_probabilitie
 			continue;
 		}
 
-		OnLineViterbiSearch::PathElement previous = find_path_leading_here(state);
-		m_paths[m_current_step][state].log_prob = previous.log_prob + std::log(emit_p);
-		m_paths[m_current_step][state].previous_state = previous.state;
+		std::pair<int, double> origin = find_path_leading_here(state);
+		int previous_state = origin.first;
+		double log_prob = origin.second;
+		m_paths[m_current_step][state].log_prob = log_prob + std::log(emit_p);
+		m_paths[m_current_step][state].previous_state = previous_state;
 
-		std::cout << "step: " << m_current_step << ", state: " << state << "," << m_paths[m_current_step][state].state
-				  << ", previous state: " << m_paths[m_current_step][state].previous_state << std::endl;
+//		std::cout << "step: " << m_current_step << ", state: " << state << "," << m_paths[m_current_step][state].state
+//				  << ", previous state: " << m_paths[m_current_step][state].previous_state << std::endl;
 	}
 
-	print_path_matrix();
+	//print_path_matrix();
 }
 
-OnLineViterbiSearch::PathElement OnLineViterbiSearch::find_path_leading_here(int next_state) const {
-	OnLineViterbiSearch::PathElement result;
+std::pair<int, double> OnLineViterbiSearch::find_path_leading_here(int next_state) const {
+	int result_state = -1;
+	double best_log_prob = -std::numeric_limits<double>::infinity();
 	for (int state = 0; state != m_states.size(); ++state) {
-		double log_prob =  m_paths[m_current_step - 1][state].log_prob + m_transition_matrix(state, next_state);
-		if (log_prob > result.log_prob) {
-			result = m_paths[m_current_step - 1][state];
+		double log_prob =  m_paths[m_current_step - 1][state].log_prob + std::log(m_transition_matrix(state, next_state));
+		if (log_prob > best_log_prob) {
+			best_log_prob = log_prob;
+			result_state = state;
 		}
 	}
 
-	return result;
+	return std::make_pair(result_state, best_log_prob);
 }
 
 void OnLineViterbiSearch::stop() {
@@ -78,7 +83,7 @@ void OnLineViterbiSearch::stop() {
 		m_paths[m_current_step][state].log_prob += std::log(m_final_p(state, 0));
 	}
 
-	print_path_matrix();
+	//print_path_matrix();
 }
 
 int OnLineViterbiSearch::most_probable_final() const {
