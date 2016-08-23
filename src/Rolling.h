@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "IRbAlgorithm.h"
+#include <functional>
 
 class Rolling{
 

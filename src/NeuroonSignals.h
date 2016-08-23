@@ -6,8 +6,8 @@
 #include <map>
 #include <functional>
 #include "VectorView.h"
-#include "Signal.h"
 #include "DataSink.h"
+#include "SignalTypes.h"
 
 class NeuroonSignals : public SignalFrameDataSink{
 

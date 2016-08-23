@@ -1,0 +1,3 @@
+* small todos
+** DONE dodawanie algorytmu do algcoredaemona
+CLOSED: [2016-08-22 Mon 19:53]
