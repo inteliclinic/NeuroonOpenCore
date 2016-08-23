@@ -5,20 +5,31 @@
 #include "NeuroonSignals.h"
 #include "DataSink.h"
 
-class StreamingAlgorithm{
+class IStreamingAlgorithm{
+public:
+  virtual void reset_state () = 0;
+  virtual void process_input (const NeuroonSignals & input) = 0;
+};
 
-  std::vector<DataSink*> _sinks;
+template<typename T>
+class SinkStreamingAlgorithm : IStreamingAlgorithm {
+
+  typedef DataSink<T> StreamSink;
+  std::vector< StreamSink* > _sinks;
 
 protected:
 
-  void feed_all_sinks(void*);
+  void feed_all_sinks(T result){
+    for(auto & s : _sinks){
+      if(s != nullptr){
+        s->consume(result);
+      }
+    }
+  }
 
 public:
 
-  StreamingAlgorithm(const std::vector<DataSink*> & sinks={}) : _sinks(sinks) {}
-
-  virtual void reset_state() = 0;
-  virtual void process_input(const NeuroonSignals & input) = 0;
+  SinkStreamingAlgorithm (const std::vector< StreamSink* > & sinks={}) : _sinks(sinks) {}
 
 };
 

@@ -4,18 +4,17 @@
 #include "VectorView.h"
 #include "StreamingAlgorithm.h"
 
-class EegQualityStream : public StreamingAlgorithm{
-public:
+enum class EegQuality{NO_SIGNAL, BAD, AVERAGE, GOOD};
 
-  enum EegQuality{NO_SIGNAL, BAD, AVERAGE, GOOD};
 
+class EegQualityStream : public SinkStreamingAlgorithm<EegQuality>{
 private:
 
   int _window_size;
   int _overlap;
   std::size_t _last_counter;
 
-  EegQuality compute_quality(VectorView<double>&& eeg_signal);
+  EegQuality _compute_quality(VectorView<double>&& eeg_signal);
 public:
 
   /**
@@ -23,8 +22,8 @@ public:
    *  @param overlap This many samples will be included from previous computation.
    *  @param sinks The result from each window window will be send to each data sink.
    */
-  EegQualityStream(int window_size, int overlap=0, const std::vector<DataSink*> & sinks={}) :
-    StreamingAlgorithm(sinks),_window_size(window_size), _overlap(overlap) {}
+  EegQualityStream(int window_size, int overlap=0, const std::vector<DataSink<EegQuality>*> & sinks={}) :
+    SinkStreamingAlgorithm(sinks),_window_size(window_size), _overlap(overlap) {}
 
 
   virtual void reset_state() override;

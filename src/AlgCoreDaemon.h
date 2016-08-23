@@ -18,7 +18,7 @@ private:
   // std::map<std::string, std::vector<InValue> > _msg_inbox;
 
   // algorithms working with stream of data coming from mask
-  std::vector<std::unique_ptr<StreamingAlgorithm>> _stream_algorithms = {};
+  std::vector<std::unique_ptr<IStreamingAlgorithm>> _stream_algorithms = {};
 
   // module aggregating input data frames and converting in to
   // a continuous signal
@@ -45,9 +45,9 @@ public:
   // Receive a frame of signal from Neuron mask.
   void receive_stream_frame(SignalFrame * sf, bool streaming_algs_step=true);
 
-  void add_streaming_algorithms(std::unique_ptr<StreamingAlgorithm> & saup);
+  void add_streaming_algorithms(std::unique_ptr<IStreamingAlgorithm> & saup);
 
-  void add_streaming_algorithms(std::vector<std::unique_ptr<StreamingAlgorithm>> saups);
+  void add_streaming_algorithms(std::vector<std::unique_ptr<IStreamingAlgorithm>> saups);
 
 
   // // ----- in case we need some message receiving by the daemon
@@ -64,3 +64,4 @@ public:
 };
 
 #endif
+

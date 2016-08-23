@@ -9,7 +9,7 @@
 #include "DataSink.h"
 #include "SignalTypes.h"
 
-class NeuroonSignals : public SignalFrameDataSink{
+class NeuroonSignals : public DataSink<SignalFrame *> {
 
   static const std::map<SignalOrigin, SignalSpec> _signal_specs;
   std::function<void (std::vector<double>&, const VectorView<int>&, ullong,ullong,ullong)> _filling_hole_function = nullptr;
@@ -36,7 +36,7 @@ class NeuroonSignals : public SignalFrameDataSink{
                       ullong ms_per_sample);
 public:
 
-  NeuroonSignals() : SignalFrameDataSink() {}
+  NeuroonSignals() : DataSink<SignalFrame *>() {}
 
   // sets hole filling function,
   // the function should accept index of last samples before the hole,
