@@ -1,5 +1,7 @@
 #include "logger.h"
 
+ONCE_PER_APP_INITIALIZE_LOGGER
+
 void configure_logger() {
 
 #ifdef CAPTURE_LOGS_FROM_EASYLOGGING
