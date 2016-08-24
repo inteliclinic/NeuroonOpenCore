@@ -11,7 +11,6 @@
 ExpandingMean::ExpandingMean() {
 	m_sum = 0;
 	m_count = 0;
-	// TODO Auto-generated constructor stub
 }
 
 void ExpandingMean::consume(double x) {

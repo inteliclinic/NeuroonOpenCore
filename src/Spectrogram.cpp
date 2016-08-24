@@ -12,12 +12,11 @@
 #include <numeric>
 #include <dlib/matrix.h>
 #include <exception>
-
+#include "logger.h"
 
 Spectrogram::Spectrogram() {
 
 }
-
 
 int smaller_power_of_2(int x) {
 	int log2 = 0;
@@ -46,6 +45,9 @@ int smaller_power_of_2(int x) {
  */
 Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap) {
+
+	LOG(INFO) << "computing spectrogram from size: (" << signal.nr() << "," << signal.nc() <<"), window: " << window
+			  << ", noverlap: " << noverlap;
 
 	if (signal.nc() != 1) {
 		throw std::logic_error("Only 1D spectrograms are supported. Please provide a column vector.");
@@ -94,6 +96,8 @@ Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_fre
 
 		dlib::set_rowm(buffer, i) = dlib::trans(dlib::abs(fft_res));
 	}
+
+	LOG(DEBUG) << "spectrogram computed";
 }
 
 Spectrogram::~Spectrogram() {

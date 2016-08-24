@@ -5,26 +5,26 @@
  *      Author: tomek
  */
 
-#include "StagingClassifier.h"
 #include "MlpClassifier.h"
 #include <vector>
 #include <fstream>
 #include <istream>
 #include <sstream>
+#include "OfflineStagingClassifier.h"
 
 #include "signal_utils.h"
 
-StagingClassifier* StagingClassifier::m_instance = nullptr;
+OfflineStagingClassifier* OfflineStagingClassifier::m_instance = nullptr;
 
-StagingClassifier* StagingClassifier::get_instance() {
+OfflineStagingClassifier* OfflineStagingClassifier::get_instance() {
 	if (m_instance == nullptr) {
-		m_instance = new StagingClassifier();
+		m_instance = new OfflineStagingClassifier();
 	}
 	return m_instance;
 }
 
 
-StagingClassifier::StagingClassifier()
+OfflineStagingClassifier::OfflineStagingClassifier()
 : m_mlp(nullptr)
 {
 	std::vector<dlib::matrix<double>> weights(2);
@@ -44,11 +44,11 @@ StagingClassifier::StagingClassifier()
 	m_mlp = new MlpClassifier(weights, intercepts);
 }
 
-StagingClassifier::~StagingClassifier() {
+OfflineStagingClassifier::~OfflineStagingClassifier() {
 	// TODO Auto-generated destructor stub
 }
 
 
-dlib::matrix<int> StagingClassifier::predict(const dlib::matrix<double> &input) {
+dlib::matrix<int> OfflineStagingClassifier::predict(const dlib::matrix<double> &input) {
 	return m_mlp->predict(input);
 }

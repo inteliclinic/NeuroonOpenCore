@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 #include <dlib/matrix.h>
 #include <iostream>
-#include "StagingClassifier.h"
+#include "OfflineStagingClassifier.h"
 #include "StagingPreprocessor.h"
 
 #include "functional_tests_data.h"
 
 TEST(StagingFunctionalTest, staging_functional_test) {
 	dlib::matrix<double> features = get_python_features();
-	StagingClassifier* clf = StagingClassifier::get_instance();
+	OfflineStagingClassifier* clf = OfflineStagingClassifier::get_instance();
 	dlib::matrix<int> stages = clf->predict(features);
 
 	std::ofstream out("./functional_test_results/staging.csv");
@@ -25,7 +25,7 @@ TEST(StagingFunctionalTest, full_offline_staging_functional_test) {
 	StagingPreprocessor pre;
 	dlib::matrix<double> features = pre.transform(eeg, ir);
 
-	StagingClassifier* clf = StagingClassifier::get_instance();
+	OfflineStagingClassifier* clf = OfflineStagingClassifier::get_instance();
 	dlib::matrix<int> stages = clf->predict(features);
 
 	std::ofstream out("./functional_test_results/full_offline_staging.csv");

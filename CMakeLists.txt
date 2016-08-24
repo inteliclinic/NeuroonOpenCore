@@ -33,6 +33,7 @@ target_include_directories (neuroon-alg-core PUBLIC src/util)
 target_include_directories (neuroon-alg-core PUBLIC src/sleep_staging)
 target_include_directories (neuroon-alg-core PUBLIC api)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/dlib)
+target_include_directories (neuroon-alg-core PUBLIC 3rd_party/easylogging)
 
 target_link_libraries(neuroon-alg-core
     dlib_shared
@@ -58,6 +59,7 @@ if (desktop_build)
         )
         
     add_subdirectory(tools)
+    target_include_directories (runTests PUBLIC 3rd_party/easylogging)
 endif()
 
 file(MAKE_DIRECTORY ./build)

@@ -19,9 +19,10 @@
 #include "entropy_filter_test.h"
 #include "multilayer_perceptron_test.h"
 #include "mlp_classifier_test.h"
-#include "staging_classifier_test.h"
 #include "expanding_mean_test.h"
 #include "online_viterbi_search_test.h"
+#include "easylogging_test.h"
+#include "offline_staging_classifier_test.h"
 /*
  * ====== FUNCTIONAL TESTS ===============
  */
@@ -29,7 +30,11 @@
 #include "eeg_features_functional_test.h"
 #include "staging_functional_test.h"
 
+#include "logger.h"
+ONCE_PER_APP_INITIALIZE_LOGGER
+
 int main(int argc, char **argv) {
+	configure_logger();
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

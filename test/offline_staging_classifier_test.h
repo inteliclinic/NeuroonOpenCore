@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "StagingClassifier.h"
+#include "../src/sleep_staging/OfflineStagingClassifier.h"
 
 TEST(StagingClassifierTest, create_the_classifier_test) {
-	StagingClassifier* clf = StagingClassifier::get_instance();
+	OfflineStagingClassifier* clf = OfflineStagingClassifier::get_instance();
 
 	const int NUMBER_OF_FEATURES = 7;
 	const int ROWS = 100;

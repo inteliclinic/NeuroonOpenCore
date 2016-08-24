@@ -1,12 +1,17 @@
 #include <iostream>
 #include <dlib/matrix.h>
 #include <cassert>
+#include "../../src/sleep_staging/OfflineStagingClassifier.h"
 #include "signal_utils.h"
 
-#include "StagingClassifier.h"
 #include "StagingPreprocessor.h"
+#include "logger.h"
+
+ONCE_PER_APP_INITIALIZE_LOGGER
 
 int main(int argc, char** argv) {
+	configure_logger();
+
 	std::string eeg_filename(argv[1]);
 	std::string ir_filename(argv[2]);
 	std::string output_path(argv[3]);
@@ -21,7 +26,7 @@ int main(int argc, char** argv) {
 	const Spectrogram ir_spectrum = pre.get_ir_spectrogram(ir);
 	dlib::matrix<double> features = pre.transform(eeg, ir);
 
-	StagingClassifier* clf = StagingClassifier::get_instance();
+	OfflineStagingClassifier* clf = OfflineStagingClassifier::get_instance();
 	dlib::matrix<int> stages = clf->predict(features);
 
 	dump_matrix<int>(stages, output_path + "/" + "staging.csv");

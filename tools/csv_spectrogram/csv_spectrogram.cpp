@@ -11,8 +11,13 @@
 
 #include "Spectrogram.h"
 #include "signal_utils.h"
+#include "logger.h"
+
+ONCE_PER_APP_INITIALIZE_LOGGER
 
 int main(int argc, char* argv[]) {
+	configure_logger();
+
 	if (argc < 3) {
 		std::cout << "Filename argument is required\n";
 		return -1;
