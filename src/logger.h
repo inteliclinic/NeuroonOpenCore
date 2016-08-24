@@ -44,15 +44,6 @@ struct callback : public el::LogDispatchCallback {
 
 #define ONCE_PER_APP_INITIALIZE_LOGGER INITIALIZE_EASYLOGGINGPP
 
-void configure_logger() {
-
-#ifdef CAPTURE_LOGS_FROM_EASYLOGGING
-	el::Helpers::installLogDispatchCallback<callback>("dummy");
-#endif
-	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-	el::Logger* dummyLogger = el::Loggers::getLogger("dummy");
-	el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %logger %fbase:%line  %msg");
-	CLOG(INFO, "default") << "Logger initialized";
-}
+void configure_logger();
 
 #endif
