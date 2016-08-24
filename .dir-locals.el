@@ -1,6 +1,7 @@
 ((nil . ((c-c++-default-mode-for-headers . 'c++-mode)
          (flycheck-clang-include-path . '("/home/michal/Projects/neuroon-alg-core/3rd_party/dlib"))
-         (eval . (setq cmake-ide-build-dir (expand-file-name "~/Sources/Projects/neuroon-alg-core/build")))))
+         (eval . (setq cmake-ide-build-dir (expand-file-name "~/Sources/Projects/neuroon-alg-core/build")))
+         (eval . (setq cmake-ide-compile-command (concat "make all -k -j4 -C " cmake-ide-build-dir)))))
  (c-mode . (mode . c++))
  (c++-mode . ((flycheck-clang-args . '("-std=c++11"))
               (flycheck-gcc-args . '("-std=c++11"))

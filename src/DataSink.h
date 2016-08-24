@@ -4,32 +4,34 @@
 #include <functional>
 #include "SignalTypes.h"
 
+template<typename T>
 class DataSink{
 public:
   // this function should be lightweight in order to not cause delays
   // in realtime streaming
-  virtual void consume(void*) = 0;
+  virtual void consume(T) = 0;
 };
 
+typedef DataSink<SignalFrame*> SignalFrameDataSink;
 
-// consumes SignalFrame pointer
-// WARNING use it only if you know that passed pointer points
-// to SignalFrame!
-class SignalFrameDataSink : public DataSink{
- public:
-  // consume_function should be lightweight in order to not cause delays
-  // in realtime streaming
-  SignalFrameDataSink() : DataSink () {}
+// // consumes SignalFrame pointer
+// // WARNING use it only if you know that passed pointer points
+// // to SignalFrame!
+// class SignalFrameDataSink : public DataSink<Signal{
+//  public:
+//   // consume_function should be lightweight in order to not cause delays
+//   // in realtime streaming
+//   SignalFrameDataSink() : DataSink () {}
 
-  virtual void consume(SignalFrame* sfr) = 0;
+//   virtual void consume(SignalFrame* sfr) = 0;
 
-  void consume(void* sfp) override{
-    consume((SignalFrame*)sfp);
-  }
-};
+//   void consume(void* sfp) override{
+//     consume((SignalFrame*)sfp);
+//   }
+// };
 
 
-class LambdaSignalFrameDataSink : public SignalFrameDataSink{
+class LambdaSignalFrameDataSink : public SignalFrameDataSink {
   std::function<void (SignalFrame*)> _frame_consume_fun = nullptr;
  public:
   // consume_function should be lightweight in order to not cause delays
