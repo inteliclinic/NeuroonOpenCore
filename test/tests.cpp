@@ -23,6 +23,8 @@
 #include "online_viterbi_search_test.h"
 #include "logger_test.h"
 #include "offline_staging_classifier_test.h"
+#include "online_staging_feature_preprocessor_test.h"
+
 /*
  * ====== FUNCTIONAL TESTS ===============
  */

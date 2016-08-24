@@ -10,16 +10,22 @@
 
 #include <dlib/matrix.h>
 #include <functional>
+#include <vector>
+#include <utility>
 
 class Spectrogram;
 
 class EegFeatures {
+
+	static std::vector<std::pair<double, double>> create_bands(const std::vector<double>& borders);
+
 public:
 	EegFeatures();
 	virtual ~EegFeatures();
 
 	static dlib::matrix<double> sum_in_band(const Spectrogram& s, double low, double high);
-	static dlib::matrix<double> sum_in_bands(const Spectrogram& s, std::vector<std::pair<double, double>> bands);
+	static dlib::matrix<double> sum_in_bands(const Spectrogram& s, const std::vector<std::pair<double, double>>& bands);
+	static dlib::matrix<double> sum_by_borders(const Spectrogram& s, const std::vector<double>& borders);
 
 
 	static dlib::matrix<double> sparse_rolling(const dlib::matrix<double> &signal, int window_size,
