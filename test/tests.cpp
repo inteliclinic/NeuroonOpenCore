@@ -33,7 +33,6 @@
 #include "staging_functional_test.h"
 
 #include "logger.h"
-ONCE_PER_APP_INITIALIZE_LOGGER
 
 int main(int argc, char **argv) {
 	configure_logger();
