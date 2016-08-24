@@ -8,6 +8,10 @@ void configure_logger() {
 	el::Helpers::installLogDispatchCallback<callback>("dummy");
 #endif
 	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-	el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %logger | %func@%loc\n%msg");
+
+	// el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %logger %fbase:%line  %msg");
+	el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime{%d/%M %h:%m:%s,%g} %level [%logger] %fbase:%line: %msg");
+  // michal debug
+	// el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime{%d/%M %h:%m:%s,%g} %level %logger | %func@%fbase:%line\n%msg");
 	CLOG(INFO, "default") << "Logger initialized";
 }
