@@ -25,7 +25,10 @@ const int NUMBER_OF_FEATURES = 5;
 dlib::matrix<double> compute_eeg_features(const dlib::matrix<double>& eeg_signal);
 dlib::matrix<double> compute_ir_features(const dlib::matrix<double>& ir_signal);
 
+void online_standardize_in_place(dlib::matrix<double> &input);
+
 ExpandingMean<dlib::matrix<double>> m_mean;
+dlib::matrix<double> m_feature_stds;
 
 public:
 	OnlineStagingFeaturePreprocessor();

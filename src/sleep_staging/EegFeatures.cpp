@@ -10,9 +10,9 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
-#include <signal_utils.h>
 #include <exception>
 #include <functional>
+#include "../dlib_utils.h"
 
 EegFeatures::EegFeatures() {
 	// TODO Auto-generated constructor stub

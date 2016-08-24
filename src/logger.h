@@ -3,7 +3,11 @@
 
 
 #define ELPP_DISABLE_DEBUG_LOGS
-#define ELPP_STACKTRACE_ON_CRASH
+
+#ifdef __linux__
+	#define ELPP_STACKTRACE_ON_CRASH
+#endif
+
 #define ELPP_DEFAULT_LOG_FILE "neuroon-alg-core.log"
 
 #include "easylogging++.h"

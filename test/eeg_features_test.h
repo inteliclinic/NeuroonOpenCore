@@ -10,7 +10,7 @@
 
 #include "Config.h"
 #include <cmath>
-#include "signal_utils.h"
+#include "../src/dlib_utils.h"
 
 struct EegFeaturesTest : public ::testing::Test {
 	virtual void SetUp() {

@@ -10,10 +10,10 @@
 #include "EegFeatures.h"
 #include "AmplitudeFilter.h"
 #include "Config.h"
-#include "signal_utils.h"
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include "../dlib_utils.h"
 
 #include "EntropyFilter.h"
 StagingPreprocessor::StagingPreprocessor() {
