@@ -27,7 +27,7 @@ dlib::matrix<double> compute_ir_features(const dlib::matrix<double>& ir_signal);
 
 void online_standardize_in_place(dlib::matrix<double> &input);
 
-ExpandingMean<dlib::matrix<double>> m_mean;
+ExpandingMean m_mean;
 dlib::matrix<double> m_feature_stds;
 
 public:

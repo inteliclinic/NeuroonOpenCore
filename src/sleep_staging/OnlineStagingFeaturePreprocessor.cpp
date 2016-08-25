@@ -14,7 +14,7 @@
 #include <cassert>
 
 OnlineStagingFeaturePreprocessor::OnlineStagingFeaturePreprocessor()
-: m_mean()
+: m_mean(1, NUMBER_OF_FEATURES)
 , m_feature_stds(1, NUMBER_OF_FEATURES)
 {
 	//TODO: hardcode the stds for the features
