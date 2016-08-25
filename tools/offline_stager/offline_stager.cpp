@@ -1,9 +1,8 @@
 #include <iostream>
 #include <dlib/matrix.h>
 #include <cassert>
+#include "../../src/dlib_utils.h"
 #include "../../src/sleep_staging/OfflineStagingClassifier.h"
-#include "signal_utils.h"
-
 #include "StagingPreprocessor.h"
 #include "logger.h"
 

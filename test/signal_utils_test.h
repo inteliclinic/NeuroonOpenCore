@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "signal_utils.h"
+#include "../src/dlib_utils.h"
 
 //TODO: write tests for all functions in singal_utils header
 

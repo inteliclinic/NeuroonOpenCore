@@ -9,9 +9,9 @@
 #include <iostream>
 
 #include <dlib/matrix.h>
+#include "dlib_utils.h"
 
 #include "Spectrogram.h"
-#include "signal_utils.h"
 
 
 SimpleSpectrogramFilter::SimpleSpectrogramFilter() {

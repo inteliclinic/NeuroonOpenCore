@@ -6,7 +6,8 @@
  */
 
 #include "MlpClassifier.h"
-#include "signal_utils.h"
+
+#include "../dlib_utils.h"
 
 MlpClassifier::MlpClassifier(std::vector<dlib::matrix<double>> weights, std::vector<dlib::matrix<double>> intercepts)
 : m_mlp(weights, intercepts)

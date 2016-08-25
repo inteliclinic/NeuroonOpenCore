@@ -10,10 +10,10 @@
 #include "EegFeatures.h"
 #include "AmplitudeFilter.h"
 #include "Config.h"
-#include "signal_utils.h"
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include "../dlib_utils.h"
 
 #include "EntropyFilter.h"
 StagingPreprocessor::StagingPreprocessor() {
@@ -26,13 +26,6 @@ StagingPreprocessor::~StagingPreprocessor() {
 }
 
 
-std::vector<std::pair<double, double>> create_bands(const std::vector<double>& borders) {
-	std::vector<std::pair<double,double>> result(borders.size() - 1);
-	for (std::size_t i = 0; i != borders.size() - 1; ++i) {
-		result[i] = std::pair<double, double>(borders[i], borders[i+1]);
-	}
-	return result;
-}
 
 Spectrogram StagingPreprocessor::get_eeg_spectrogram(const dlib::matrix<double> eeg_signal) {
 	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, EEG_FFT_OVERLAP);
@@ -56,17 +49,13 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 
 dlib::matrix<double> StagingPreprocessor::transform(const Spectrogram &eeg_spectrogram, const Spectrogram &pulse_spectrogram) {
 	std::vector<double> borders({2.5, 7.5, 10, 14, 21});
-	dlib::matrix<double> eeg_sums = EegFeatures::sum_in_bands(eeg_spectrogram, create_bands(borders));
+	dlib::matrix<double> eeg_sums = EegFeatures::sum_by_borders(eeg_spectrogram, borders);
 	eeg_sums = dlib::log(eeg_sums);
 	const double EEG_FILTER_CRITICAL = 19;
 	const int EEG_FILTER_COLUMN = 2;
 	AmplitudeFilter f(EEG_FILTER_CRITICAL, EEG_FILTER_COLUMN);
 
-	//std::cout << eeg_sums;
-	std::cout << "before filter: " << nan_ratio(eeg_sums) << std::endl;
 	eeg_sums = f.transform(eeg_sums);
-	std::cout << "after filter: " << nan_ratio(eeg_sums) << std::endl;
-
 
 // =================== PULSE FEATURES =================================
 

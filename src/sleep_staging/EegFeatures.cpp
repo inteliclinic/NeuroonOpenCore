@@ -10,9 +10,9 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
-#include <signal_utils.h>
 #include <exception>
 #include <functional>
+#include "../dlib_utils.h"
 
 EegFeatures::EegFeatures() {
 	// TODO Auto-generated constructor stub
@@ -27,7 +27,16 @@ dlib::matrix<double> EegFeatures::sum_in_band(const Spectrogram& s, double low, 
   return dlib::sum_cols(s.get_band(low, high));
 }
 
-dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, std::vector<std::pair<double, double>> bands) {
+std::vector<std::pair<double, double>> EegFeatures::create_bands(const std::vector<double>& borders) {
+	std::vector<std::pair<double,double>> result(borders.size() - 1);
+	for (std::size_t i = 0; i != borders.size() - 1; ++i) {
+		result[i] = std::pair<double, double>(borders[i], borders[i+1]);
+	}
+	return result;
+}
+
+
+dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, const std::vector<std::pair<double, double>> &bands) {
 	dlib::matrix<double> result(s.size(), bands.size());
 
 	for (std::size_t i = 0; i != bands.size(); ++i) {
@@ -37,6 +46,10 @@ dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, std::vector
 	return result;
 }
 
+dlib::matrix<double> EegFeatures::sum_by_borders(const Spectrogram& s, const std::vector<double> &borders) {
+	auto bands = create_bands(borders);
+	return sum_in_bands(s, bands);
+}
 
 //centered, inserts NaNs in the beginning and in the end
 dlib::matrix<double> EegFeatures::rolling_mean(const dlib::matrix<double> &signal, int window_size) {

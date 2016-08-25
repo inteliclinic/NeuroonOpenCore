@@ -7,10 +7,10 @@
 #include <iostream>
 #include <dlib/matrix.h>
 #include <complex>
+#include "../../src/dlib_utils.h"
 #include "../../src/SimpleSpectrogramFilter.h"
 
 #include "Spectrogram.h"
-#include "signal_utils.h"
 #include "logger.h"
 
 ONCE_PER_APP_INITIALIZE_LOGGER
