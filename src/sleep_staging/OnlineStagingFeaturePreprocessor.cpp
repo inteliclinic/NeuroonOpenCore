@@ -19,7 +19,10 @@ OnlineStagingFeaturePreprocessor::OnlineStagingFeaturePreprocessor()
 {
 	//TODO: hardcode the stds for the features
 	dlib::set_all_elements(m_feature_stds, 1);
-
+	m_feature_stds(0,0) = 0.34;
+	m_feature_stds(0,1) = 0.26;
+	m_feature_stds(0,2) = 0.27;
+	m_feature_stds(0,3) = 0.21;
 }
 
 dlib::matrix<double> OnlineStagingFeaturePreprocessor::compute_eeg_features(const dlib::matrix<double>& eeg_signal) {
@@ -61,7 +64,7 @@ void OnlineStagingFeaturePreprocessor::online_standardize_in_place(dlib::matrix<
 	m_mean.consume(input);
 	input = input - m_mean.value();
 
-	input = dlib::pointwise_multiply(input, m_feature_stds);
+	input = dlib::pointwise_multiply(input, 1 / m_feature_stds);
 }
 
 dlib::matrix<double> OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,

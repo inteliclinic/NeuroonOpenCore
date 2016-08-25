@@ -17,7 +17,7 @@ class ExpandingMean {
 	int m_count;
 public:
 	ExpandingMean(int rows, int cols);
-	void consume(dlib::matrix<double> x);
+	void consume(const dlib::matrix<double> &x);
 	dlib::matrix<double> value() const;
 };
 
@@ -27,7 +27,7 @@ ExpandingMean::ExpandingMean(int rows, int cols) {
 	m_count = 0;
 }
 
-void ExpandingMean::consume(dlib::matrix<double> x) {
+void ExpandingMean::consume(const dlib::matrix<double> &x) {
 	if (!dlib::is_finite(x)) {
 		return;
 	}

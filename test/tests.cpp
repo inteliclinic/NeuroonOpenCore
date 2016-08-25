@@ -20,6 +20,7 @@
 #include "multilayer_perceptron_test.h"
 #include "mlp_classifier_test.h"
 #include "expanding_mean_test.h"
+#include "expanding_std_test.h"
 #include "online_viterbi_search_test.h"
 #include "logger_test.h"
 #include "offline_staging_classifier_test.h"

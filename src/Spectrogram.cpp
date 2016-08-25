@@ -46,7 +46,7 @@ int smaller_power_of_2(int x) {
 Spectrogram::Spectrogram(const dlib::matrix<double>& signal, double sampling_frequency,
 			int window, int noverlap) {
 
-	LOG(INFO) << "computing spectrogram from size: (" << signal.nr() << "," << signal.nc() <<"), window: " << window
+	LOG(DEBUG) << "computing spectrogram from size: (" << signal.nr() << "," << signal.nc() <<"), window: " << window
 			  << ", noverlap: " << noverlap;
 
 	if (signal.nc() != 1) {
