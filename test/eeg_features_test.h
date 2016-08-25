@@ -152,10 +152,20 @@ TEST_F(EegFeaturesTest, basic_n_max_to_median_test) {
 	input_data(2, 0) = 2;
 
 	auto result = EegFeatures::n_max_to_median(input_data, 3);
-	//std::cout << result;
-
-
+	std::cout << result;
 }
+
+TEST_F(EegFeaturesTest, basic_n_max_to_median_test2) {
+	dlib::matrix<double> input_data(1, 7);
+	dlib::set_all_elements(input_data, 0.1);
+	input_data(0, 4) = 1;
+	input_data(0, 5) = 2;
+	input_data(0, 6) = 3;
+
+	auto result = EegFeatures::n_max_to_median(input_data, 1);
+	EXPECT_EQ(result, 30);
+}
+
 
 TEST_F(EegFeaturesTest, basic_standardize_test) {
 	const int SIZE = 10;

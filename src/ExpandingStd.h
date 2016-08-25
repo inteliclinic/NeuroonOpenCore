@@ -55,7 +55,7 @@ dlib::matrix<double> ExpandingStd::value() const {
 
 	dlib::matrix<double> m2 = (1. / m_count) * m_sum_of_squares;
 	dlib::matrix<double> variance = m2 - m1_squared;
-	LOG(INFO) << "variance: "<< variance;
+	LOG(DEBUG) << "variance: "<< variance;
 	dlib::matrix<double> std = dlib::sqrt(variance);
 	return std;
 }

@@ -178,5 +178,7 @@ dlib::matrix<double> softmax(const dlib::matrix<double>& input) {
 
 dlib::matrix<double> standardize(const dlib::matrix<double> &input, const dlib::matrix<double> &means,
 								 const dlib::matrix<double> &stds) {
+
+	//TODO: test it
 	return dlib::pointwise_multiply((input - means), 1. / stds);
 }
