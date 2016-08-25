@@ -14,7 +14,7 @@
 
 class OnlineStagingFeaturePreprocessor {
 
-    const int NUMBER_OF_FEATURES = 5;
+    const int NUMBER_OF_FEATURES = 6;
 
     dlib::matrix<double> compute_eeg_features(const dlib::matrix<double>& eeg_signal);
     dlib::matrix<double> compute_ir_features(const dlib::matrix<double>& ir_signal);
@@ -53,7 +53,8 @@ public:
 	OnlineStagingFeaturePreprocessor();
 
 	void reset();
-	dlib::matrix<double> transform(const dlib::matrix<double>& eeg_signal, const dlib::matrix<double>& ir_signal);
+	dlib::matrix<double> transform(const dlib::matrix<double>& eeg_signal, const dlib::matrix<double>& ir_signal,
+								   double seconds_since_start);
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINESTAGINGFEATUREPREPROCESSOR_H_ */

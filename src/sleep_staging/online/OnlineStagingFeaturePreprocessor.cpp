@@ -83,7 +83,8 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(con
 }
 
 dlib::matrix<double> OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,
-																 const dlib::matrix<double>& ir_signal) {
+																 const dlib::matrix<double>& ir_signal,
+																 double seconds_since_start) {
 	dlib::matrix<double> result(1, NUMBER_OF_FEATURES);
 
 	auto eeg_features = m_eeg_features.transform(eeg_signal);
@@ -92,6 +93,10 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::transform(const dlib::mat
 	dlib::set_colm(result, dlib::range(0, eeg_features.nc() - 1)) = eeg_features;
 	dlib::set_colm(result, dlib::range(eeg_features.nc(), eeg_features.nc() + ir_features.nc() - 1)) = ir_features;
 
+	//ugly hack that makes it exactly as in scipy's spectrogram
+	double beginning_feature = (seconds_since_start <= 45 * 60) ? 1 : 0;
+
+	dlib::set_colm(result, NUMBER_OF_FEATURES-1) = beginning_feature;
 	//TODO: possibly add a rolling mean and a delay
 	return result;
 }

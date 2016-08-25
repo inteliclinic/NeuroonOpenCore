@@ -11,7 +11,8 @@ TEST(OnlineStagingFeaturePreprocessorTest, basic_sizes_test) {
 
 	dlib::matrix<double> eeg_signal = dlib::zeros_matrix<double>(2048 * 5, 1);
 	dlib::matrix<double> ir_signal = dlib::zeros_matrix<double>(2048, 1);
-	pre.transform(eeg_signal, ir_signal);
+	double seconds_since_start = 0;
+	pre.transform(eeg_signal, ir_signal, seconds_since_start);
 }
 
 TEST(OnlineStagingFeaturePreprocessorTest, functional_test) {
@@ -42,7 +43,8 @@ TEST(OnlineStagingFeaturePreprocessorTest, functional_test) {
 
 		LOG(DEBUG) << "eeg index: " << eeg_index << "eeg.shape = [" << eeg_window.nr() << "," << eeg_window.nc() << "]";
 
-		dlib::matrix<double> processed_sample = pre.transform(eeg_window, ir_window);
+		double seconds_since_start = eeg_index * 0.008;
+		dlib::matrix<double> processed_sample = pre.transform(eeg_window, ir_window, seconds_since_start);
 		out << dlib::csv << processed_sample;
 		LOG(DEBUG) << processed_sample;
 
