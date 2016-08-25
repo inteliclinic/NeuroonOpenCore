@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/sleep_staging/OfflineStagingClassifier.h"
+#include "OfflineStagingClassifier.h"
 
 TEST(StagingClassifierTest, create_the_classifier_test) {
 	OfflineStagingClassifier* clf = OfflineStagingClassifier::get_instance();
