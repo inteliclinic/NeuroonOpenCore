@@ -9,6 +9,7 @@
 #define SRC_EXPANDINGMEAN_H_
 
 #include <stdexcept>
+#include <dlib/matrix.h>
 
 template <typename T>
 class ExpandingMean {
@@ -28,6 +29,20 @@ ExpandingMean<T>::ExpandingMean() {
 
 template <typename T>
 void ExpandingMean<T>::consume(T x) {
+	if (m_count == 0) {
+		m_sum = x;
+	} else {
+		m_sum = m_sum + x;
+	}
+	++m_count;
+}
+
+template <>
+void ExpandingMean<dlib::matrix<double>>::consume(dlib::matrix<double> x) {
+	if (!dlib::is_finite(x)) {
+		return;
+	}
+
 	if (m_count == 0) {
 		m_sum = x;
 	} else {

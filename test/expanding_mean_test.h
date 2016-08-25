@@ -53,4 +53,8 @@ TEST(ExpandingMeanTest, ignores_matrix_with_nans) {
 	EXPECT_EQ(em.value(), mat);
 	em.consume(mat);
 	EXPECT_EQ(em.value(), mat);
+	em.consume(4 * mat);
+	EXPECT_EQ(em.value(), 2 * mat);
+	em.consume(nan_row);
+	EXPECT_EQ(em.value(), 2 * mat);
 }
