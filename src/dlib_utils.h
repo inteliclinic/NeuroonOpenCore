@@ -34,4 +34,8 @@ dlib::matrix<double> logistic(const dlib::matrix<double>& input);
 
 dlib::matrix<double> softmax(const dlib::matrix<double>& input);
 
+dlib::matrix<double> standardize(const dlib::matrix<double> &input, const dlib::matrix<double> &means,
+								 const dlib::matrix<double> &stds);
+
+
 #endif
