@@ -67,11 +67,11 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(con
 	Spectrogram ir_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, overlap);
 	dlib::matrix<double> pulse_band = ir_spectrogram.get_band(0.6, 1.5502);
 
-	const double CRITICAL_PULSE_SPECTROGRAM_ENTROPY = 4.1;
+	const double CRITICAL_PULSE_SPECTROGRAM_ENTROPY = 4.3;
 	EntropyFilter pulse_filter(CRITICAL_PULSE_SPECTROGRAM_ENTROPY);
 	pulse_band = pulse_filter.transform(pulse_band);
 
-	const int N_MAX_TO_MEDIAN_N = 1;
+	const int N_MAX_TO_MEDIAN_N = 3;
 	dlib::matrix<double> result = EegFeatures::n_max_to_median(pulse_band, N_MAX_TO_MEDIAN_N);
 
 	m_mean.consume(result);
