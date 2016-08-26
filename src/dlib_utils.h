@@ -21,16 +21,18 @@ dlib::matrix<double> normalize(const dlib::matrix<double> &signal);
 
 double entropy(const dlib::matrix<double> &signal);
 
-dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input);
-
-std::vector<int> dlib_matrix_to_vector(const dlib::matrix<int> &input);
-
 dlib::matrix<double> load_matrix(const std::string& filename);
 
 dlib::matrix<double> load_matrix(std::istream &input);
 
 template <typename T>
 void dump_matrix(const dlib::matrix<T> &data, const std::string &filename);
+
+template <typename T>
+dlib::matrix<T> vector_to_dlib_matrix(const std::vector<T> &input);
+
+std::vector<int> dlib_matrix_to_vector(const dlib::matrix<int> &input);
+
 
 dlib::matrix<double> logistic(const dlib::matrix<double>& input);
 

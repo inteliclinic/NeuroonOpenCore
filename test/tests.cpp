@@ -32,6 +32,7 @@
 
 #include "eeg_features_functional_test.h"
 #include "staging_functional_test.h"
+#include "online_staging_functional_test.h"
 
 #include "logger.h"
 

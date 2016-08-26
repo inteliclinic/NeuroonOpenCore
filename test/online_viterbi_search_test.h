@@ -12,7 +12,7 @@ void print_sequence(const std::vector<int> seq) {
 }
 
 TEST(OnLineViterbiSearchTest, basic_test1) {
-	std::vector<int> states({0, -1, -3, -4});
+	std::vector<int> states({0, 1, 2, 3});
 	dlib::matrix<double> start_p(states.size(), 1);
 	dlib::set_all_elements(start_p, 0);
 	start_p(1, 0) = 1;

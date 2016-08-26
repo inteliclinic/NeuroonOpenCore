@@ -121,14 +121,6 @@ double entropy(const dlib::matrix<double> &signal) {
 	return result;
 }
 
-dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input) {
-	dlib::matrix<double> result(input.size(), 1);
-	for (std::size_t i = 0; i != input.size(); ++i) {
-		result(i, 0) = input[i];
-	}
-	return result;
-}
-
 std::vector<int> dlib_matrix_to_vector(const dlib::matrix<int> &input) {
 	assert(input.nc() == 1);
 
@@ -156,6 +148,17 @@ dlib::matrix<double> load_matrix(std::istream &input) {
 	input >> result;
 	return result;
 }
+
+template <typename T>
+dlib::matrix<T> vector_to_dlib_matrix(const std::vector<T> &input) {
+	dlib::matrix<T> result(input.size(), 1);
+	for (std::size_t i = 0; i != input.size(); ++i) {
+		result(i, 0) = input[i];
+	}
+	return result;
+}
+template dlib::matrix<double> vector_to_dlib_matrix<double>(const std::vector<double> &input);
+template dlib::matrix<int> vector_to_dlib_matrix<int>(const std::vector<int> &input);
 
 template <typename T>
 void dump_matrix(const dlib::matrix<T> &data, const std::string &filename) {

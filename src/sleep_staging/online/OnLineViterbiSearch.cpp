@@ -8,7 +8,7 @@
 #include "OnLineViterbiSearch.h"
 #include <algorithm>
 #include <cassert>
-
+#include "logger.h"
 OnLineViterbiSearch::OnLineViterbiSearch(const std::vector<int>& states, const dlib::matrix<double>& start_probabilities,
 				     	 	 	 	 	 const dlib::matrix<double>& final_probabilities, const dlib::matrix<double> transition_matrix)
 : m_states(states),
@@ -37,6 +37,9 @@ void OnLineViterbiSearch::print_path_matrix() const {
 }
 
 void OnLineViterbiSearch::step(const dlib::matrix<double>& emission_probabilities) {
+
+	assert(dlib::is_finite(emission_probabilities));
+	LOG(INFO) << emission_probabilities;
 	appendNewStep();
 
 	assert(dlib::sum(emission_probabilities) != 0);
@@ -98,7 +101,7 @@ std::vector<int> OnLineViterbiSearch::best_sequence() const {
 	int state = most_probable_final();
 	int step = m_current_step;
 	while (state != INVALID_STATE_INDEX) {
-		best_sequence.push_back(state);
+		best_sequence.push_back(m_states[state]);
 		state = m_paths[step][state].previous_state;
 		--step;
 	}

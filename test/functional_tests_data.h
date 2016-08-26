@@ -42,5 +42,11 @@ dlib::matrix<double> get_python_features() {
 	return features;
 }
 
+dlib::matrix<double> get_online_python_features() {
+	std::string TEST_FEATURES_FILENAME("../test/test_data/TG_190616_online_features.csv");
+	dlib::matrix<double> features = load_matrix(TEST_FEATURES_FILENAME);
+	return features;
+}
+
 
 #endif

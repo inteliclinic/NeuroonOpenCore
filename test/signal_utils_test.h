@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "../src/dlib_utils.h"
-
+#include <iostream>
 //TODO: write tests for all functions in singal_utils header
 
 
