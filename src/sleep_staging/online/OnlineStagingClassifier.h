@@ -8,13 +8,25 @@
 #ifndef SRC_SLEEP_STAGING_ONLINESTAGINGCLASSIFIER_H_
 #define SRC_SLEEP_STAGING_ONLINESTAGINGCLASSIFIER_H_
 #include <vector>
+
+#include "OnlineStagingFeaturePreprocessor.h"
+
+class MlpClassifier;
+class OnLineViterbiSearch;
+
 class OnlineStagingClassifier {
+
+	MlpClassifier* m_mlp = nullptr;
+	OnLineViterbiSearch* m_viterbi = nullptr;
+
+	void initialize_mlp();
+	void initialize_viterbi(const std::vector<int> classes);
+
 public:
 	OnlineStagingClassifier();
 	~OnlineStagingClassifier();
 
-	void process_input(double NeuroonSignals);
-	std::vector<int> get_results();
+	std::vector<int> predict(const dlib::matrix<double> &features);
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINESTAGINGCLASSIFIER_H_ */

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include "dlib_utils.h"
 
 double percentile (dlib::matrix<double> signal, double percentile) {
@@ -128,6 +129,15 @@ dlib::matrix<double> vector_to_dlib_matrix(const std::vector<double> &input) {
 	return result;
 }
 
+std::vector<int> dlib_matrix_to_vector(const dlib::matrix<int> &input) {
+	assert(input.nc() == 1);
+
+	std::vector<int> result(input.nr());
+	for (int i = 0; i != result.size(); ++i) {
+		result[i] = input(i, 0);
+	}
+	return result;
+}
 
 
 dlib::matrix<double> load_matrix(const std::string& filename) {

@@ -1,3 +1,5 @@
+#include "ExpandingMean.h"
+#include <dlib/matrix.h>
 
 ExpandingMean::ExpandingMean(int rows, int cols) {
 	m_sum = dlib::matrix<double>(rows, cols);

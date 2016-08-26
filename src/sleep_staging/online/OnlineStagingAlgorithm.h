@@ -9,8 +9,10 @@
 #define SRC_SLEEP_STAGING_ONLINESTAGINGALGORITHM_H_
 
 #include "StreamingAlgorithm.h"
+#include "OnlineStagingFeaturePreprocessor.h"
 
 class OnlineStagingAlgorithm {
+
 public:
 	OnlineStagingAlgorithm();
 	virtual ~OnlineStagingAlgorithm();
