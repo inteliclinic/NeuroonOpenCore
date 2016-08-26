@@ -14,10 +14,10 @@
 OnlineStagingClassifier::OnlineStagingClassifier() {
 
 	dlib::matrix<int> c = dlib::matrix_cast<int>(load_matrix(ONLINE_MODEL_RES_DIRECTORY "classes.csv"));
-	std::vector<int> classes = dlib_matrix_to_vector(c);
+	m_classes = dlib_matrix_to_vector(c);
 
 	initialize_mlp();
-	initialize_viterbi(classes);
+	initialize_viterbi(m_classes);
 }
 
 void OnlineStagingClassifier::initialize_mlp() {
@@ -64,3 +64,12 @@ OnlineStagingClassifier::~OnlineStagingClassifier() {
 	delete m_viterbi;
 }
 
+std::vector<int> OnlineStagingClassifier::stop() {
+	m_viterbi->stop();
+	return m_viterbi->best_sequence();
+}
+
+void OnlineStagingClassifier::reset() {
+	delete m_viterbi;
+	initialize_viterbi(m_classes);
+}

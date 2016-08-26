@@ -18,6 +18,7 @@ class OnlineStagingClassifier {
 
 	MlpClassifier* m_mlp = nullptr;
 	OnLineViterbiSearch* m_viterbi = nullptr;
+	std::vector<int> m_classes;
 
 	void initialize_mlp();
 	void initialize_viterbi(const std::vector<int> classes);
@@ -27,6 +28,8 @@ public:
 	~OnlineStagingClassifier();
 
 	std::vector<int> predict(const dlib::matrix<double> &features);
+	std::vector<int> stop();
+	void reset();
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINESTAGINGCLASSIFIER_H_ */
