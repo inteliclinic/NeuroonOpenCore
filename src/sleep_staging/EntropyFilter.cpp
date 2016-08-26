@@ -7,7 +7,7 @@
 
 #include "EntropyFilter.h"
 #include <cmath>
-#include "../dlib_utils.h"
+#include "dlib_utils.h"
 
 EntropyFilter::EntropyFilter(double critical_value)
 : m_critical_value(critical_value)

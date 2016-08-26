@@ -12,7 +12,7 @@
 #include <iostream>
 #include <exception>
 #include <functional>
-#include "../dlib_utils.h"
+#include "dlib_utils.h"
 
 EegFeatures::EegFeatures() {
 	// TODO Auto-generated constructor stub

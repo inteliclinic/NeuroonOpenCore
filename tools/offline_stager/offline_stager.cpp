@@ -1,7 +1,7 @@
 #include <iostream>
 #include <dlib/matrix.h>
 #include <cassert>
-#include "../../src/dlib_utils.h"
+#include "dlib_utils.h"
 #include "OfflineStagingClassifier.h"
 #include "StagingPreprocessor.h"
 #include "logger.h"

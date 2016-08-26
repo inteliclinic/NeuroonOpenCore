@@ -8,7 +8,7 @@
 #include "AmplitudeFilter.h"
 #include <cmath>
 #include <vector>
-#include "../dlib_utils.h"
+#include "dlib_utils.h"
 
 AmplitudeFilter::AmplitudeFilter(double critical_value, int column)
 	: m_critical_value(critical_value)

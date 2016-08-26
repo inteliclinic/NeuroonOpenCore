@@ -12,7 +12,7 @@
 #include <sstream>
 #include "OfflineStagingClassifier.h"
 
-#include "../dlib_utils.h"
+#include "dlib_utils.h"
 
 OfflineStagingClassifier* OfflineStagingClassifier::m_instance = nullptr;
 

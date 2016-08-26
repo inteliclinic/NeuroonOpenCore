@@ -2,7 +2,7 @@
 #define X_CUBE_NEURAL_NETWORK_H
 
 #include <vector>
-#include "../src/dlib_utils.h"
+#include "dlib_utils.h"
 
 
 /**

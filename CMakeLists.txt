@@ -33,6 +33,7 @@ add_library (neuroon-alg-core SHARED ${sources})
 
 target_include_directories (neuroon-alg-core PUBLIC src)
 target_include_directories (neuroon-alg-core PUBLIC src/util)
+target_include_directories (neuroon-alg-core PUBLIC src/numerics)
 target_include_directories (neuroon-alg-core PUBLIC src/sleep_staging)
 target_include_directories (neuroon-alg-core PUBLIC src/sleep_staging/offline)
 target_include_directories (neuroon-alg-core PUBLIC src/sleep_staging/online)

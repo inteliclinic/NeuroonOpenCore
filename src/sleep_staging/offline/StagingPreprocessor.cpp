@@ -13,7 +13,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
-#include "../dlib_utils.h"
+#include "dlib_utils.h"
 
 #include "EntropyFilter.h"
 StagingPreprocessor::StagingPreprocessor() {

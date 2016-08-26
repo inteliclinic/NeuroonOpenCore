@@ -7,8 +7,8 @@
 #include <iostream>
 #include <dlib/matrix.h>
 #include <complex>
-#include "../../src/dlib_utils.h"
-#include "../../src/SimpleSpectrogramFilter.h"
+#include "dlib_utils.h"
+#include "SimpleSpectrogramFilter.h"
 
 #include "Spectrogram.h"
 #include "logger.h"
