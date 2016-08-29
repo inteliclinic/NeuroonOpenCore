@@ -6,7 +6,6 @@
 
 #include "neuroonsignals_and_streamalgo_tests.h"
 #include "streaming_pipeline_and_csvsimulator_tests.h"
-#include "streaming_pipeline_tests.h"
 #include "signal_utils_test.h"
 #include "spectrogram_test.h"
 

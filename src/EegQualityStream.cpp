@@ -1,5 +1,5 @@
+// #include <random>
 #include "EegQualityStream.h"
-#include <random>
 
 void EegQualityStream::process_input(const NeuroonSignals & ns){
   // TODO: now is dummy implementation

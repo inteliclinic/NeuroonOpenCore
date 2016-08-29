@@ -125,7 +125,7 @@ void NeuroonSignals::consume(AccelLedsTempFrame & frame){
       (double)frame.accel_axes.x,
       (double)frame.accel_axes.y,
       (double)frame.accel_axes.z});
-  temperature_signal.push_back((double)frame.temperature);
+  temperature_signal.push_back((double)BIGGER(frame.temperature[0],frame.temperature[1]));
 
 
   TOTAL_COUNT(_ir_led_signal) += ir_signal.size() - ir_old_sz;

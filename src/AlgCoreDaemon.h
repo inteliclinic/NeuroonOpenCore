@@ -10,7 +10,7 @@
 #include "NeuroonSignals.h"
 
 // daemon managing signal processing and algorithm execution
-class AlgCoreDaemon : public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
+class AlgCoreDaemon : public IDataSink<NeuroonFrameBytes>, public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
 
 private:
 
@@ -44,6 +44,7 @@ public:
   void end_processing();
 
   // Receive a frame of signal
+  void consume(NeuroonFrameBytes& frame_stream) override;
   void consume(EegFrame& frame) override;
   void consume(AccelLedsTempFrame& frame) override;
 

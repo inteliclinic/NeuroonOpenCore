@@ -44,7 +44,6 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
   virtual void SetUp(){
     eeg_source_sample1 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv1));
     eeg_source_sample2 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv2));
-
 	}
 
 
@@ -106,7 +105,8 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsAccelLedsTempFrameConsume
     ef.ir_led = i;
     ef.red_led = i+1;
     ef.accel_axes = {i+2, i+3, i+4};
-    ef.temperature = i+5;
+    ef.temperature[0] = 11;
+    ef.temperature[1] = 12;
 
     auto ts = ef.timestamp;
     ns.consume(ef);
@@ -123,7 +123,7 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsAccelLedsTempFrameConsume
       EXPECT_EQ(i+2, ns.accel_axes_signal()[i].x);
       EXPECT_EQ(i+3, ns.accel_axes_signal()[i].y);
       EXPECT_EQ(i+4, ns.accel_axes_signal()[i].z);
-      EXPECT_EQ(i+5, ns.temperature_signal()[i]);
+      EXPECT_EQ(12, ns.temperature_signal()[i]);
   }
 
 }

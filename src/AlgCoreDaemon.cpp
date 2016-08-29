@@ -34,6 +34,25 @@ void AlgCoreDaemon::start_processing(){
 }
 
 
+void AlgCoreDaemon::consume (NeuroonFrameBytes& frame_stream) {
+  if (!_processing_in_progress) {
+    LOG(WARNING) << "Unintended behaviour: Consuming data when processing flag turned off.";
+  }
+  switch(frame_stream.source_stream){
+  case NeuroonFrameBytes::SourceStream::EEG:{
+    auto f = EegFrame::from_bytes_array(frame_stream.bytes, frame_stream.size);
+    consume(f);
+    break;
+  }
+  case NeuroonFrameBytes::SourceStream::ALT:{
+    auto f = AccelLedsTempFrame::from_bytes_array(frame_stream.bytes, frame_stream.size);
+    consume(f);
+    break;
+  }
+  }
+}
+
+
 void AlgCoreDaemon::consume (AccelLedsTempFrame& frame) {
   if (!_processing_in_progress) {
     LOG(WARNING) << "Unintended behaviour: Consuming data when processing flag turned off.";
