@@ -10,7 +10,7 @@
 
 #define ELPP_DEFAULT_LOG_FILE "neuroon-alg-core.log"
 
-#include "easylogging++.h"
+#include "../3rd_party/easylogging/easylogging++.h"
 
 
 /*

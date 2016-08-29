@@ -1,67 +1,71 @@
 #ifndef __CSV_SIGNAL_SIMULATOR__
 #define __CSV_SIGNAL_SIMULATOR__
 
-#include "CommonTypedefs.h"
+#include "CommonTypes.h"
+#include "logger.h"
+#include "DataSink.h"
+#include "CsvUtils.h"
+#include "FrameStreamPipe.h"
+
 #include <vector>
 #include <set>
 #include <map>
-#include "DataSink.h"
-#include "CsvUtils.h"
-// #include "NeuroonSignals.h"
 
-// class providing access to vector of timestamped values
-// with indication on frame generation frequency
-// and spec of the signal.
+class CsvEegFramesSource : public IPullBasedFrameSource<EegFrame>{
 
-class CsvSignalSource{
+  std::vector<EegFrame> _frames = {};
+  std::size_t _frame_size;
 
-  SignalSpec _spec;
-  std::vector<int> _signal;
-  int _ms_per_frame;
-
-  void check_and_parse_csv(std::string);
+  void _check_and_parse_csv(std::string path);
 public:
 
-  // path should point to csv value with timestamped values
-  // and header containing fields: "timestamp" and "signal"
-  CsvSignalSource(std::string path, SignalSpec spec, int ms_per_frame);
+  CsvEegFramesSource (std::string path, std::size_t frame_size = EegFrame::Length);
+  CsvEegFramesSource (CsvEegFramesSource && other) :
+    _frames(std::move(other._frames)),
+    _frame_size(other._frame_size) {}
+  // ~CsvEegFramesSource () {}
 
-  CsvSignalSource(const CsvSignalSource & rhs) :
-    _spec(SignalSpec(rhs._spec)), _signal(std::vector<int>(rhs._signal)){}
+  std::vector<EegFrame> & get_frames () override { return _frames; }
+};
 
-  CsvSignalSource(CsvSignalSource && rhs) :
-    _spec(std::move(rhs._spec)), _signal(std::move(rhs._signal)){}
 
-  SignalSpec spec() const { return _spec;}
-  const std::vector<int> & signal() const { return _signal;}
-  int ms_per_frame() const { return _ms_per_frame; }
+class CsvAccelLedsTempFrameSource : public IPullBasedFrameSource<AccelLedsTempFrame>{
 
-  // void init_from_
-
-  static CsvSignalSource eeg_signal_source(std::string path, int ms_per_frame=60);
-  static CsvSignalSource irled_signal_source(std::string path, int ms_per_frame=150);
 };
 
 
 class CsvSignalSimulator{
 
+
+  ullong _starting_timestamp = 0;
   ullong _time_passed = 0;
-  std::map<CsvSignalSource*, std::pair<int, std::size_t>> _signal_bookmarks = {};
+
+  std::vector<std::tuple<uint, std::unique_ptr<IFrameStreamPipe>>> _pipes = {};
+
+  void _set_timestamp_to_now();
+
 
 public:
 
-  std::vector<CsvSignalSource*> sources = {};
-  std::vector<SignalFrameDataSink*> sinks = {};
+  CsvSignalSimulator();
+  CsvSignalSimulator(ullong starting_timestamp) :
+    _starting_timestamp(starting_timestamp) {}
 
 
-  void reset();
+  CsvSignalSimulator(CsvSignalSimulator && other) :
+    _starting_timestamp(other._starting_timestamp),
+    _time_passed(other._time_passed),
+    _pipes(std::move(other._pipes)) {}
+
+
+  CsvSignalSimulator(const CsvSignalSimulator &) = delete;
+  CsvSignalSimulator& operator=(const CsvSignalSimulator &) = delete;
+
+  void add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
+                          uint pipe_frame_emission_interval_ms);
+
   void pass_time(ullong ms_to_simulate,
                  double time_passing_modifier=1.0);
-
-
-
-
-
 
 };
 

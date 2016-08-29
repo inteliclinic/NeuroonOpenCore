@@ -1,83 +1,100 @@
 #ifndef __NEUROON_SIGNALS__
 #define __NEUROON_SIGNALS__
 
-#include "CommonTypedefs.h"
+#include "CommonTypes.h"
 #include <vector>
 #include <map>
+#include <set>
+#include <memory>
 #include <functional>
 #include "VectorView.h"
 #include "DataSink.h"
+#include "NeuroonSignalFrames.h"
 #include "SignalTypes.h"
 
-class NeuroonSignals : public DataSink<SignalFrame *> {
-
-  static const std::map<SignalOrigin, SignalSpec> _signal_specs;
-  std::function<void (std::vector<double>&, const VectorView<int>&, ullong,ullong,ullong)> _filling_hole_function = nullptr;
-
-  std::map<SignalOrigin, std::vector<double>> _signals = {
-    {SignalOrigin::EEG,           {}},
-    {SignalOrigin::IR_LED,        {}},
-    {SignalOrigin::ACCELEROMETER, {}},
-    {SignalOrigin::TEMPERATURE,   {}}
-  };
-
-  std::map<SignalOrigin, ullong> _last_timestamps = {
-    {SignalOrigin::EEG,           0},
-    {SignalOrigin::IR_LED,        0},
-    {SignalOrigin::ACCELEROMETER, 0},
-    {SignalOrigin::TEMPERATURE,   0}
-  };
-
-  // default filling function
-  void fill_with_nans(std::vector<double> & signal,
-                      const VectorView<int> &new_data,
-                      ullong begin_hole,
-                      ullong end_hole,
-                      ullong ms_per_sample);
+class NeuroonSignals : public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
 public:
 
-  NeuroonSignals() : DataSink<SignalFrame *>() {}
 
-  // sets hole filling function,
-  // the function should accept index of last samples before the hole,
-  // vector with signal, till the beginning of the hole
-  // vectorview  of signal just aquired (marking the end of the hole)
-  // timestamps of the last sample befor the hole
-  // timestamps of newly aquired samples (end of the hole),
-  // ms_per_sample parameter of the signal
-  // basing on that it should fill the hole in the signal passed as first
-  // parameter
+  // ----------- lost frame signal hole filling
+
+  struct EegHoleFillingArgs{
+    std::vector<double> & gathered_eeg_signal;
+    std::size_t lost_frames_count;
+    const EegFrame * new_data;
+  };
+
+  struct AccelLedsTempHoleFillingArgs{
+    std::vector<Double3d> & gathered_accel_axes_signal;
+    std::vector<double> & gathered_ir_led_signal;
+    std::vector<double> & gathered_red_led_signal;
+    std::vector<double> & gathered_temperature_signal;
+    std::size_t lost_frames_count;
+    const AccelLedsTempFrame * new_data;
+  };
+
+private:
+
+  static const std::map<SignalOrigin, SignalSpec> _signal_specs;
+
+  std::tuple<std::size_t, ullong, std::vector<double>> _eeg_signal = {};
+  std::tuple<std::size_t, ullong, std::vector<double>> _ir_led_signal = {};
+  std::tuple<std::size_t, ullong, std::vector<double>> _red_led_signal = {};
+  std::tuple<std::size_t, ullong, std::vector<Double3d>> _accel_axes_signal = {};
+  std::tuple<std::size_t, ullong, std::vector<double>> _temperature_signal = {};
+
+
+  void _add_new_vector_data(SignalOrigin origin, llong timestamp, std::vector<double>& v);
+
+  // ----------- lost frame signal hole filling
+
+  std::function< void (EegHoleFillingArgs) >  _eeg_lost_frame_hole_filling_function = nullptr;
+  std::function< void (AccelLedsTempHoleFillingArgs) >  _accelledstemp_lost_frame_hole_filling_function = nullptr;
+
+  void _default_nan_filling_eeg(EegHoleFillingArgs);
+  void _default_nan_filling_accelledstemp(AccelLedsTempHoleFillingArgs);
+
+
+public:
+
+  NeuroonSignals() {}
+
+  // clears so far collected signals
+  void clear_data();
+
+  // sets lost frame hole filling function,
+  // for particular frame
+  // function should append only missing data to the given as reference vectors,
+  // new data will be appended automatically.
   // it defaults to filling it with std::nan
-  void set_hole_filling_function(std::function<void (std::vector<double>&, const VectorView<int>&, ullong,ullong,ullong)> f){
-    _filling_hole_function = f;
+  void set_lost_frame_hole_filling_function(std::function< void (EegHoleFillingArgs)> fun){
+    _eeg_lost_frame_hole_filling_function = fun;
+  }
+  void set_lost_frame_hole_filling_function(std::function<void (AccelLedsTempHoleFillingArgs)> fun){
+    _accelledstemp_lost_frame_hole_filling_function = fun;
   }
 
-  void consume(SignalFrame * frame) override{
-    receive_frame(frame);
-  }
-  // receive frame of data
-  void receive_frame(SignalFrame * frame);
+  // consumes a frame converting it to signal vectors
+  void consume(EegFrame& frame) override;
+  void consume(AccelLedsTempFrame& frame) override;
 
   // get vectors of received samples
-  const std::vector<double> & operator[](SignalOrigin ss) const {
-    return _signals.at(ss);
-  }
+  const std::vector<double> & eeg_signal() const;
+  const std::vector<double> & ir_led_signal() const;
+  const std::vector<double> & red_led_signal() const;
+  const std::vector<Double3d> & accel_axes_signal() const;
+  const std::vector<double> & temperature_signal() const;
 
-  ullong last_timestamp(SignalOrigin so) const {
-    return _last_timestamps.at(so);
-  }
+  // ask for last sample timestamp for each signal
+  ullong last_timestamp(SignalOrigin so) const;
 
   // get specification of signals by its source
-  static const SignalSpec & specs(SignalOrigin ss){
-    return _signal_specs.at(ss);
-  }
+  static const SignalSpec & specs(SignalOrigin so){return _signal_specs.at(so);}
 
   // This is intended to provide information about number of already received
   // samples. The implementation may change as we might want not to store all the samples
   // in the vectors.
-  std::size_t received_samples(SignalOrigin ss) const{
-    return _signals.at(ss).size();
-  }
+  std::size_t total_signal_samples(SignalOrigin ss) const;
 
 };
 
