@@ -17,7 +17,7 @@ void replace_to_nan(double to_replace, dlib::matrix<double> &m) {
 	}
 }
 
-TEST(OnlineStagingFunctionalTest, online_staging_functional_test) {
+TEST(OnlineStagingFunctionalTest, DISABLED_online_staging_functional_test) {
 	dlib::matrix<double> features = get_online_python_features();
 	replace_to_nan(4096, features);
 	EXPECT_TRUE(features.nr() > 100);

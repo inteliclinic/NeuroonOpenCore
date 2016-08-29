@@ -11,10 +11,11 @@
 #include <dlib/matrix.h>
 #include "ExpandingMean.h"
 #include "ExpandingStd.h"
+#include "RollingMean.h"
 
 class OnlineStagingFeaturePreprocessor {
 
-    const int NUMBER_OF_FEATURES = 6;
+    const int NUMBER_OF_FEATURES = 22;
 
     dlib::matrix<double> compute_eeg_features(const dlib::matrix<double>& eeg_signal);
     dlib::matrix<double> compute_ir_features(const dlib::matrix<double>& ir_signal);
@@ -25,8 +26,9 @@ class OnlineStagingFeaturePreprocessor {
 		const int EEG_FFT_WINDOW = 10 * 1024;
 		const int EEG_FFT_OVERLAP = (EEG_FFT_WINDOW * 3) / 4;
 
-    	const int NUMBER_OF_EEG_FEATURES = 4;
+    	const int NUMBER_OF_EEG_FEATURES = 20;
     	ExpandingMean m_mean;
+    	RollingMean m_rolling;
     	dlib::matrix<double> m_feature_stds;
     public:
     	EegSumsFeatures();
@@ -40,6 +42,8 @@ class OnlineStagingFeaturePreprocessor {
 
     	ExpandingMean m_mean;
     	ExpandingStd m_std;
+    	RollingMean m_rolling;
+
     public:
     	IrFeatures();
     	void reset();
@@ -50,6 +54,7 @@ class OnlineStagingFeaturePreprocessor {
     IrFeatures m_ir_features;
 
 public:
+    static const int ROLLING_WINDOW_SIZE = 3;
 	OnlineStagingFeaturePreprocessor();
 
 	void reset();

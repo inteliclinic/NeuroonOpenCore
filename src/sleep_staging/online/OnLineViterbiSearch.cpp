@@ -10,13 +10,17 @@
 #include <cassert>
 #include "logger.h"
 OnLineViterbiSearch::OnLineViterbiSearch(const std::vector<int>& states, const dlib::matrix<double>& start_probabilities,
-				     	 	 	 	 	 const dlib::matrix<double>& final_probabilities, const dlib::matrix<double> transition_matrix)
+				     	 	 	 	 	 const dlib::matrix<double>& final_probabilities, const dlib::matrix<double> transition_matrix,
+										 double viterbi_weight)
 : m_states(states),
   m_start_p(start_probabilities),
   m_final_p(final_probabilities),
-  m_transition_matrix(transition_matrix)
+  m_transition_matrix(transition_matrix),
+  m_viterbi_weight(viterbi_weight)
 {
 	m_current_step = -1;
+
+	m_transition_matrix = dlib::pow(m_transition_matrix, viterbi_weight);
 }
 
 void OnLineViterbiSearch::appendNewStep() {

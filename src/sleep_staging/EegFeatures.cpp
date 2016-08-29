@@ -23,8 +23,14 @@ EegFeatures::~EegFeatures() {
 	// TODO Auto-generated destructor stub
 }
 
-dlib::matrix<double> EegFeatures::sum_in_band(const Spectrogram& s, double low, double high) {
-  return dlib::sum_cols(s.get_band(low, high));
+dlib::matrix<double> EegFeatures::sum_in_band(const Spectrogram& s, double low, double high, bool normalized) {
+  dlib::matrix<double> band = s.get_band(low, high);
+  dlib::matrix<double> sum = dlib::sum_cols(band);
+
+  if (normalized) {
+	  sum = (1. / band.nc()) * sum;
+  }
+  return sum;
 }
 
 std::vector<std::pair<double, double>> EegFeatures::create_bands(const std::vector<double>& borders) {
@@ -36,19 +42,19 @@ std::vector<std::pair<double, double>> EegFeatures::create_bands(const std::vect
 }
 
 
-dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, const std::vector<std::pair<double, double>> &bands) {
+dlib::matrix<double> EegFeatures::sum_in_bands(const Spectrogram& s, const std::vector<std::pair<double, double>> &bands, bool normalized) {
 	dlib::matrix<double> result(s.size(), bands.size());
 
 	for (std::size_t i = 0; i != bands.size(); ++i) {
-		dlib::set_colm(result, i) = sum_in_band(s, bands[i].first, bands[i].second);
+		dlib::set_colm(result, i) = sum_in_band(s, bands[i].first, bands[i].second, normalized);
 	}
 
 	return result;
 }
 
-dlib::matrix<double> EegFeatures::sum_by_borders(const Spectrogram& s, const std::vector<double> &borders) {
+dlib::matrix<double> EegFeatures::sum_by_borders(const Spectrogram& s, const std::vector<double> &borders, bool normalized) {
 	auto bands = create_bands(borders);
-	return sum_in_bands(s, bands);
+	return sum_in_bands(s, bands, normalized);
 }
 
 //centered, inserts NaNs in the beginning and in the end

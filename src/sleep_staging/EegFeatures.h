@@ -23,9 +23,9 @@ public:
 	EegFeatures();
 	virtual ~EegFeatures();
 
-	static dlib::matrix<double> sum_in_band(const Spectrogram& s, double low, double high);
-	static dlib::matrix<double> sum_in_bands(const Spectrogram& s, const std::vector<std::pair<double, double>>& bands);
-	static dlib::matrix<double> sum_by_borders(const Spectrogram& s, const std::vector<double>& borders);
+	static dlib::matrix<double> sum_in_band(const Spectrogram& s, double low, double high, bool normalized = false);
+	static dlib::matrix<double> sum_in_bands(const Spectrogram& s, const std::vector<std::pair<double, double>>& bands, bool normalized = false);
+	static dlib::matrix<double> sum_by_borders(const Spectrogram& s, const std::vector<double>& borders, bool normalized = false);
 
 
 	static dlib::matrix<double> sparse_rolling(const dlib::matrix<double> &signal, int window_size,

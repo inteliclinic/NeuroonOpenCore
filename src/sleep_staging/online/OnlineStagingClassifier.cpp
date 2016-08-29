@@ -53,7 +53,8 @@ void OnlineStagingClassifier::initialize_viterbi(const std::vector<int> classes)
 	assert(transition_matrix.nc() != 0);
 	assert(transition_matrix.nr() != 0);
 
-	m_viterbi = new OnLineViterbiSearch(classes, start_p, final_p, transition_matrix);
+	const double VITERBI_WEIGHT = 0.5;
+	m_viterbi = new OnLineViterbiSearch(classes, start_p, final_p, transition_matrix, VITERBI_WEIGHT);
 }
 
 std::vector<int> OnlineStagingClassifier::predict(const dlib::matrix<double> &features) {

@@ -25,7 +25,7 @@
 #include "logger_test.h"
 #include "offline_staging_classifier_test.h"
 #include "online_staging_feature_preprocessor_test.h"
-
+#include "rolling_mean_test.h"
 /*
  * ====== FUNCTIONAL TESTS ===============
  */

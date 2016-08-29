@@ -33,7 +33,8 @@ struct PathElement {
 
 public:
 	OnLineViterbiSearch(const std::vector<int>& states, const dlib::matrix<double>& start_probabilities,
-				  const dlib::matrix<double>& final_probabilities, const dlib::matrix<double> transition_matrix
+				  const dlib::matrix<double>& final_probabilities, const dlib::matrix<double> transition_matrix,
+				  double viterbi_weight = 1
 				  );
 
 	void step(const dlib::matrix<double>& emission_probabilities);
@@ -50,6 +51,7 @@ private:
 
 	std::vector<std::vector<PathElement>> m_paths;
 	int m_current_step;
+	double m_viterbi_weight;
 
 	std::vector<int> m_states;
 	dlib::matrix<double> m_start_p;
