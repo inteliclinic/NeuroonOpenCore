@@ -9,7 +9,7 @@
 struct NeuroonFrameBytes{
   enum class SourceStream { EEG, ALT };
   enum class ByteOrder { BE, LE };
-  static const ByteOrder DefaultByteOrder = ByteOrder::BE;
+  static const ByteOrder DefaultByteOrder = ByteOrder::LE;
   SourceStream source_stream;
   char* bytes;
   std::size_t size;
@@ -29,7 +29,7 @@ struct EegFrame : public NeuroonSignalFrame{
   static const uint DefaultEmissionInterval_ms = 64;
   static const std::size_t Length = 8;
 
-  static EegFrame from_bytes_array(char*, std::size_t, NeuroonFrameBytes::ByteOrder bo=NeuroonFrameBytes::DefaultByteOrder);
+  static EegFrame from_bytes_array(const char*, std::size_t, NeuroonFrameBytes::ByteOrder bo=NeuroonFrameBytes::DefaultByteOrder);
   std::int16_t signal[Length];
 };
 
@@ -39,7 +39,7 @@ struct AccelAxes{
 
 struct AccelLedsTempFrame : public NeuroonSignalFrame{
   static const uint DefaultEmissionInterval_ms = 40;
-  static AccelLedsTempFrame from_bytes_array(char* bytes, std::size_t, NeuroonFrameBytes::ByteOrder bo=NeuroonFrameBytes::DefaultByteOrder);
+  static AccelLedsTempFrame from_bytes_array(const char* bytes, std::size_t, NeuroonFrameBytes::ByteOrder bo=NeuroonFrameBytes::DefaultByteOrder);
   std::int32_t ir_led;
   std::int32_t red_led;
   AccelAxes accel_axes;

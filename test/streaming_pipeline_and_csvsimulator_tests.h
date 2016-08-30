@@ -3,11 +3,6 @@
 #include "../src/DataSink.h"
 
 #include <gtest/gtest.h>
-/* #include <vector> */
-/* #include <memory> */
-/* #include <functional> */
-/* #include <numeric> */
-/* #include <algorithm> */
 #include <chrono>
 #include "../src/CsvSignalSimulator.h"
 #include "test_utils.h"
@@ -16,11 +11,7 @@
 #include "../src/FrameStreamPipe.h"
 
 #include <gtest/gtest.h>
-/* #include <vector> */
 #include <memory>
-/* #include <functional> */
-/* #include <numeric> */
-/* #include <algorithm> */
 #include <chrono>
 #include <thread>
 #include <sstream>
@@ -59,6 +50,52 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
 	}
 
 };
+
+
+TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
+
+  const std::size_t L = 20;
+  const unsigned char bytes []= {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xAB, 0x89, 0xCD, 0xEF,
+                                 0xEF, 0xCD, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xAB, 0x89};
+
+
+  // big endian
+  auto ef_be = EegFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::BE);
+  EXPECT_EQ(19088743,ef_be.timestamp);
+  std::int16_t expected_ef_be[] = {-30293, -21623,-12817,-4147, 291, 17767,-30293,-21623};
+
+  for(std::size_t i = 0; i < EegFrame::Length; i++){
+    EXPECT_EQ(expected_ef_be[i],ef_be.signal[i]);
+  }
+
+  auto af_be = AccelLedsTempFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::BE);
+  EXPECT_EQ(19088743,af_be.timestamp);
+  EXPECT_EQ(-1985238135, af_be.ir_led);
+  EXPECT_EQ(291, af_be.accel_axes.x);
+  EXPECT_EQ(17767, af_be.accel_axes.y);
+  EXPECT_EQ(-30293, af_be.accel_axes.z);
+  EXPECT_EQ(-85, af_be.temperature[0]);
+  EXPECT_EQ(-119, af_be.temperature[1]);
+
+
+  // little endian
+  auto ef_le = EegFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::LE);
+  EXPECT_EQ(1732584193,ef_le.timestamp);
+  std::int16_t expected_ef_le[] = {-21623,-30293,-4147,-12817, 8961, 26437,-21623,-30293};
+  for(std::size_t i = 0; i < EegFrame::Length; i++){
+    EXPECT_EQ(expected_ef_le[i],ef_le.signal[i]);
+  }
+
+  auto af_le = AccelLedsTempFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::LE);
+  EXPECT_EQ(1732584193,af_le.timestamp);
+  EXPECT_EQ(-1985238135, af_le.ir_led);
+  EXPECT_EQ(8961, af_le.accel_axes.x);
+  EXPECT_EQ(26437, af_le.accel_axes.y);
+  EXPECT_EQ(-21623, af_le.accel_axes.z);
+  EXPECT_EQ(-85, af_le.temperature[0]);
+  EXPECT_EQ(-119, af_le.temperature[1]);
+
+}
 
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
@@ -129,6 +166,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
   auto frame_length = EegFrame::Length;
 
   std::vector<EegFrame> v = {};
+
   auto sink = accumulate_to_vector_sink(v);
   auto sink_sp = std::make_shared<LambdaSignalFrameDataSink<EegFrame>>(sink);
 
@@ -248,71 +286,3 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSource_insta
   EXPECT_EQ(true,pipe_cheat_rp->is_exhausted());
   EXPECT_EQ(true,pipe2_cheat_rp->is_exhausted());
 }
-// TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_1020ms_normal_time) {
-
-//   auto sim = CsvSignalSimulator();
-//   sim.sources.push_back(eeg_source_sample1.get());
-//   sim.sinks.push_back(&_frames_to_vector_sink);
-//   auto start = std::chrono::high_resolution_clock::now();
-//   int ms_to_pass = 1020;
-//   sim.pass_time(ms_to_pass);
-//   // std::cout << "Time to pass: " << ms_to_pass << "ms.";
-//   auto end = std::chrono::high_resolution_clock::now();
-//   std::chrono::duration<double, std::milli> elapsed = end-start;
-//   // std::cout << " Passed: " << elapsed.count() << "ms.\n";
-
-//   ASSERT_TRUE(elapsed.count()>=ms_to_pass);
-
-//   std::vector<int> expected = {};
-//   for(int i=0;i<127;i++){ expected.push_back(i);}
-//   EXPECT_EQ_VECTORS(_sink_vector,expected);
-// }
-
-// TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_entire_instant) {
-
-//   auto sim = CsvSignalSimulator();
-//   sim.sources.push_back(eeg_source_sample1.get());
-//   sim.sinks.push_back(&_frames_to_vector_sink);
-//   sim.pass_time(0,0);
-
-//   std::vector<int> expected = {};
-//   for(int i=0;i<250;i++){ expected.push_back(i);}
-//   EXPECT_EQ_VECTORS(_sink_vector,expected);
-// }
-
-// TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_entire_double_source_instant) {
-
-//   auto sim = CsvSignalSimulator();
-//   sim.sources.push_back(eeg_source_sample2.get());
-//   sim.sources.push_back(irled_source_sample2.get());
-//   sim.sinks.push_back(&_frames_to_vector_split_sink);
-//   sim.pass_time(0,0);
-
-//   std::vector<int> expected = {};
-//   for(int i=0;i<500;i++){ expected.push_back(i);}
-//   // printf("eegsize: %zu irled_size %zu", _eeg_sink_vector.size(), _irled_sink_vector.size());
-//   EXPECT_EQ_VECTORS(expected,_eeg_sink_vector);
-//   EXPECT_EQ_VECTORS(expected,_irled_sink_vector);
-// }
-
-// TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_1001ms_and_then_500_ms_double_source_instant) {
-
-//   auto sim = CsvSignalSimulator();
-//   sim.sources.push_back(eeg_source_sample2.get());
-//   sim.sources.push_back(irled_source_sample2.get());
-//   sim.sinks.push_back(&_frames_to_vector_split_sink);
-//   sim.pass_time(1001,0);
-
-//   std::vector<int> expected1 = {};
-//   std::vector<int> expected2 = {};
-//   for(int i=0;i<120;i++){ expected1.push_back(i);}
-//   for(int i=0;i<22;i++){ expected2.push_back(i);}
-//   EXPECT_EQ_VECTORS(expected1,_eeg_sink_vector);
-//   EXPECT_EQ_VECTORS(expected2,_irled_sink_vector);
-
-//   sim.pass_time(500,0);
-//   for(int i=120;i<187;i++){ expected1.push_back(i);}
-//   for(int i=22;i<37;i++){ expected2.push_back(i);}
-//   EXPECT_EQ_VECTORS(expected1,_eeg_sink_vector);
-//   EXPECT_EQ_VECTORS(expected2,_irled_sink_vector);
-// }
