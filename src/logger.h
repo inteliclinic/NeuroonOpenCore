@@ -40,7 +40,7 @@ struct LoggingCallback : public el::LogDispatchCallback {
 #define ONCE_PER_APP_INITIALIZE_LOGGER INITIALIZE_EASYLOGGINGPP
 
 struct DummyCallback : public LoggingCallback {
-	virtual void save_log(const std::string& message) {}
+	virtual void save_log(const std::string& ) {}
 };
 
 template<typename T=DummyCallback>
