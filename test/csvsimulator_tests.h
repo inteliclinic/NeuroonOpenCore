@@ -1,4 +1,4 @@
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
 
@@ -9,7 +9,7 @@
 /* #include <numeric> */
 /* #include <algorithm> */
 #include <chrono>
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
 #include "../src/NeuroonSignals.h"
@@ -35,8 +35,8 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   // this file should contain values from 0 to 499 as column under header signal
   const std::string sample_csv2 = "../test/test_data/sample2.csv";
 
-  std::unique_ptr<CsvEegFramesSource> eeg_source_sample1;
-  std::unique_ptr<CsvEegFramesSource> eeg_source_sample2;
+  std::unique_ptr<EegFramesSource> eeg_source_sample1;
+  std::unique_ptr<EegFramesSource> eeg_source_sample2;
   std::unique_ptr<CsvAccelLedsTempFrameSource> irled_source_sample2;
 
   template<class T>
@@ -48,8 +48,8 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   // ------------ GOOGLE TEST'S ------------------------
 
   virtual void SetUp(){
-    eeg_source_sample1 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv1));
-    eeg_source_sample2 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv2));
+    eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1));
+    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2));
 
 	}
 
@@ -62,7 +62,7 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
 
-  auto frames = eeg_source_sample1->get_frames();
+  auto frames = eeg_source_sample1->get_values();
   auto frame_length = EegFrame::Length;
 
   EXPECT_TRUE(frames.size() > 0);
@@ -90,7 +90,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
 }
 // TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_1020ms_normal_time) {
 
-//   auto sim = CsvSignalSimulator();
+//   auto sim = SignalSimulator();
 //   sim.sources.push_back(eeg_source_sample1.get());
 //   sim.sinks.push_back(&_frames_to_vector_sink);
 //   auto start = std::chrono::high_resolution_clock::now();
@@ -110,7 +110,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
 
 // TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_entire_instant) {
 
-//   auto sim = CsvSignalSimulator();
+//   auto sim = SignalSimulator();
 //   sim.sources.push_back(eeg_source_sample1.get());
 //   sim.sinks.push_back(&_frames_to_vector_sink);
 //   sim.pass_time(0,0);
@@ -122,7 +122,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
 
 // TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_entire_double_source_instant) {
 
-//   auto sim = CsvSignalSimulator();
+//   auto sim = SignalSimulator();
 //   sim.sources.push_back(eeg_source_sample2.get());
 //   sim.sources.push_back(irled_source_sample2.get());
 //   sim.sinks.push_back(&_frames_to_vector_split_sink);
@@ -137,7 +137,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
 
 // TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_1001ms_and_then_500_ms_double_source_instant) {
 
-//   auto sim = CsvSignalSimulator();
+//   auto sim = SignalSimulator();
 //   sim.sources.push_back(eeg_source_sample2.get());
 //   sim.sources.push_back(irled_source_sample2.get());
 //   sim.sinks.push_back(&_frames_to_vector_split_sink);

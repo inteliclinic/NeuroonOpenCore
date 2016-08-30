@@ -4,7 +4,7 @@
 #include "test_utils.h"
 #include "../src/DataSink.h"
 #include "../src/AlgCoreDaemon.h"
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "../src/StreamingAlgorithm.h"
 
 #include <memory>
@@ -76,6 +76,39 @@ struct StreamingPipelineTests : public ::testing::Test {
 
 };
 
+TEST_F(StreamingPipelineTests, frame_from_bytes_tests) {
+
+  char bytes []= {0x01, 0x23, 0x45, 0x67};
+  AlgCoreDaemon d;
+  SumSink sum_sink;
+  auto algo = std::unique_ptr<IStreamingAlgorithm>(new IdentityStream({&sum_sink}));
+  d.add_streaming_algorithms(algo);
+
+  auto sim = SignalSimulator();
+  sim.sources.push_back(eeg_source_sample1.get());
+  sim.sources.push_back(irled_source_sample2.get());
+
+  sim.sinks.push_back(&d);
+
+  auto start = std::chrono::high_resolution_clock::now();
+  int ms_to_pass = 0;
+  d.start_processing();
+  sim.pass_time(ms_to_pass,0);
+  d.end_processing();
+  // std::cout << "Time to pass: " << ms_to_pass << "ms.";
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double, std::milli> elapsed = end-start;
+  // std::cout << " Passed: " << elapsed.count() << "ms.\n";
+
+  ASSERT_TRUE(elapsed.count()>=ms_to_pass);
+
+  auto res = sum_sink.get_accumulator();
+
+  double expected = 0.0;
+  for(int i=0;i<250;i++){ expected+=(double)i; }
+  EXPECT_EQ(expected, res);
+}
+
 TEST_F(StreamingPipelineTests, double_sum_pipeline_test_instant) {
 
   AlgCoreDaemon d;
@@ -83,7 +116,7 @@ TEST_F(StreamingPipelineTests, double_sum_pipeline_test_instant) {
   auto algo = std::unique_ptr<IStreamingAlgorithm>(new IdentityStream({&sum_sink}));
   d.add_streaming_algorithms(algo);
 
-  auto sim = CsvSignalSimulator();
+  auto sim = SignalSimulator();
   sim.sources.push_back(eeg_source_sample1.get());
   sim.sources.push_back(irled_source_sample2.get());
 
@@ -115,7 +148,7 @@ TEST_F(StreamingPipelineTests, double_sum_pipeline_test_normal_time) {
   auto algo = std::unique_ptr<IStreamingAlgorithm>(new IdentityStream({&sum_sink}));
   d.add_streaming_algorithms(algo);
 
-  auto sim = CsvSignalSimulator();
+  auto sim = SignalSimulator();
   sim.sources.push_back(eeg_source_sample1.get());
   /* sim.sources.push_back(irled_source_sample2.get()); */
 

@@ -1,10 +1,10 @@
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
 
 #include <gtest/gtest.h>
 #include <chrono>
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
 #include "../src/NeuroonSignals.h"
@@ -27,9 +27,9 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   // this file should contain values from 0 to 499 as column under header signal
   const std::string sample_csv2 = "../test/test_data/sample2.csv";
 
-  std::shared_ptr<CsvEegFramesSource> eeg_source_sample1;
-  std::shared_ptr<CsvEegFramesSource> eeg_source_sample2;
-  std::shared_ptr<CsvAccelLedsTempFrameSource> irled_source_sample2;
+  std::shared_ptr<EegFramesSource> eeg_source_sample1;
+  std::shared_ptr<EegFramesSource> eeg_source_sample2;
+  std::shared_ptr<AccelLedsTempFrameSource> irled_source_sample2;
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
@@ -40,8 +40,8 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   // ------------ GOOGLE TEST'S ------------------------
 
   virtual void SetUp(){
-    eeg_source_sample1 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv1));
-    eeg_source_sample2 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv2));
+    eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1));
+    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2));
 
 	}
 
@@ -60,7 +60,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
 
 
   // big endian
-  auto ef_be = EegFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::BE);
+  auto ef_be = EegFrame::from_bytes_array((char*)bytes, L, NeuroonFrameBytes::ByteOrder::BE);
   EXPECT_EQ(19088743,ef_be.timestamp);
   std::int16_t expected_ef_be[] = {-30293, -21623,-12817,-4147, 291, 17767,-30293,-21623};
 
@@ -68,7 +68,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
     EXPECT_EQ(expected_ef_be[i],ef_be.signal[i]);
   }
 
-  auto af_be = AccelLedsTempFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::BE);
+  auto af_be = AccelLedsTempFrame::from_bytes_array((char*)bytes, L, NeuroonFrameBytes::ByteOrder::BE);
   EXPECT_EQ(19088743,af_be.timestamp);
   EXPECT_EQ(-1985238135, af_be.ir_led);
   EXPECT_EQ(291, af_be.accel_axes.x);
@@ -100,7 +100,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
 
-  auto frames = eeg_source_sample1->get_frames();
+  auto frames = eeg_source_sample1->get_values();
   auto frame_length = EegFrame::Length;
 
   EXPECT_TRUE(frames.size() > 0);
@@ -130,7 +130,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleFrameStreamPipe) {
 
-  auto frames = eeg_source_sample1->get_frames();
+  auto frames = eeg_source_sample1->get_values();
   auto frame_length = EegFrame::Length;
 
   std::vector<EegFrame> v = {};
@@ -162,7 +162,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleFrameStreamPipe) {
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_time) {
 
-  auto frames = eeg_source_sample1->get_frames();
+  auto frames = eeg_source_sample1->get_values();
   auto frame_length = EegFrame::Length;
 
   std::vector<EegFrame> v = {};
@@ -173,7 +173,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
   auto pipe_up = std::unique_ptr<IFrameStreamPipe>(new FrameStreamPipe<EegFrame>(eeg_source_sample1, sink_sp));
 
 
-  auto sim = CsvSignalSimulator();
+  auto sim = SignalSimulator();
   sim.add_streaming_pipe(pipe_up, EegFrame::DefaultEmissionInterval_ms);
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -192,7 +192,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
   for(uint16_t i=0; i<120/frame_length; i++){
     // only full frames are created
     if(250 - i*frame_length >= frame_length){
-      auto & passed = eeg_source_sample1->get_frames()[i];
+      auto & passed = eeg_source_sample1->get_values()[i];
       auto & received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for(uint16_t j=0; j<frame_length;j++){
@@ -206,7 +206,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
   for(uint16_t i=120/frame_length; i<250/frame_length; i++){
     // only full frames are created
     if(250 - i*frame_length >= frame_length){
-      auto & passed = eeg_source_sample1->get_frames()[i];
+      auto & passed = eeg_source_sample1->get_values()[i];
       auto & received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for(uint16_t j=0; j<frame_length;j++){
@@ -224,7 +224,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant) {
 
-  auto frames = eeg_source_sample1->get_frames();
+  auto frames = eeg_source_sample1->get_values();
 
   std::vector<EegFrame> v = {};
   auto sink = accumulate_to_vector_sink(v);
@@ -236,7 +236,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant
   auto pipe_cheat_rp = pipe_up.get();
   auto pipe2_cheat_rp = pipe2_up.get();
 
-  auto sim = CsvSignalSimulator();
+  auto sim = SignalSimulator();
   sim.add_streaming_pipe(pipe_up, EegFrame::DefaultEmissionInterval_ms);
   sim.add_streaming_pipe(pipe2_up, EegFrame::DefaultEmissionInterval_ms);
 
@@ -254,7 +254,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSource_instant) {
 
-  auto frames = eeg_source_sample1->get_frames();
+  auto frames = eeg_source_sample1->get_values();
 
   std::size_t frame_count = 0;
   llong frame_sum = 0;
@@ -269,7 +269,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSource_insta
   auto pipe_cheat_rp = pipe_up.get();
   auto pipe2_cheat_rp = pipe2_up.get();
 
-  auto sim = CsvSignalSimulator();
+  auto sim = SignalSimulator();
   sim.add_streaming_pipe(pipe_up, EegFrame::DefaultEmissionInterval_ms);
   sim.add_streaming_pipe(pipe2_up, EegFrame::DefaultEmissionInterval_ms);
 

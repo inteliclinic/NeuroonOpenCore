@@ -1,10 +1,10 @@
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
 
 #include <gtest/gtest.h>
 #include <chrono>
-#include "../src/CsvSignalSimulator.h"
+#include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
 #include "../src/NeuroonSignals.h"
@@ -29,9 +29,9 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
   // this file should contain values from 0 to 499 as column under header signal
   const std::string sample_csv2 = "../test/test_data/sample2.csv";
 
-  std::unique_ptr<CsvEegFramesSource> eeg_source_sample1;
-  std::unique_ptr<CsvEegFramesSource> eeg_source_sample2;
-  std::unique_ptr<CsvAccelLedsTempFrameSource> irled_source_sample2;
+  std::unique_ptr<EegFramesSource> eeg_source_sample1;
+  std::unique_ptr<EegFramesSource> eeg_source_sample2;
+  std::unique_ptr<AccelLedsTempFrameSource> irled_source_sample2;
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
@@ -42,8 +42,8 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
   // ------------ GOOGLE TEST'S ------------------------
 
   virtual void SetUp(){
-    eeg_source_sample1 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv1));
-    eeg_source_sample2 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv2));
+    eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1));
+    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2));
 	}
 
 

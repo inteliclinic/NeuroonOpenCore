@@ -29,6 +29,7 @@ private:
   void _make_streaming_algorithms_step();
 
   void _add_streaming_algorithms(std::unique_ptr<IStreamingAlgorithm> & saup, bool suppress_warning);
+
 public:
 
   AlgCoreDaemon() {}

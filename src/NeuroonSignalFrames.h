@@ -22,6 +22,7 @@ struct NeuroonSignalFrame{
   virtual ~NeuroonSignalFrame() = 0;
 };
 
+// must be implemented for valid compilation
 inline NeuroonSignalFrame::~NeuroonSignalFrame() {}
 
 
@@ -44,14 +45,6 @@ struct AccelLedsTempFrame : public NeuroonSignalFrame{
   std::int32_t red_led;
   AccelAxes accel_axes;
   std::int8_t temperature[2];
-};
-
-
-template<class T>
-class IPullBasedFrameSource{
-
-public:
-  virtual std::vector<T>& get_frames() = 0;
 };
 
 

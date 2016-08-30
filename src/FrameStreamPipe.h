@@ -2,6 +2,7 @@
 #define __FRAME_STREAM_PIPE__
 
 #include "CommonTypes.h"
+#include "DataSource.h"
 #include "NeuroonSignalFrames.h"
 #include "DataSink.h"
 #include "logger.h"
@@ -20,7 +21,7 @@ template<class T>
 class FrameStreamPipe : public IFrameStreamPipe{
 
   ullong _frame_transmitted = 0;
-  std::weak_ptr<IPullBasedFrameSource<T>> _source;
+  std::weak_ptr<IPullBasedOfflineSource<T>> _source;
   std::weak_ptr<IDataSink<T>> _sink;
 
   bool _exhausted = false;
@@ -30,13 +31,13 @@ class FrameStreamPipe : public IFrameStreamPipe{
     if(!is_exhausted() && !is_broken()){
       if (auto ssource = _source.lock()) {
         if (auto ssink = _sink.lock()) {
-          auto& frame = ssource->get_frames()[_frame_transmitted];
+          auto& frame = ssource->get_values()[_frame_transmitted];
           if(change_timestamp){
             ((NeuroonSignalFrame*)&frame)->timestamp = timestamp;
           }
           ssink->consume(frame);
           _frame_transmitted++;
-          if (_frame_transmitted >= ssource->get_frames().size()) {
+          if (_frame_transmitted >= ssource->get_values().size()) {
             _exhausted = true;
             just_exhausted = true;
           }
@@ -60,13 +61,13 @@ class FrameStreamPipe : public IFrameStreamPipe{
 
  public:
 
- FrameStreamPipe(std::weak_ptr<IPullBasedFrameSource<T>> source,
+ FrameStreamPipe(std::weak_ptr<IPullBasedOfflineSource<T>> source,
                  std::weak_ptr<IDataSink<T>> sink) :
    _source(source), _sink(sink), _frame_transmitted(0) {
     static_assert(std::is_base_of<NeuroonSignalFrame, T>::value, "T must inherit from NeuroonSignalFrame");
     if (auto ssource = _source.lock()) {
       if (auto ssink = _sink.lock()) {
-        if (_frame_transmitted >= ssource->get_frames().size()) {
+        if (_frame_transmitted >= ssource->get_values().size()) {
           _exhausted = true;
         }
       }

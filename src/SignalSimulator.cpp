@@ -1,4 +1,4 @@
-#include "CsvSignalSimulator.h"
+#include "SignalSimulator.h"
 #include "Exceptions.h"
 #include "NeuroonSignals.h"
 #include <chrono>
@@ -10,7 +10,9 @@
 #define EMISSION_INTERVAL_MS(t) std::get<0>(t)
 #define PIPE_UP(t) std::get<1>(t)
 
-CsvEegFramesSource::CsvEegFramesSource(const std::string path, std::size_t frame_size) :
+
+
+EegFramesSource::EegFramesSource(const std::string path, std::size_t frame_size) :
   _frame_size(frame_size) {
 
   // read csv
@@ -18,7 +20,7 @@ CsvEegFramesSource::CsvEegFramesSource(const std::string path, std::size_t frame
   _check_and_parse_csv(path);
 }
 
-void CsvEegFramesSource::_check_and_parse_csv(std::string path){
+void EegFramesSource::_check_and_parse_csv(std::string path){
 
   auto csv_map = CsvReader::read_csv_with_headers_from_path(path);
 
@@ -49,14 +51,14 @@ void CsvEegFramesSource::_check_and_parse_csv(std::string path){
 }
 
 
-////////////////////////////////////////// CsvSignalSimulator
+////////////////////////////////////////// SignalSimulator
 
 
-CsvSignalSimulator::CsvSignalSimulator(){
+SignalSimulator::SignalSimulator(){
   _set_timestamp_to_now();
 }
 
-void CsvSignalSimulator::_set_timestamp_to_now(){
+void SignalSimulator::_set_timestamp_to_now(){
   auto dtn = std::chrono::high_resolution_clock::now().time_since_epoch();
   // assuming nanoseconds.....
   _starting_timestamp = dtn.count() / 1000000;
@@ -73,7 +75,7 @@ void CsvSignalSimulator::_set_timestamp_to_now(){
 *
 *   \warning This function may actually emit the data a bit slower than expected
 */
-void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
+void SignalSimulator::pass_time(ullong ms_to_simulate,
                                    double time_passing_modifier){
 
 
@@ -147,7 +149,7 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
   }
 }
 
-void CsvSignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
+void SignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
                                             uint pipe_frame_emission_interval_ms){
   _pipes.push_back(std::make_tuple(pipe_frame_emission_interval_ms, std::move(pipe)));
 }
