@@ -5,16 +5,16 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include "DataSink.h"
 #include "StreamingAlgorithm.h"
 #include "NeuroonSignals.h"
 
 // daemon managing signal processing and algorithm execution
-// for now intended to be used as a singleton
-class AlgCoreDaemon{
+class AlgCoreDaemon : public IDataSink<NeuroonFrameBytes>, public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
 
 private:
-  AlgCoreDaemon() {}
 
+  bool _processing_in_progress = false;
   // std::map<std::string, std::vector<InValue> > _msg_inbox;
 
   // algorithms working with stream of data coming from mask
@@ -24,29 +24,32 @@ private:
   // a continuous signal
   NeuroonSignals _neuroon_signals;
 
-
   // it "wakes" up streaming algorithms by sending to them actual state
   // of neuroon signals
   void _make_streaming_algorithms_step();
 
+  void _add_streaming_algorithms(std::unique_ptr<IStreamingAlgorithm> & saup, bool suppress_warning);
 public:
 
-  // Singleton
-  static AlgCoreDaemon& instance(){
-    static AlgCoreDaemon inst;
-    return inst;
-  }
+  AlgCoreDaemon() {}
 
-  // Name explains it.
-  // In the future it may be wrapped with methods such as: start_processing
-  // or sthing like this.
-  void reset_algorithms_state();
+  // can't copy as it contains vectors of unique_pointers
+  AlgCoreDaemon(const AlgCoreDaemon &) = delete;
+  AlgCoreDaemon & operator=(const AlgCoreDaemon &) = delete;
 
-  // Receive a frame of signal from Neuron mask.
-  void receive_stream_frame(SignalFrame * sf, bool streaming_algs_step=true);
+  // call it after adding algorithm and before starting receiving frames
+  void start_processing();
 
+  // call it to finalize receiving frames.
+  void end_processing();
+
+  // Receive a frame of signal
+  void consume(NeuroonFrameBytes& frame_stream) override;
+  void consume(EegFrame& frame) override;
+  void consume(AccelLedsTempFrame& frame) override;
+
+  // for now it isnt possible to remove algorithm from daemon
   void add_streaming_algorithms(std::unique_ptr<IStreamingAlgorithm> & saup);
-
   void add_streaming_algorithms(std::vector<std::unique_ptr<IStreamingAlgorithm>> saups);
 
 

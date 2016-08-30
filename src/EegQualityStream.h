@@ -22,12 +22,13 @@ public:
    *  @param overlap This many samples will be included from previous computation.
    *  @param sinks The result from each window window will be send to each data sink.
    */
-  EegQualityStream(int window_size, int overlap=0, const std::vector<DataSink<EegQuality>*> & sinks={}) :
+  EegQualityStream(int window_size, int overlap=0, const std::vector<IDataSink<EegQuality>*> & sinks={}) :
     SinkStreamingAlgorithm(sinks),_window_size(window_size), _overlap(overlap) {}
 
 
   virtual void reset_state() override;
   virtual void process_input(const NeuroonSignals & input) override;
+  virtual void end_streaming (const NeuroonSignals & ) override {}
 
 };
 

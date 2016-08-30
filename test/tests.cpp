@@ -4,7 +4,8 @@
  * ======= UNIT TESTS ===================
  */
 
-#include "csvsimulator_tests.h"
+#include "neuroonsignals_and_streamalgo_tests.h"
+#include "streaming_pipeline_and_csvsimulator_tests.h"
 #include "signal_utils_test.h"
 #include "spectrogram_test.h"
 
@@ -38,6 +39,6 @@
 
 int main(int argc, char **argv) {
 	configure_logger();
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

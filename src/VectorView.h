@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <vector>
+#include <array>
 
 template <typename T>
 class VectorView {
@@ -21,20 +22,21 @@ public:
   std::size_t size() const{ return _end - _begin;}
 };
 
-// template <typename T>
-// class ArrayView {
-//   std::iterator<std::random_access_iterator_tag, T> _begin;
-//   std::iterator<std::random_access_iterator_tag, T> _end;
-// public:
-//   // ...
-//   ArrayView(std::iterator<std::random_access_iterator_tag, T> begin,
-//             std::iterator<std::random_access_iterator_tag, T> end):
-//     _begin(begin), _end(end) {}
+template <typename T>
+class ArrayView {
+  std::iterator<std::random_access_iterator_tag, T> _begin;
+  std::iterator<std::random_access_iterator_tag, T> _end;
+public:
+  // ...
+  ArrayView(std::iterator<std::random_access_iterator_tag, T> begin,
+            std::iterator<std::random_access_iterator_tag, T> end):
+    _begin(begin), _end(end) {}
 
-//   std::iterator<std::random_access_iterator_tag, T> begin() const { return this->_begin; }
-//   std::iterator<std::random_access_iterator_tag, T> end() const   { return this->_end; }
-//   typename std::iterator_traits< std::iterator<std::random_access_iterator_tag, T> >::reference
-//   operator[](std::size_t index) { return this->_begin[index]; }
-// };
+  const std::iterator<std::random_access_iterator_tag, T> begin() const { return this->_begin; }
+  const std::iterator<std::random_access_iterator_tag, T> end() const   { return this->_end; }
+  const typename std::iterator_traits< std::iterator<std::random_access_iterator_tag, T> >::reference
+  operator[](std::size_t index) { return this->_begin[index]; }
+  std::size_t size() const{ return _end - _begin;}
+};
 
 #endif

@@ -8,14 +8,15 @@
 class IStreamingAlgorithm{
 public:
   virtual void reset_state () = 0;
-  virtual void process_input (const NeuroonSignals & input) = 0;
+  virtual void process_input (const NeuroonSignals & input ) = 0;
+  virtual void end_streaming (const NeuroonSignals & input) = 0;
 };
 
-template<typename T>
-class SinkStreamingAlgorithm : IStreamingAlgorithm {
 
-  typedef DataSink<T> StreamSink;
-  std::vector< StreamSink* > _sinks;
+template<typename T>
+class SinkStreamingAlgorithm : public IStreamingAlgorithm {
+
+  std::vector< IDataSink<T>* > _sinks;
 
 protected:
 
@@ -29,7 +30,7 @@ protected:
 
 public:
 
-  SinkStreamingAlgorithm (const std::vector< StreamSink* > & sinks={}) : _sinks(sinks) {}
+  SinkStreamingAlgorithm (const std::vector< IDataSink<T>* > & sinks={}) : _sinks(sinks) {}
 
 };
 

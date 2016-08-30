@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "CommonTypedefs.h"
+#include "CommonTypes.h"
 #include "InValue.h"
 
 struct TempTest : public ::testing::Test {

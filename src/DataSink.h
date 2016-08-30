@@ -1,46 +1,31 @@
 #ifndef __DATA_SINK__
 #define __DATA_SINK__
 
+#include <type_traits>
 #include <functional>
 #include "SignalTypes.h"
+#include "NeuroonSignalFrames.h"
 
 template<typename T>
-class DataSink{
+class IDataSink{
 public:
   // this function should be lightweight in order to not cause delays
   // in realtime streaming
-  virtual void consume(T) = 0;
+  virtual void consume(T&) = 0;
 };
 
-typedef DataSink<SignalFrame*> SignalFrameDataSink;
 
-// // consumes SignalFrame pointer
-// // WARNING use it only if you know that passed pointer points
-// // to SignalFrame!
-// class SignalFrameDataSink : public DataSink<Signal{
-//  public:
-//   // consume_function should be lightweight in order to not cause delays
-//   // in realtime streaming
-//   SignalFrameDataSink() : DataSink () {}
-
-//   virtual void consume(SignalFrame* sfr) = 0;
-
-//   void consume(void* sfp) override{
-//     consume((SignalFrame*)sfp);
-//   }
-// };
-
-
-class LambdaSignalFrameDataSink : public SignalFrameDataSink {
-  std::function<void (SignalFrame*)> _frame_consume_fun = nullptr;
+template<class T>
+class LambdaSignalFrameDataSink : public IDataSink<T>{
+  std::function<void (T&)> _consume_fun = nullptr;
  public:
   // consume_function should be lightweight in order to not cause delays
   // in realtime streaming
-  LambdaSignalFrameDataSink(std::function<void (SignalFrame*)> consume_function) :
-  _frame_consume_fun(consume_function) {}
-
-  void consume(SignalFrame* ptr) override{
-    _frame_consume_fun(ptr);
+  LambdaSignalFrameDataSink(std::function<void (T&)> consume_function) :
+  _consume_fun(consume_function) {
+  }
+  void consume(T& ptr) override{
+    _consume_fun(ptr);
   }
 };
 

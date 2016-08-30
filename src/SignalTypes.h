@@ -1,19 +1,20 @@
-#ifndef __SIGNAL__
-#define __SIGNAL__
+#ifndef __NEUROON_SIGNAL_TYPES__
+#define __NEUROON_SIGNAL_TYPES__
 
-#include "CommonTypedefs.h"
+#include "CommonTypes.h"
 #include "VectorView.h"
 
 
 // source of signal in Neuroon Mask
-enum SignalOrigin{ EEG, ACCELEROMETER, IR_LED, TEMPERATURE};
+enum SignalOrigin{ EEG, ACCELEROMETER, IR_LED, RED_LED, TEMPERATURE};
 
-// structure holding data from the mask
-struct SignalFrame{
-  SignalOrigin origin;
-  ullong timestamp;
-  VectorView<int> signal;
-};
+/* // structure holding data from the mask */
+/* struct SignalFrame{ */
+/*   SignalOrigin origin; */
+/*   ullong timestamp; */
+/*   VectorView<int> signal; */
+/* }; */
+
 
 // class holding characteristics of signal
 class SignalSpec{
@@ -21,7 +22,6 @@ class SignalSpec{
   int _sampling_rate;
   SignalOrigin _signal_origin;
 
-  int compute_lost_frames_count(SignalFrame* frame);
  public:
 
  SignalSpec(SignalOrigin signal_origin, int sampling_rate) :
