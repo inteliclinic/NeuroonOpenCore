@@ -22,11 +22,11 @@ const std::vector<double> & NeuroonSignals::temperature_signal() const { return 
 
 
 void NeuroonSignals::clear_data(){
-  _eeg_signal = {0,0,{}};
-  _ir_led_signal = {0,0,{}};
-  _red_led_signal = {0,0,{}};
-  _accel_axes_signal = {0,0,{}};
-  _temperature_signal = {0,0,{}};
+  _eeg_signal = std::make_tuple(0,0,std::vector<double>());
+  _ir_led_signal = std::make_tuple(0,0,std::vector<double>());
+  _red_led_signal = std::make_tuple(0,0,std::vector<double>());
+  _accel_axes_signal = std::make_tuple(0,0,std::vector<Double3d>());
+  _temperature_signal = std::make_tuple(0,0,std::vector<double>());
 }
 
 ullong NeuroonSignals::last_timestamp(SignalOrigin so) const {

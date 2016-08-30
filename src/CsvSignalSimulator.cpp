@@ -149,5 +149,5 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
 
 void CsvSignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
                                             uint pipe_frame_emission_interval_ms){
-  _pipes.push_back({pipe_frame_emission_interval_ms, std::move(pipe)});
+  _pipes.push_back(std::make_tuple(pipe_frame_emission_interval_ms, std::move(pipe)));
 }

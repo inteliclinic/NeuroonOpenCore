@@ -97,14 +97,16 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsAccelLedsTempFrameConsume
   NeuroonSignals ns;
 
   const int N = 100;
-  for(auto i=0;i<N;i++){
+  for(std::int16_t i = 0; i < N; i++){
     AccelLedsTempFrame ef;
 
     ef.timestamp = i * AccelLedsTempFrame::DefaultEmissionInterval_ms + dis(gen);
 
     ef.ir_led = i;
     ef.red_led = i+1;
-    ef.accel_axes = {i+2, i+3, i+4};
+    ef.accel_axes.x = i+2;
+    ef.accel_axes.y = i+3;
+    ef.accel_axes.z = i+4;
     ef.temperature[0] = 11;
     ef.temperature[1] = 12;
 

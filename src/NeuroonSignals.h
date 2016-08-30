@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <functional>
+#include <tuple>
 #include "VectorView.h"
 #include "DataSink.h"
 #include "NeuroonSignalFrames.h"

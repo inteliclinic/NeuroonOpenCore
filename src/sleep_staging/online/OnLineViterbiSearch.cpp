@@ -82,6 +82,11 @@ std::pair<int, double> OnLineViterbiSearch::find_path_leading_here(int next_stat
 }
 
 void OnLineViterbiSearch::stop() {
+	if (m_current_step == INVALID_STATE_INDEX) {
+		LOG(WARNING) << "Tried to stop a Viterbi search without executing any steps";
+		return;
+	}
+
 	for (int state = 0; state != m_states.size(); ++state) {
 		m_paths[m_current_step][state].log_prob += std::log(m_final_p(state, 0));
 	}
