@@ -36,8 +36,10 @@ struct mock_neuroon_signals_t : public INeuroonSignals {
 	mock_neuroon_signals_t() {
 		m_step = 0;
 		LOG(INFO) << "loading data...";
-		auto eeg_signal = get_eeg_data("/home/tomek/workspace/data/NoAlice/WW180116/RawSignal.csv");
-		auto ir_signal = get_ir_data("/home/tomek/workspace/data/NoAlice/WW180116/IrLedSignal.csv");
+//		auto eeg_signal = get_eeg_data("/home/tomek/workspace/data/NoAlice/WW180116/RawSignal.csv");
+//		auto ir_signal = get_ir_data("/home/tomek/workspace/data/NoAlice/WW180116/IrLedSignal.csv");
+		auto eeg_signal = get_eeg_data("/home/tomek/workspace/data/WG_310816/RawSignal.csv");
+		auto ir_signal = get_ir_data("/home/tomek/workspace/data/WG_310816/IrLedSignal.csv");
 
 		eeg_v = dlib_matrix_to_vector<double>(eeg_signal);
 		ir_v = dlib_matrix_to_vector<double>(ir_signal);
