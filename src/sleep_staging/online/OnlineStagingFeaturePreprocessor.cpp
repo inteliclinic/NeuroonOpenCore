@@ -49,9 +49,10 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::EegSumsFeatures::transfor
 	band_sums = dlib::log(band_sums);
 
 	const double EEG_FILTER_CRITICAL = 19;
-	const int EEG_FILTER_COLUMN = 2;
-	//AmplitudeFilter f(EEG_FILTER_CRITICAL, EEG_FILTER_COLUMN);
-	//band_sums = f.transform(band_sums);
+	dlib::matrix<double> filter_band = EegFeatures::sum_in_band(eeg_spectrogram, 10, 14, false);
+	filter_band = dlib::log(filter_band);
+	AmplitudeFilter f(EEG_FILTER_CRITICAL);
+	band_sums = f.transform(band_sums, filter_band);
 
 	m_mean.consume(band_sums);
 	band_sums = standardize(band_sums, m_mean.value(), m_feature_stds);
@@ -105,6 +106,5 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::transform(const dlib::mat
 	double beginning_feature = (seconds_since_start <= 45 * 60) ? 1 : 0;
 
 	dlib::set_colm(result, NUMBER_OF_FEATURES-1) = beginning_feature;
-	//TODO: possibly add a rolling mean and a delay
 	return result;
 }

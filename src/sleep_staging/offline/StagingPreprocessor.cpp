@@ -53,9 +53,9 @@ dlib::matrix<double> StagingPreprocessor::transform(const Spectrogram &eeg_spect
 	eeg_sums = dlib::log(eeg_sums);
 	const double EEG_FILTER_CRITICAL = 19;
 	const int EEG_FILTER_COLUMN = 2;
-	AmplitudeFilter f(EEG_FILTER_CRITICAL, EEG_FILTER_COLUMN);
+	AmplitudeFilter f(EEG_FILTER_CRITICAL);
 
-	eeg_sums = f.transform(eeg_sums);
+	eeg_sums = f.transform(eeg_sums, dlib::colm(eeg_sums, EEG_FILTER_COLUMN));
 
 // =================== PULSE FEATURES =================================
 

@@ -12,10 +12,9 @@
 
 class AmplitudeFilter {
 public:
-	AmplitudeFilter(double critical_value, int column=-1);
-	virtual ~AmplitudeFilter();
+	AmplitudeFilter(double critical_value);
 
-	dlib::matrix<double> transform(const dlib::matrix<double> &data);
+	dlib::matrix<double> transform(const dlib::matrix<double> &data, const dlib::matrix<double> &filter_column);
 
 private:
 	double m_critical_value;
