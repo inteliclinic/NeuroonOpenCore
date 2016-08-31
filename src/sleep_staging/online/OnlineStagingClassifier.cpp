@@ -74,7 +74,7 @@ std::vector<int> OnlineStagingClassifier::predict(const dlib::matrix<double> &fe
 }
 
 dlib::matrix<double> OnlineStagingClassifier::get_probability_when_nan(bool beginning) {
-    static std::vector<double> bad_signal_p({0.063141, 0.301530, 0.327178,0.278493});
+    static std::vector<double> bad_signal_p({0.1, 0.29, 0.30, 0.31});
     static std::vector<double> bad_signal_p_beginning({0.15, 0.15, 0.15, 0.55});
 
 
