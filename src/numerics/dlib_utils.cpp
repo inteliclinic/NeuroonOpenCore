@@ -121,15 +121,18 @@ double entropy(const dlib::matrix<double> &signal) {
 	return result;
 }
 
-std::vector<int> dlib_matrix_to_vector(const dlib::matrix<int> &input) {
+template <typename T>
+std::vector<T> dlib_matrix_to_vector(const dlib::matrix<T> &input) {
 	assert(input.nc() == 1);
 
-	std::vector<int> result(input.nr());
+	std::vector<T> result(input.nr());
 	for (int i = 0; i != result.size(); ++i) {
 		result[i] = input(i, 0);
 	}
 	return result;
 }
+template std::vector<int> dlib_matrix_to_vector<int>(const dlib::matrix<int>&);
+template std::vector<double> dlib_matrix_to_vector<double>(const dlib::matrix<double>&);
 
 
 dlib::matrix<double> load_matrix(const std::string& filename) {
@@ -157,8 +160,31 @@ dlib::matrix<T> vector_to_dlib_matrix(const std::vector<T> &input) {
 	}
 	return result;
 }
+
+
+
 template dlib::matrix<double> vector_to_dlib_matrix<double>(const std::vector<double> &input);
 template dlib::matrix<int> vector_to_dlib_matrix<int>(const std::vector<int> &input);
+
+
+template <typename I>
+dlib::matrix<typename I::value_type> range_to_dlib_matrix(const I& begin, const I& end) {
+	int rows = std::distance(begin, end);
+
+	dlib::matrix<typename I::value_type> result(rows, 1);
+	int i = 0;
+	for (I it = begin;
+			it != end;
+			++it, ++i) {
+
+		result(i, 0) = *it;
+	}
+	return result;
+}
+
+template dlib::matrix<double> range_to_dlib_matrix<std::vector<double>::iterator>(const std::vector<double>::iterator&, const std::vector<double>::iterator&);
+template dlib::matrix<double> range_to_dlib_matrix<std::vector<double>::const_iterator>(const std::vector<double>::const_iterator&, const std::vector<double>::const_iterator&);
+
 
 template <typename T>
 void dump_matrix(const dlib::matrix<T> &data, const std::string &filename) {

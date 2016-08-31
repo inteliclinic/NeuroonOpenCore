@@ -27,8 +27,8 @@ public:
 
 
   virtual void reset_state() override;
-  virtual void process_input(const NeuroonSignals & input) override;
-  virtual void end_streaming (const NeuroonSignals & ) override {}
+  virtual void process_input(const INeuroonSignals & input) override;
+  virtual void end_streaming (const INeuroonSignals & ) override {}
 
 };
 

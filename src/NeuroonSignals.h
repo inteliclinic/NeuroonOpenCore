@@ -12,7 +12,25 @@
 #include "NeuroonSignalFrames.h"
 #include "SignalTypes.h"
 
-class NeuroonSignals : public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
+
+class INeuroonSignals {
+public:
+  virtual const std::vector<double> & eeg_signal() const = 0;
+  virtual const std::vector<double> & ir_led_signal() const = 0;
+  virtual const std::vector<double> & red_led_signal() const = 0;
+  virtual const std::vector<Double3d> & accel_axes_signal() const = 0;
+  virtual const std::vector<double> & temperature_signal() const = 0;
+
+  // ask for last sample timestamp for each signal
+  virtual ullong last_timestamp(SignalOrigin so) const = 0;
+
+  // This is intended to provide information about number of already received
+  // samples. The implementation may change as we might want not to store all the samples
+  // in the vectors.
+  virtual std::size_t total_signal_samples(SignalOrigin ss) const = 0;
+};
+
+class NeuroonSignals : public INeuroonSignals, public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
 public:
 
 
@@ -79,14 +97,14 @@ public:
   void consume(AccelLedsTempFrame& frame) override;
 
   // get vectors of received samples
-  const std::vector<double> & eeg_signal() const;
-  const std::vector<double> & ir_led_signal() const;
-  const std::vector<double> & red_led_signal() const;
-  const std::vector<Double3d> & accel_axes_signal() const;
-  const std::vector<double> & temperature_signal() const;
+  const std::vector<double> & eeg_signal() const override;
+  const std::vector<double> & ir_led_signal() const override;
+  const std::vector<double> & red_led_signal() const override;
+  const std::vector<Double3d> & accel_axes_signal() const override;
+  const std::vector<double> & temperature_signal() const override;
 
   // ask for last sample timestamp for each signal
-  ullong last_timestamp(SignalOrigin so) const;
+  ullong last_timestamp(SignalOrigin so) const override;
 
   // get specification of signals by its source
   static const SignalSpec & specs(SignalOrigin so){return _signal_specs.at(so);}
@@ -94,7 +112,7 @@ public:
   // This is intended to provide information about number of already received
   // samples. The implementation may change as we might want not to store all the samples
   // in the vectors.
-  std::size_t total_signal_samples(SignalOrigin ss) const;
+  std::size_t total_signal_samples(SignalOrigin ss) const override;
 
 };
 

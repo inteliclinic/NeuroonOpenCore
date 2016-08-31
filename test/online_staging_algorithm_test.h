@@ -12,7 +12,7 @@ struct test_sink : public OnlineStagingAlgorithm::sink_t {
 		std::cout << "staging len: " << res.m_stages.size() << std::endl;
 		m_last_staging = res;
 
-		std::ofstream out("stages.csv");
+		std::ofstream out("./functional_test_results/online_stages_to_plot.csv");
 
 		for (int i = 0; i != res.m_stages.size(); ++i) {
 			out << res.m_stages[i].stage << std::endl;
@@ -36,8 +36,8 @@ struct mock_neuroon_signals_t : public INeuroonSignals {
 	mock_neuroon_signals_t() {
 		m_step = 0;
 		LOG(INFO) << "loading data...";
-		auto eeg_signal = get_eeg_data();
-		auto ir_signal = get_ir_data();
+		auto eeg_signal = get_eeg_data("/home/tomek/workspace/data/NoAlice/WW180116/RawSignal.csv");
+		auto ir_signal = get_ir_data("/home/tomek/workspace/data/NoAlice/WW180116/IrLedSignal.csv");
 
 		eeg_v = dlib_matrix_to_vector<double>(eeg_signal);
 		ir_v = dlib_matrix_to_vector<double>(ir_signal);
@@ -48,9 +48,6 @@ struct mock_neuroon_signals_t : public INeuroonSignals {
 	}
 
 	void next_step() {
-		if (m_step % 1000 == 0) {
-			LOG(INFO) << "\t step: " << m_step;
-		}
 		++m_step;
 
 		int beginning_idx = std::max(0, m_step - 20000);
@@ -102,9 +99,6 @@ TEST(OnlineStagingAlgorithmTest, basic_testcase) {
 	int SAMPLES = mock_signals.size();
 	for (int i = 0; i != SAMPLES; ++i) {
 		mock_signals.next_step();
-		if (i == 5000) {
-			std::cout << "break!\n";
-		}
 		a.process_input(mock_signals);
 	}
 	a.end_streaming(mock_signals);

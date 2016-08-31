@@ -8,8 +8,8 @@
 class IStreamingAlgorithm{
 public:
   virtual void reset_state () = 0;
-  virtual void process_input (const NeuroonSignals & input ) = 0;
-  virtual void end_streaming (const NeuroonSignals & input) = 0;
+  virtual void process_input (const INeuroonSignals & input ) = 0;
+  virtual void end_streaming (const INeuroonSignals & input) = 0;
 };
 
 
