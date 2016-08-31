@@ -17,8 +17,8 @@ public:
   virtual bool is_exhausted() const = 0;
 };
 
-template<class T>
 class FrameStreamPipe : public IFrameStreamPipe{
+template<class T>
 
   ullong _frame_transmitted = 0;
   std::weak_ptr<IPullBasedOfflineSource<T>> _source;

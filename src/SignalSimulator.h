@@ -12,7 +12,7 @@
 #include <map>
 
 class EegFramesSource : public IPullBasedOfflineSource<EegFrame>{
-  friend class SignalSourceSpec;
+  friend class SignalSource<std::int16_t>;
 
   std::vector<EegFrame> _frames = {};
   std::size_t _frame_size;
@@ -21,7 +21,7 @@ class EegFramesSource : public IPullBasedOfflineSource<EegFrame>{
 public:
 
   EegFramesSource (std::string path, std::size_t frame_size = EegFrame::Length);
-  EegFramesSource (SignalSourceSpec signal_source, std::size_t frame_size = EegFrame::Length);
+  EegFramesSource (SignalSource<std::int16_t> signal_source, std::size_t frame_size = EegFrame::Length);
   EegFramesSource (EegFramesSource && other) :
     _frames(std::move(other._frames)),
     _frame_size(other._frame_size) {}
@@ -32,23 +32,25 @@ public:
 
 
 class AccelLedsTempFrameSource : public IPullBasedOfflineSource<AccelLedsTempFrame>{
-  friend class SignalSourceSpec;
+  friend class SignalSource<std::int16_t>;
+  friend class SignalSource<std::int32_t>;
+  friend class SignalSource<std::int8_t>;
 
 public:
 
 
 
   // low level constructor
-  AccelLedsTempFrameSource (SignalSourceSpec ir_led,
-                            SignalSourceSpec red_led,
-                            SignalSourceSpec accel_axes_x,
-                            SignalSourceSpec accel_axes_y,
-                            SignalSourceSpec accel_axes_z,
-                            SignalSourceSpec temperature_1,
-                            SignalSourceSpec temperature_2);
+  AccelLedsTempFrameSource (SignalSource<std::int32_t> ir_led,
+                            SignalSource<std::int32_t> red_led,
+                            SignalSource<std::int16_t> accel_axes_x,
+                            SignalSource<std::int16_t> accel_axes_y,
+                            SignalSource<std::int16_t> accel_axes_z,
+                            SignalSource<std::int8_t> temperature_1,
+                            SignalSource<std::int8_t> temperature_2);
 
-  // irled,
-  AccelLedsTempFrameSource(SignalSourceSpec ir_led, SignalSourceSpec acc);
+  // // irled,
+  // AccelLedsTempFrameSource(SignalSource ir_led, SignalSource acc);
 
 
 };
