@@ -49,6 +49,47 @@ void CsvEegFramesSource::_check_and_parse_csv(std::string path){
 }
 
 
+/////////////////////////////////////////// temp accel leds implementation
+
+CsvAccelLedsTempFrameSource::CsvAccelLedsTempFrameSource (const std::string path) {
+
+  // read csv
+  // parse & check signal from csv
+  _check_and_parse_csv(path);
+}
+
+void CsvAccelLedsTempFrameSource::_check_and_parse_csv(std::string path){
+
+  auto csv_map = CsvReader::read_csv_with_headers_from_path(path);
+
+  std::vector<InValue> samples;
+  if (csv_map.find("signal") == csv_map.end()) {
+    csv_map.clear();
+    samples = CsvReader::read_csv_no_headers_from_path(path)[0];
+    // throw std::invalid_argument("No signal column in the csv file.");
+
+  }
+  else{
+    samples = csv_map["signal"];
+  }
+
+  for (std::size_t i = 0;i<samples.size();i++) {
+    auto & iv = samples[i];
+    AccelLedsTempFrame frame;
+    if(iv.type() != InValue::Type::LLONG){
+      std::stringstream ss;
+      ss << "Invalid signal value: " << iv << " at index: " << i;
+      throw std::invalid_argument(ss.str());
+    }
+    frame.ir_led = iv.llong_value();
+    // for(std::size_t j=0;j<_frame_size;j++){
+    //   auto & iv = samples[i*_frame_size + j];
+    //   frame.signal[j] = iv.llong_value();
+    // }
+    _frames.push_back(frame);
+  }
+}
+
 ////////////////////////////////////////// CsvSignalSimulator
 
 

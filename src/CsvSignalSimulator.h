@@ -31,6 +31,19 @@ public:
 
 class CsvAccelLedsTempFrameSource : public IPullBasedFrameSource<AccelLedsTempFrame>{
 
+  std::vector<AccelLedsTempFrame> _frames = {};
+  std::size_t _frame_size;
+
+  void _check_and_parse_csv(std::string path);
+ public:
+
+  CsvAccelLedsTempFrameSource  (std::string path);
+  CsvAccelLedsTempFrameSource  (CsvAccelLedsTempFrameSource  && other) :
+  _frames(std::move(other._frames)),
+    _frame_size(other._frame_size) {}
+  // ~CsvAccelLedsTempFrameSource  () {}
+
+  std::vector<AccelLedsTempFrame> & get_frames () override { return _frames; }
 };
 
 

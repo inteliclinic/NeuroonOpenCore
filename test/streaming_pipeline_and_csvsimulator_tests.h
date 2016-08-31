@@ -42,7 +42,7 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   virtual void SetUp(){
     eeg_source_sample1 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv1));
     eeg_source_sample2 = std::unique_ptr<CsvEegFramesSource>(new CsvEegFramesSource(sample_csv2));
-
+    irled_source_sample2 = std::unique_ptr<CsvAccelLedsTempFrameSource>(new CsvAccelLedsTempFrameSource(sample_csv2));
 	}
 
 
@@ -60,7 +60,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
 
 
   // big endian
-  auto ef_be = EegFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::BE);
+  auto ef_be = EegFrame::from_bytes_array((char*)bytes, L, NeuroonFrameBytes::ByteOrder::BE);
   EXPECT_EQ(19088743,ef_be.timestamp);
   std::int16_t expected_ef_be[] = {-30293, -21623,-12817,-4147, 291, 17767,-30293,-21623};
 
@@ -113,6 +113,17 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
       }
   }
 
+}
+
+TEST_F(StreamingPipelineAndCsvSimulatorTests, TemplAccelLedsTempFrameSource1) {
+
+  auto frames = irled_source_sample2->get_frames();
+
+  EXPECT_TRUE(frames.size() > 0);
+
+  for(uint16_t i=0; i<500; i++){
+      EXPECT_EQ(i, frames[i].ir_led);
+  }
 }
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
