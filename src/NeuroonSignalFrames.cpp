@@ -2,6 +2,14 @@
 #include "Exceptions.h"
 #include "logger.h"
 
+int is_big_endian(void)
+{
+  union {
+    uint32_t i;
+    char c[4];
+  } bint = {0x01020304};
+  return bint.c[0] == 1;
+}
 
 template<typename T>
 T bytes_to_int(const unsigned char* bytes, NeuroonFrameBytes::ByteOrder bo) {
@@ -21,9 +29,22 @@ T bytes_to_int(const unsigned char* bytes, NeuroonFrameBytes::ByteOrder bo) {
   return result;
 }
 
+
 template<typename T>
 T bytes_to_int(const char* bytes, NeuroonFrameBytes::ByteOrder  little_endian) {
   return bytes_to_int<T>((const unsigned char*)bytes, little_endian);
+}
+
+template<typename T>
+void int_to_bytes(char* out, T num, NeuroonFrameBytes::ByteOrder bo) {
+  auto sz = sizeof(T);
+  memcpy(out, &num, sz);
+  if((bo == NeuroonFrameBytes::ByteOrder::LE && is_big_endian())
+     || (bo == NeuroonFrameBytes::ByteOrder::BE && !is_big_endian())){
+    for(std::size_t i=0;i<sz/2;i++){
+      std::swap(out[i],out[sz-i-1]);
+    }
+  }
 }
 
 EegFrame EegFrame::from_bytes_array(const char* bytes, std::size_t size, NeuroonFrameBytes::ByteOrder bo){
@@ -56,4 +77,23 @@ AccelLedsTempFrame AccelLedsTempFrame::from_bytes_array(const char* bytes, std::
   af.temperature[1] = bytes_to_int<std::int8_t>(bytes+19, bo);
 
   return af;
+}
+
+
+void EegFrame::to_bytes(char* out, NeuroonFrameBytes::ByteOrder bo) const{
+  int_to_bytes<std::uint32_t>(out, this->timestamp, bo);
+  for(std::size_t i = 0; i < EegFrame::Length; i++){
+    int_to_bytes<std::int16_t>(out+4+2*i, this->signal[i], bo);
+  }
+}
+
+void AccelLedsTempFrame::to_bytes(char* out, NeuroonFrameBytes::ByteOrder bo) const{
+  int_to_bytes<std::uint32_t>(out, this->timestamp, bo);
+  int_to_bytes<std::int32_t>(out+4, this->ir_led, bo);
+  int_to_bytes<std::int32_t>(out+8, this->red_led, bo);
+  int_to_bytes<std::int16_t>(out+12, this->accel_axes.x, bo);
+  int_to_bytes<std::int16_t>(out+14, this->accel_axes.y, bo);
+  int_to_bytes<std::int16_t>(out+16, this->accel_axes.z, bo);
+  int_to_bytes<std::int8_t>(out+18, this->temperature[0], bo);
+  int_to_bytes<std::int8_t>(out+19, this->temperature[1], bo);
 }
