@@ -15,7 +15,7 @@
 OnlineStagingClassifier::OnlineStagingClassifier() {
 
 	dlib::matrix<int> c = dlib::matrix_cast<int>(load_matrix(ONLINE_MODEL_RES_DIRECTORY "/classes.csv"));
-	m_classes = dlib_matrix_to_vector(dlib::trans(c));
+	m_classes = dlib_matrix_to_vector<int>(dlib::trans(c));
 
 	initialize_mlp();
 	initialize_viterbi(m_classes);
@@ -53,7 +53,7 @@ void OnlineStagingClassifier::initialize_viterbi(const std::vector<int> classes)
 	assert(transition_matrix.nc() != 0);
 	assert(transition_matrix.nr() != 0);
 
-	const double VITERBI_WEIGHT = 0.5;
+	const double VITERBI_WEIGHT = 1;
 	m_viterbi = new OnLineViterbiSearch(classes, start_p, final_p, transition_matrix, VITERBI_WEIGHT);
 }
 
