@@ -1,6 +1,7 @@
 #include "../src/SignalSimulator.h"
 #include "test_utils.h"
 #include "../src/DataSink.h"
+#include "../src/DataSource.h"
 
 #include <gtest/gtest.h>
 #include <chrono>
@@ -98,7 +99,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
 }
 
 
-TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
+TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleEegFrameSource1) {
 
   auto frames = eeg_source_sample1->get_values();
   auto frame_length = EegFrame::Length;
@@ -113,6 +114,44 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
       }
   }
 
+}
+TEST_F(StreamingPipelineAndCsvSimulatorTests, SignalSource) {
+  auto zeros_int16 = SignalSource<std::uint16_t>::zeros(5);
+
+  auto v = zeros_int16.get_values();
+  std::vector<std::uint16_t> expected = { 0, 0, 0, 0, 0};
+  EXPECT_EQ_VECTORS(expected,v);
+
+  auto zeros_strings = SignalSource<std::string>::generation_from_index([](std::size_t ){ return "0";}, 3);
+  std::vector<std::string> expected_str = {"0","0","0"};
+  auto v2 = zeros_strings.get_values();
+  EXPECT_EQ_VECTORS(expected_str,v2);
+
+  auto csv_header = SignalSource<int>::csv_column(sample_csv2,"signal");
+  auto v3 = csv_header.get_values();
+  std::vector<int> expected_csv = {};
+  for(int i = 0; i<500; i++){
+    expected_csv.push_back(i);
+  }
+  EXPECT_EQ_VECTORS(expected_csv,v3);
+}
+
+TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleAccelLedTempFrameSource1) {
+
+  auto zeros_int16 = SignalSource<std::uint16_t>::zeros(10);
+
+  /* auto frames = eeg_source_sample1->get_values(); */
+  /* auto frame_length = EegFrame::Length; */
+
+  /* EXPECT_TRUE(frames.size() > 0); */
+
+  /* for(uint16_t i=0; i<250; i+= frame_length){ */
+  /*   auto & f = frames[i/frame_length]; */
+  /*   if(250 - i >= frame_length) */
+  /*     for(uint16_t j=0; j<frame_length;j++){ */
+  /*       EXPECT_EQ(i+j, f.signal[j]); */
+  /*     } */
+  /* } */
 }
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {

@@ -27,7 +27,11 @@ public:
     _frame_size(other._frame_size) {}
   // ~EegFramesSource () {}
 
-  std::vector<EegFrame> get_values () override { return _frames; }
+  std::vector<EegFrame> get_values (std::size_t count=0) override {
+    if(count == 0) return _frames;
+    if(count >= _frames.size()) count = _frames.size();
+    return std::vector<EegFrame>(_frames.begin(), _frames.begin()+count);
+  }
 };
 
 
@@ -47,7 +51,8 @@ public:
                             SignalSource<std::int16_t> accel_axes_y,
                             SignalSource<std::int16_t> accel_axes_z,
                             SignalSource<std::int8_t> temperature_1,
-                            SignalSource<std::int8_t> temperature_2);
+                            SignalSource<std::int8_t> temperature_2)
+  {}
 
   // // irled,
   // AccelLedsTempFrameSource(SignalSource ir_led, SignalSource acc);
