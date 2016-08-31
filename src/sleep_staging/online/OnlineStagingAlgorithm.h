@@ -14,17 +14,12 @@
 #include <vector>
 #include <stdexcept>
 
-enum SLEEP_STAGE {
-	AWAKE = 0,
-	REM = -1,
-	LIGHT = -3,
-	DEEP = -4
-};
+#include "NeuroonAlgCoreApi.h"
 
-struct sleep_stage_t {
-	SLEEP_STAGE stage;
-	llong timestamp;
-};
+//struct sleep_stage_t {
+//	SLEEP_STAGE stage;
+//	llong timestamp;
+//};
 
 class SleepStagingResult {
 public:
@@ -40,7 +35,7 @@ public:
 		}
 	}
 
-	std::vector<sleep_stage_t> m_stages;
+	std::vector<staging_element_t> m_stages;
 };
 
 class OnlineStagingAlgorithm : public SinkStreamingAlgorithm<SleepStagingResult> {

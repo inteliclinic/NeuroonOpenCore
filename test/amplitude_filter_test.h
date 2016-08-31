@@ -25,8 +25,8 @@ TEST_F(AmplitudeFilterTest, basic_amplitude_filter_test) {
 	dlib::set_all_elements(data, 0);
 
 	dlib::set_colm(data, column) = dlib::trans(dlib::range(0, rows - 1));
-	AmplitudeFilter f(critical_value, column);
-	dlib::matrix<double> filtered = f.transform(data);
+	AmplitudeFilter f(critical_value);
+	dlib::matrix<double> filtered = f.transform(data, dlib::colm(data, column));
 
 	EXPECT_EQ(filtered.nr(), data.nr());
 	EXPECT_EQ(filtered.nc(), data.nc());
