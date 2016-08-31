@@ -1,2 +1,3 @@
 add_subdirectory(csv_spectrogram)
 add_subdirectory(offline_stager)
+add_subdirectory(simulator)
