@@ -31,7 +31,7 @@ class FrameStreamPipe : public IFrameStreamPipe{
     if(!is_exhausted() && !is_broken()){
       if (auto ssource = _source.lock()) {
         if (auto ssink = _sink.lock()) {
-          auto& frame = ssource->get_values()[_frame_transmitted];
+          auto frame = ssource->get_values()[_frame_transmitted];
           if(change_timestamp){
             ((NeuroonSignalFrame*)&frame)->timestamp = timestamp;
           }

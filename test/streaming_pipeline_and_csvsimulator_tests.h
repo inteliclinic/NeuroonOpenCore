@@ -43,9 +43,9 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   virtual void SetUp(){
     eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1));
     eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2));
-
+    irled_source_sample2 = std::unique_ptr<AccelLedsTempFrameSource>(
+                                                                     new AccelLedsTempFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
 	}
-
 
 	void TearDown() {
 	}
@@ -115,6 +115,24 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleEegFrameSource1) {
   }
 
 }
+
+TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleAccelLedTempFrameSource1) {
+
+  for(auto i=0;i<100;i++){
+    irled_source_sample2 = std::unique_ptr<AccelLedsTempFrameSource>(
+                                                                     new AccelLedsTempFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
+
+  }
+
+  auto frames = irled_source_sample2->get_values();
+
+  EXPECT_TRUE(frames.size() == 500);
+
+  for(uint32_t i=0; i<500; i++){
+    EXPECT_EQ(i, frames[i].ir_led);
+  }
+}
+
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SignalSource) {
   auto zeros_int16 = SignalSource<std::uint16_t>::zeros(5);
 
@@ -134,24 +152,6 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SignalSource) {
     expected_csv.push_back(i);
   }
   EXPECT_EQ_VECTORS(expected_csv,v3);
-}
-
-TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleAccelLedTempFrameSource1) {
-
-  auto zeros_int16 = SignalSource<std::uint16_t>::zeros(10);
-
-  /* auto frames = eeg_source_sample1->get_values(); */
-  /* auto frame_length = EegFrame::Length; */
-
-  /* EXPECT_TRUE(frames.size() > 0); */
-
-  /* for(uint16_t i=0; i<250; i+= frame_length){ */
-  /*   auto & f = frames[i/frame_length]; */
-  /*   if(250 - i >= frame_length) */
-  /*     for(uint16_t j=0; j<frame_length;j++){ */
-  /*       EXPECT_EQ(i+j, f.signal[j]); */
-  /*     } */
-  /* } */
 }
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
@@ -213,7 +213,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
 
 
   auto sim = SignalSimulator();
-  sim.add_streaming_pipe(pipe_up, EegFrame::DefaultEmissionInterval_ms);
+  sim.add_streaming_pipe(std::move(pipe_up), EegFrame::DefaultEmissionInterval_ms);
 
   auto start = std::chrono::high_resolution_clock::now();
   int ms_to_pass = 1020;
@@ -230,11 +230,28 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
 
   for(uint16_t i=0; i<120/frame_length; i++){
     // only full frames are created
-    if(250 - i*frame_length >= frame_length){
+    if(120 - i*frame_length >= frame_length){
       auto & passed = eeg_source_sample1->get_values()[i];
+      // std::cout << "\n-------------------------\n";
+      // for(auto &d: eeg_source_sample1->get_values()){
+      //   std::cout<<"\n";
+      //   for(uint16_t j=0; j<frame_length;j++){
+      //     std::cout << d.signal[j] << " ";
+      //   }
+      // }
+      // std::cout << "\n-------------------------\n";
+      // for(auto &d: v){
+      //   std::cout<<"\n";
+      //   for(uint16_t j=0; j<frame_length;j++){
+      //     std::cout << d.signal[j] << " ";
+      //   }
+      // }
+      std::cout << "\n-------------------------\n";
       auto & received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for(uint16_t j=0; j<frame_length;j++){
+        std::cout << passed.signal[j] << " " << received.signal[j];
+        std::cout << "\n";
         EXPECT_EQ(passed.signal[j], received.signal[j]);
       }
     }
@@ -276,8 +293,8 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant
   auto pipe2_cheat_rp = pipe2_up.get();
 
   auto sim = SignalSimulator();
-  sim.add_streaming_pipe(pipe_up, EegFrame::DefaultEmissionInterval_ms);
-  sim.add_streaming_pipe(pipe2_up, EegFrame::DefaultEmissionInterval_ms);
+  sim.add_streaming_pipe(std::move(pipe_up), EegFrame::DefaultEmissionInterval_ms);
+  sim.add_streaming_pipe(std::move(pipe2_up), EegFrame::DefaultEmissionInterval_ms);
 
   int ms_to_pass = 1985;
 
@@ -290,6 +307,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant
   EXPECT_EQ(true,pipe2_cheat_rp->is_exhausted());
   EXPECT_EQ(93, v.size());
 }
+
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSource_instant) {
 
@@ -309,8 +327,8 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSource_insta
   auto pipe2_cheat_rp = pipe2_up.get();
 
   auto sim = SignalSimulator();
-  sim.add_streaming_pipe(pipe_up, EegFrame::DefaultEmissionInterval_ms);
-  sim.add_streaming_pipe(pipe2_up, EegFrame::DefaultEmissionInterval_ms);
+  sim.add_streaming_pipe(std::move(pipe_up), EegFrame::DefaultEmissionInterval_ms);
+  sim.add_streaming_pipe(std::move(pipe2_up), EegFrame::DefaultEmissionInterval_ms);
 
   sim.pass_time(0, 0);
 

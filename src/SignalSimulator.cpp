@@ -49,6 +49,153 @@ void EegFramesSource::_check_and_parse_csv(std::string path){
   }
 }
 
+////////////////////////////////////////// AccelLedsTempFrame
+
+
+AccelLedsTempFrameSource::AccelLedsTempFrameSource (SignalSource<std::int32_t> ir_led,
+                                                    SignalSource<std::int32_t> red_led,
+                                                    SignalSource<std::int16_t> accel_x,
+                                                    SignalSource<std::int16_t> accel_y,
+                                                    SignalSource<std::int16_t> accel_z,
+                                                    SignalSource<std::int8_t> temperature_1,
+                                                    SignalSource<std::int8_t> temperature_2){
+
+  // gather all csv based sources
+  std::vector<SourceSpec> specs = {
+    ir_led.spec(),
+    red_led.spec(),
+    accel_x.spec(),
+    accel_y.spec(),
+    accel_z.spec(),
+    temperature_1.spec(),
+    temperature_2.spec(),
+  };
+
+  std::vector<std::int32_t> led_signals[2] = {{},{}};
+  std::vector<std::int16_t> accel_axes[3] ={{},{},{}};
+  std::vector<std::int8_t> temperatures[2] = {{},{}};
+
+  std::size_t final_source_length = std::numeric_limits<std::size_t>::max();
+  bool any_csv_source = false;
+
+  // csv sources ---------------------------
+
+  // adjust source length to the shorted csv file.
+
+  // ---------------------
+
+  if(ir_led.spec().option() == SourceSpec::SourceOption::CSV){
+    auto & v = led_signals[0];
+    v = ir_led.get_values();
+    any_csv_source = true;
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+  }
+  if(red_led.spec().option() == SourceSpec::SourceOption::CSV){
+    auto & v = led_signals[1];
+    any_csv_source = true;
+    v = red_led.get_values();
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+  }
+  if(accel_x.spec().option() == SourceSpec::SourceOption::CSV){
+    any_csv_source = true;
+    auto & v = accel_axes[0];
+    v = accel_x.get_values();
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+  }
+  if(accel_y.spec().option() == SourceSpec::SourceOption::CSV){
+    any_csv_source = true;
+    auto & v = accel_axes[1];
+    v = accel_y.get_values();
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+
+  }
+  if(accel_z.spec().option() == SourceSpec::SourceOption::CSV){
+    any_csv_source = true;
+    auto & v = accel_axes[2];
+    v = accel_z.get_values();
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+  }
+  if(temperature_1.spec().option() == SourceSpec::SourceOption::CSV){
+    any_csv_source = true;
+    auto & v = temperatures[0];
+    v = temperature_1.get_values();
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+  }
+  if(temperature_2.spec().option() == SourceSpec::SourceOption::CSV){
+    any_csv_source = true;
+    auto & v = temperatures[1];
+    v = temperature_2.get_values();
+    if(v.size() < final_source_length) { final_source_length = v.size();}
+  }
+
+
+  // non csv sources ---------------------------
+
+  // if there was no csv sources, then adjust source length to the longest default size
+  // of single signal sources
+
+  // ---------------------
+
+  if(!any_csv_source){
+    final_source_length = std::numeric_limits<std::size_t>::lowest();
+    for(auto & spc : specs){
+      if(spc.default_size() > final_source_length) { final_source_length = spc.default_size();}
+    }
+  }
+
+  if(ir_led.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = led_signals[0];
+    v = ir_led.get_values(final_source_length);
+  }
+
+  if(red_led.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = led_signals[1];
+    v = red_led.get_values(final_source_length);
+  }
+
+  if(accel_x.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = accel_axes[0];
+    v = accel_x.get_values(final_source_length);
+  }
+
+  if(accel_y.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = accel_axes[1];
+    v = accel_y.get_values(final_source_length);
+
+  }
+  if(accel_z.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = accel_axes[2];
+    v = accel_z.get_values(final_source_length);
+  }
+  if(temperature_1.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = temperatures[0];
+    v = temperature_1.get_values(final_source_length);
+  }
+  if(temperature_2.spec().option() != SourceSpec::SourceOption::CSV){
+    auto & v = temperatures[1];
+    v = temperature_2.get_values(final_source_length);
+  }
+
+  for(int i = 0 ; i < final_source_length ; i++) {
+    AccelLedsTempFrame al;
+    al.timestamp = 0;
+    al.ir_led = led_signals[0][i];
+    al.red_led = led_signals[1][i];
+
+    AccelAxes ax;
+
+    ax.x = accel_axes[0][i];
+    ax.y = accel_axes[1][i];
+    ax.z = accel_axes[2][i];
+
+    al.accel_axes = ax;
+
+    al.temperature[0] = temperatures[0][i];
+    al.temperature[1] = temperatures[1][i];
+
+    _frames.push_back(al);
+  }
+}
 
 ////////////////////////////////////////// SignalSimulator
 
@@ -142,7 +289,7 @@ bool SignalSimulator::pass_time(ullong ms_to_simulate,
   return all_exhausted;
 }
 
-void SignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
+void SignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> pipe,
                                             uint pipe_frame_emission_interval_ms){
   _pipes.push_back(std::make_tuple(pipe_frame_emission_interval_ms, std::move(pipe)));
 }

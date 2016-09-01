@@ -28,9 +28,10 @@ public:
   // ~EegFramesSource () {}
 
   std::vector<EegFrame> get_values (std::size_t count=0) override {
+
     if(count == 0) return _frames;
-    if(count >= _frames.size()) count = _frames.size();
-    return std::vector<EegFrame>(_frames.begin(), _frames.begin()+count);
+    if(count < _frames.size()) return std::vector<EegFrame>(_frames.begin(), _frames.begin()+count);
+    return _frames;
   }
 };
 
@@ -42,6 +43,8 @@ class AccelLedsTempFrameSource : public IPullBasedOfflineSource<AccelLedsTempFra
 
 public:
 
+  std::vector<AccelLedsTempFrame> _frames = {};
+  std::size_t _frame_size;
 
 
   // low level constructor
@@ -51,12 +54,26 @@ public:
                             SignalSource<std::int16_t> accel_axes_y,
                             SignalSource<std::int16_t> accel_axes_z,
                             SignalSource<std::int8_t> temperature_1,
-                            SignalSource<std::int8_t> temperature_2)
-  {}
+                            SignalSource<std::int8_t> temperature_2);
 
-  // // irled,
-  // AccelLedsTempFrameSource(SignalSource ir_led, SignalSource acc);
+  // only ir_led in resulting frames, rest is zeros
+  AccelLedsTempFrameSource(SignalSource<std::int32_t> ir_led) :
+    AccelLedsTempFrameSource(ir_led,
+                             SignalSource<std::int32_t>::zeros(1),
+                             SignalSource<std::int16_t>::zeros(1),
+                             SignalSource<std::int16_t>::zeros(1),
+                             SignalSource<std::int16_t>::zeros(1),
+                             SignalSource<std::int8_t>::zeros(1),
+                             SignalSource<std::int8_t>::zeros(1)) {}
 
+
+
+  std::vector<AccelLedsTempFrame> get_values (std::size_t count=0) override {
+
+    if(count == 0) return _frames;
+    if(count < _frames.size()) return std::vector<AccelLedsTempFrame>(_frames.begin(), _frames.begin()+count);
+    return _frames;
+  }
 
 };
 
@@ -87,7 +104,12 @@ public:
   SignalSimulator(const SignalSimulator &) = delete;
   SignalSimulator& operator=(const SignalSimulator &) = delete;
 
-  void add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
+  // void add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> && pipe,
+  //                         uint pipe_frame_emission_interval_ms){
+  //   _pipes.push_back(std::make_tuple(pipe_frame_emission_interval_ms, std::move(pipe)));
+  // }
+
+  void add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> pipe,
                           uint pipe_frame_emission_interval_ms);
 
   /** this function simulate passage of time and emits frame of data according

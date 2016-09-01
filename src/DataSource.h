@@ -35,23 +35,38 @@ template < > struct invalue_dispatch_type_tag<std::int32_t> { typedef number_tag
 template < > struct invalue_dispatch_type_tag<std::int16_t> { typedef number_tag type; };
 template < > struct invalue_dispatch_type_tag<std::int8_t> { typedef number_tag type; };
 
-template<typename T>
-class SignalSource : public IPullBasedOfflineSource<T>{
-
-
-  typedef std::function<T (ulong)> GenFun;
+class SourceSpec{
+public:
   enum class SourceOption { CSV, ZEROS, GEN_FUN };
 
+private:
   std::string _csv_path;
   std::string _header;
   int _column_index;
   SourceOption _option;
-  GenFun _gen_fun;
   std::size_t _default_size;
 
+public:
 
-  SignalSource(std::string csv_path, std::string header, int column_index, SourceOption option, GenFun gen_fun=nullptr, std::size_t samples_count=0) :
-    _csv_path(csv_path), _header(header), _column_index(column_index), _option(option), _gen_fun(gen_fun), _default_size(samples_count) {}
+  SourceSpec(SourceOption option, std::string csv_path, std::string header, int column_index, std::size_t default_size=0) : _csv_path(csv_path), _header(header), _column_index(column_index), _option(option), _default_size(default_size) {}
+
+  SourceOption option() const{ return _option;}
+  std::size_t default_size() const {return _default_size;}
+  std::string csv_path() const { return ( option() == SourceOption::CSV) ? _csv_path : "";}
+  std::string csv_header() const { return ( option() == SourceOption::CSV) ? _header : "";}
+  int csv_column_index() const { return ( option() == SourceOption::CSV) ? _column_index : -1;}
+};
+
+template<typename T>
+class SignalSource : public IPullBasedOfflineSource<T>{
+
+
+
+  typedef std::function<T (ulong)> GenFun;
+  SourceSpec _spec;
+  GenFun _gen_fun;
+
+  SignalSource(SourceSpec spec, GenFun gen_fun=nullptr) : _spec(spec), _gen_fun(gen_fun) {}
 
 
   // T dispatch(number_tag, const InValue & val) const;
@@ -59,21 +74,22 @@ class SignalSource : public IPullBasedOfflineSource<T>{
   // const std::vector<T> get_values_internal() const;
 
 public:
+  SourceSpec spec() const { return _spec; }
 
   static SignalSource csv_column(std::string csv_path, std::string header){
-    return SignalSource(csv_path, header, -1, SourceOption::CSV);
+    return SignalSource(SourceSpec(SourceSpec::SourceOption::CSV, csv_path, header, -1));
   }
 
   static SignalSource csv_column(std::string csv_path, int column_index){
-    return SignalSource(csv_path, "", column_index, SourceOption::CSV);
+    return SignalSource(SourceSpec(SourceSpec::SourceOption::CSV, csv_path, "", column_index));
   }
 
   static SignalSource zeros(std::size_t default_samples_count){
-    return SignalSource("", "", -1, SourceOption::ZEROS, nullptr, default_samples_count);
+    return SignalSource(SourceSpec(SourceSpec::SourceOption::ZEROS, "", "", -1, default_samples_count));
  }
 
   static SignalSource generation_from_index(std::function<T (ulong)> gen_fun, std::size_t default_samples_count){
-    return SignalSource("", "", -1, SourceOption::GEN_FUN, gen_fun, default_samples_count);
+    return SignalSource(SourceSpec(SourceSpec::SourceOption::GEN_FUN, "", "", -1, default_samples_count), gen_fun);
   }
 
   const std::vector<T> get_values(std::size_t count=0) const{
@@ -105,7 +121,6 @@ public:
     }
 
     // TODO - make it on one read of csv
-
     std::vector< std::vector<T> > ret = {};
     for(const auto & ss : same_csv_sources){
       ret.push_back(ss.get_values());
@@ -145,32 +160,32 @@ public:
 
 
     std::vector<InValue> invalues = {};
-    switch(_option){
-    case SourceOption::GEN_FUN:{
+    switch(_spec.option()){
+    case SourceSpec::SourceOption::GEN_FUN:{
       if(count == 0){
-        count = _default_size;
+        count = _spec.default_size();
       }
       std::vector<T> rets = {};
-      for(int i = 0; i < count; i++){
+      for(std::size_t i = 0; i < count; i++){
         rets.push_back(_gen_fun(i));
       }
       return rets;
     }
       break;
-    case SourceOption::ZEROS:
+    case SourceSpec::SourceOption::ZEROS:
       if(count == 0){
-        count = _default_size;
+        count = _spec.default_size();
       }
       for(int i = 0; i < count; i++){
         invalues.push_back(InValue((llong)0));
       }
       break;
-    case SourceOption::CSV:{
-      if(_header!=""){
-        invalues = CsvReader::read_csv_with_headers_from_path(_csv_path).at(_header);
+    case SourceSpec::SourceOption::CSV:{
+      if(_spec.csv_header()!=""){
+        invalues = CsvReader::read_csv_with_headers_from_path(_spec.csv_path()).at(_spec.csv_header());
       }
-      else if(_column_index>=0){
-        invalues = CsvReader::read_csv_no_headers_from_path(_csv_path)[_column_index];
+      else if(_spec.csv_column_index()>=0){
+        invalues = CsvReader::read_csv_no_headers_from_path(_spec.csv_path())[_spec.csv_column_index()];
       }
       else{
         throw std::logic_error("Invalid SignalSource initialization");
