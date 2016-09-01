@@ -4,7 +4,7 @@
 
 #define ELPP_DISABLE_DEBUG_LOGS
 
-#ifdef __linux__
+#ifndef ANDROID
 	#define ELPP_STACKTRACE_ON_CRASH
 #endif
 
