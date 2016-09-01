@@ -11,6 +11,7 @@
 #include <dlib/matrix.h>
 #include <cassert>
 #include "dlib_utils.h"
+#include "logger.h"
 
 OnlineStagingAlgorithm::OnlineStagingAlgorithm(const std::vector<OnlineStagingAlgorithm::sink_t*> & sinks)
 : SinkStreamingAlgorithm<SleepStagingResult>(sinks)
@@ -30,6 +31,8 @@ void OnlineStagingAlgorithm::reset_state() {
 }
 
 void OnlineStagingAlgorithm::process_input(const INeuroonSignals & input) {
+	//LOG(WARNING) << "GOT IT!!!!!   eeg:" << input.eeg_signal().size()<< ", ir: " << input.ir_led_signal().size() <<", total samples: " << input.total_signal_samples(EEG);
+
 	ullong eeg_sample_index = input.total_signal_samples(EEG);
 	ullong ir_sample_index = input.total_signal_samples(IR_LED);
 

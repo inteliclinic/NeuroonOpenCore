@@ -47,15 +47,15 @@ ullong NeuroonSignals::last_timestamp(SignalOrigin so) const {
 std::size_t NeuroonSignals::total_signal_samples(SignalOrigin so) const {
   switch(so){
   case SignalOrigin::EEG:
-    return LAST_TS(_eeg_signal);
+    return TOTAL_COUNT(_eeg_signal);
   case SignalOrigin::IR_LED:
-    return LAST_TS(_ir_led_signal);
+    return TOTAL_COUNT(_ir_led_signal);
   case SignalOrigin::RED_LED:
-    return LAST_TS(_red_led_signal);
+    return TOTAL_COUNT(_red_led_signal);
   case SignalOrigin::ACCELEROMETER:
-    return LAST_TS(_accel_axes_signal);
+    return TOTAL_COUNT(_accel_axes_signal);
   case SignalOrigin::TEMPERATURE:
-    return LAST_TS(_temperature_signal);
+    return TOTAL_COUNT(_temperature_signal);
   }
 }
 

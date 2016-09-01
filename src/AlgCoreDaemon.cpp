@@ -5,6 +5,7 @@
 void AlgCoreDaemon::_make_streaming_algorithms_step(){
 	LOG(INFO) << "Streaming algorithms step";
   for(auto & alg : _stream_algorithms){
+	  LOG(WARNING) << "stepping...";
     alg->process_input(_neuroon_signals);
   }
 }
@@ -50,6 +51,8 @@ void AlgCoreDaemon::consume (NeuroonFrameBytes& frame_stream) {
     break;
   }
   }
+
+  _make_streaming_algorithms_step();
 }
 
 

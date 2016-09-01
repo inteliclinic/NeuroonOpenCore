@@ -17,15 +17,18 @@ struct staging_element_t {
 };
 
 typedef void (*staging_callback_t)(const staging_element_t*, int);
+typedef void (*logger_callback_t)(const char*);
 
 NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback);
 
 void destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
 
+void start_sleep(NeuroonAlgCoreData* data);
+
 void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size);
 
 void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size);
 
-void install_log_callback(NeuroonAlgCoreData* data, void* (callback)(const char*));
+void install_log_callback(NeuroonAlgCoreData* data, logger_callback_t);
 
 #endif
