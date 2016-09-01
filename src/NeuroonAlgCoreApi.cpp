@@ -64,6 +64,11 @@ void start_sleep(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL END";
 }
 
+void stop_sleep(NeuroonAlgCoreData* data) {
+	LOG(INFO) << "API CALL";
+	data->_daemon.end_processing();
+	LOG(INFO) << "API CALL";
+}
 
 void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";

@@ -4,6 +4,8 @@
 #include <fstream>
 #include <functional>
 #include <memory>
+#include <iostream>
+#include <unistd.h>
 
 std::ofstream* log_out;
 
@@ -57,9 +59,17 @@ struct EegSink : public IDataSink<EegFrame> {
 	}
 };
 
-int main() {
-	std::string eeg_csv("../test/test_data/TG_190616_EEG.csv");
-	std::string ir_csv("../test/test_data/TG_190616_IR.csv");
+int main(int argc, char** argv) {
+
+	if (argc != 2) {
+		std::cout << "Usage: simulator <path to directory containing RawSignal.csv and IrLedSignal.csv>" << std::endl;
+		return -1;
+	}
+
+	std::string directory(argv[1]);
+
+	std::string eeg_csv(directory + "/RawSignal.csv");
+	std::string ir_csv(directory + "IrLedSignal.csv");
 
 	auto eeg_source = new CsvEegFramesSource(eeg_csv, EegFrame::Length, 1);
     std::shared_ptr<IPullBasedFrameSource<EegFrame>> eeg_source_sp(eeg_source);
@@ -99,6 +109,8 @@ int main() {
 			feed_ir_led_data(neuroon, bytes, 20);
 		}
 	}
+
+	stop_sleep(neuroon);
 
 	log_out->close();
 }

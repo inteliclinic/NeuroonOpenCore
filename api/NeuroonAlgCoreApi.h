@@ -25,6 +25,8 @@ void destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
 
 void start_sleep(NeuroonAlgCoreData* data);
 
+void stop_sleep(NeuroonAlgCoreData* data);
+
 void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size);
 
 void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size);
