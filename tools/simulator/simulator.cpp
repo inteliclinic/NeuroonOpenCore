@@ -39,7 +39,7 @@ struct IrSink : public IDataSink<AccelLedsTempFrame> {
 	AccelLedsTempFrame m_frame;
 	bool has_frame = false;
 
-	AccelLedsTempFrame get_frame() {
+	AccelLedsTempFrame take_frame() {
 		has_frame = false;
 		return m_frame;
 	}
@@ -47,7 +47,6 @@ struct IrSink : public IDataSink<AccelLedsTempFrame> {
 	virtual void consume(AccelLedsTempFrame &frame) {
 		m_frame = frame;
 		has_frame = true;
-		LOG(INFO) << "Got ir frame: " << has_frame;
 	}
 
 };
@@ -58,7 +57,7 @@ struct EegSink : public IDataSink<EegFrame> {
 	EegFrame m_frame;
 	bool has_frame = false;
 
-	EegFrame get_frame() {
+	EegFrame take_frame() {
 		has_frame = false;
 		return m_frame;
 	}
@@ -74,8 +73,8 @@ int main() {
 	std::string eeg_csv("../test/test_data/TG_190616_EEG.csv");
 	std::string ir_csv("../test/test_data/TG_190616_IR.csv");
 
-    std::shared_ptr<IPullBasedFrameSource<EegFrame>> eeg_source_sp(new CsvEegFramesSource(eeg_csv));
-    std::shared_ptr<IPullBasedFrameSource<AccelLedsTempFrame>> ir_source_sp(new CsvAccelLedsTempFrameSource(ir_csv));
+    std::shared_ptr<IPullBasedFrameSource<EegFrame>> eeg_source_sp(new CsvEegFramesSource(eeg_csv, EegFrame::Length, 0));
+    std::shared_ptr<IPullBasedFrameSource<AccelLedsTempFrame>> ir_source_sp(new CsvAccelLedsTempFrameSource(ir_csv, 0));
 
     CsvAccelLedsTempFrameSource irled_source_sample2(ir_csv);
 
@@ -86,10 +85,8 @@ int main() {
     std::shared_ptr<IrSink> sink_sp_ir(new IrSink());
     auto pipe_up_ir = std::unique_ptr<IFrameStreamPipe>(new FrameStreamPipe<AccelLedsTempFrame>(ir_source_sp, sink_sp_ir));
 
-
 	sim.add_streaming_pipe(pipe_up_eeg, EegFrame::DefaultEmissionInterval_ms);
 	sim.add_streaming_pipe(pipe_up_ir, AccelLedsTempFrame::DefaultEmissionInterval_ms);
-
 
 	staging_out = new std::ofstream("online_staging.csv");
 	log_out = new std::ofstream("online_log.csv");
@@ -99,18 +96,27 @@ int main() {
 
 	start_sleep(neuroon);
 
+	std::stringstream ss;
+	for (int i = 0; i != 1000/*eeg_source_sp->get_frames().size()*/; ++i) {
+		ss << eeg_source_sp->get_frames()[i].signal[0] << " ";
+	}
+
+	LOG(ERROR) << ss.str();
+
 	for (int i = 0; i != 1000 * 1000; ++i) {
 		sim.pass_time(10, 0);
 
 		char bytes[20];
 		if (sink_sp_eeg->has_frame) {
-			sink_sp_eeg->get_frame();
+			EegFrame f = sink_sp_eeg->take_frame();
+			f.to_bytes(bytes);
 			feed_eeg_data (neuroon, bytes, 20);
 		}
 
 		if (sink_sp_ir->has_frame) {
-			sink_sp_ir->get_frame();
-			 feed_ir_led_data(neuroon, bytes, 20);
+			AccelLedsTempFrame f = sink_sp_ir->take_frame();
+			f.to_bytes(bytes);
+			feed_ir_led_data(neuroon, bytes, 20);
 		}
 	}
 

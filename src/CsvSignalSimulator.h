@@ -15,11 +15,12 @@ class CsvEegFramesSource : public IPullBasedFrameSource<EegFrame>{
 
   std::vector<EegFrame> _frames = {};
   std::size_t _frame_size;
+  int _column = 0;
 
   void _check_and_parse_csv(std::string path);
 public:
 
-  CsvEegFramesSource (std::string path, std::size_t frame_size = EegFrame::Length);
+  CsvEegFramesSource (std::string path, std::size_t frame_size = EegFrame::Length, int column = 0);
   CsvEegFramesSource (CsvEegFramesSource && other) :
     _frames(std::move(other._frames)),
     _frame_size(other._frame_size) {}
@@ -33,11 +34,12 @@ class CsvAccelLedsTempFrameSource : public IPullBasedFrameSource<AccelLedsTempFr
 
   std::vector<AccelLedsTempFrame> _frames = {};
   std::size_t _frame_size;
+  int _column = 0;
 
   void _check_and_parse_csv(std::string path);
  public:
 
-  CsvAccelLedsTempFrameSource  (std::string path);
+  CsvAccelLedsTempFrameSource  (std::string path, int column = 0);
   CsvAccelLedsTempFrameSource  (CsvAccelLedsTempFrameSource  && other) :
   _frames(std::move(other._frames)),
     _frame_size(other._frame_size) {}

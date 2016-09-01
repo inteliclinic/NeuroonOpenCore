@@ -5,7 +5,7 @@
 #include "AlgCoreDaemon.h"
 #include "OnlineStagingAlgorithm.h"
 #include "logger.h"
-
+#include <sstream>
 struct NeuroonAlgCoreData {
 	AlgCoreDaemon _daemon;
 };
@@ -18,9 +18,11 @@ struct logging_sink : public OnlineStagingAlgorithm::sink_t {
 	void consume(SleepStagingResult& res) {
 		m_last_staging = res;
 
+		std::stringstream ss;
 		for (int i = 0; i != res.m_stages.size(); ++i) {
-			LOG(INFO) << "online staging: " << res.m_stages[i].stage;
+			ss << res.m_stages[i].stage << " ";
 		}
+		LOG(INFO) << "online staging: " << ss.str();
 	}
 };
 

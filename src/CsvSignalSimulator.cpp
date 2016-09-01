@@ -5,13 +5,14 @@
 #include <thread>
 #include <sstream>
 #include <stdio.h>
+#include <algorithm>
 
-#define BIGGER(a,b) a>b?a:b
 #define EMISSION_INTERVAL_MS(t) std::get<0>(t)
 #define PIPE_UP(t) std::get<1>(t)
 
-CsvEegFramesSource::CsvEegFramesSource(const std::string path, std::size_t frame_size) :
-  _frame_size(frame_size) {
+CsvEegFramesSource::CsvEegFramesSource(const std::string path, std::size_t frame_size, int column) :
+  _frame_size(frame_size),
+  _column(column) {
 
   // read csv
   // parse & check signal from csv
@@ -25,7 +26,7 @@ void CsvEegFramesSource::_check_and_parse_csv(std::string path){
   std::vector<InValue> samples;
   if (csv_map.find("signal") == csv_map.end()) {
     csv_map.clear();
-    samples = CsvReader::read_csv_no_headers_from_path(path)[0];
+    samples = CsvReader::read_csv_no_headers_from_path(path)[_column];
     // throw std::invalid_argument("No signal column in the csv file.");
 
   }
@@ -51,7 +52,8 @@ void CsvEegFramesSource::_check_and_parse_csv(std::string path){
 
 /////////////////////////////////////////// temp accel leds implementation
 
-CsvAccelLedsTempFrameSource::CsvAccelLedsTempFrameSource (const std::string path) {
+CsvAccelLedsTempFrameSource::CsvAccelLedsTempFrameSource (const std::string path, int column) :
+	_column(column){
 
   // read csv
   // parse & check signal from csv
@@ -65,7 +67,7 @@ void CsvAccelLedsTempFrameSource::_check_and_parse_csv(std::string path){
   std::vector<InValue> samples;
   if (csv_map.find("signal") == csv_map.end()) {
     csv_map.clear();
-    samples = CsvReader::read_csv_no_headers_from_path(path)[0];
+    samples = CsvReader::read_csv_no_headers_from_path(path)[_column];
     // throw std::invalid_argument("No signal column in the csv file.");
 
   }
@@ -124,7 +126,7 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
   // max time to wait
   llong max_time_to_wait = 0;
   for(const auto & triple : _pipes){
-    max_time_to_wait = BIGGER(EMISSION_INTERVAL_MS(triple), (ullong)max_time_to_wait);
+    max_time_to_wait = std::max( static_cast<ullong> (EMISSION_INTERVAL_MS(triple)), (ullong)max_time_to_wait);
   }
 
   while(ms_left > 0 || ms_to_simulate==0){
@@ -170,7 +172,7 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
     // Wait correct amount of time (tries to include the delay caused by computation)
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end-start;
-    llong ttw = BIGGER(0,round(time_passing_modifier*time_to_wait - elapsed.count()));
+    llong ttw = std::max(static_cast<double>(0), round(time_passing_modifier*time_to_wait - elapsed.count()));
     std::this_thread::sleep_for(std::chrono::milliseconds((llong)ttw));
     _time_passed += time_to_wait;
     // printf("Sleeping for: %lldms. Passing: %dms.\n", ttw, time_to_wait);

@@ -61,7 +61,7 @@ void OnlineStagingAlgorithm::process_input(const INeuroonSignals & input) {
 
 	ullong current_ts = input.last_timestamp(EEG);
 	int seconds_since_start = static_cast<int> (current_ts - m_first_timestamp);
-
+	LOG(INFO) << "seconds since start: " << seconds_since_start << ", first ts: " << m_first_timestamp << ", current_ts: " << current_ts;
 	dlib::matrix<double> eeg_signal = range_to_dlib_matrix(input.eeg_signal().end() - EEG_WINDOW, input.eeg_signal().end());
 	dlib::matrix<double> ir_signal = range_to_dlib_matrix(input.ir_led_signal().end() - IR_WINDOW, input.ir_led_signal().end());
 
