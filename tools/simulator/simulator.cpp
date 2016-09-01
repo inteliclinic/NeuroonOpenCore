@@ -73,8 +73,8 @@ int main() {
 	std::string eeg_csv("../test/test_data/TG_190616_EEG.csv");
 	std::string ir_csv("../test/test_data/TG_190616_IR.csv");
 
-    std::shared_ptr<IPullBasedFrameSource<EegFrame>> eeg_source_sp(new CsvEegFramesSource(eeg_csv, EegFrame::Length, 0));
-    std::shared_ptr<IPullBasedFrameSource<AccelLedsTempFrame>> ir_source_sp(new CsvAccelLedsTempFrameSource(ir_csv, 0));
+    std::shared_ptr<IPullBasedFrameSource<EegFrame>> eeg_source_sp(new CsvEegFramesSource(eeg_csv, EegFrame::Length, 1));
+    std::shared_ptr<IPullBasedFrameSource<AccelLedsTempFrame>> ir_source_sp(new CsvAccelLedsTempFrameSource(ir_csv, 1));
 
     CsvAccelLedsTempFrameSource irled_source_sample2(ir_csv);
 
