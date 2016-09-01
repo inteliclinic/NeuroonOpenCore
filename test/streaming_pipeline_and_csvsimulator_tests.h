@@ -95,6 +95,20 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
   EXPECT_EQ(-85, af_le.temperature[0]);
   EXPECT_EQ(-119, af_le.temperature[1]);
 
+  // to bytes conversion
+  auto af_def = AccelLedsTempFrame::from_bytes_array((char*)bytes, L);
+  auto ef_def = EegFrame::from_bytes_array((char*)bytes, L);
+
+  unsigned char back[L];
+  ef_def.to_bytes((char*)back);
+  for(std::size_t i = 0; i < L; i++){
+    EXPECT_EQ(bytes[i],back[i]);
+  }
+  af_def.to_bytes((char*)back);
+  for(std::size_t i = 0; i < L; i++){
+    EXPECT_EQ(bytes[i],back[i]);
+  }
+
 }
 
 
