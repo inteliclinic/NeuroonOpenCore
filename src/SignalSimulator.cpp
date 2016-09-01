@@ -6,7 +6,6 @@
 #include <sstream>
 #include <stdio.h>
 
-#define BIGGER(a,b) a>b?a:b
 #define EMISSION_INTERVAL_MS(t) std::get<0>(t)
 #define PIPE_UP(t) std::get<1>(t)
 
@@ -65,19 +64,9 @@ void SignalSimulator::_set_timestamp_to_now(){
 }
 
 
-/** this function simulate passage of time and emits frame of data according
-*   to provided data frame sinks.
-*   \param ms_to_simulate this many ms will be simulated.
-*                         Pass 0 for emiting entire data.
-*   \param time_passing_modifier rate at which real time passes.
-*                                 0 - passing take not real time
-*                                 1 - passing take normal time
-*
-*   \warning This function may actually emit the data a bit slower than expected
-*/
-void SignalSimulator::pass_time(ullong ms_to_simulate,
-                                   double time_passing_modifier){
-
+bool SignalSimulator::pass_time(ullong ms_to_simulate,
+                                double time_passing_modifier,
+                                bool force_wait){
 
   ullong ms_left = ms_to_simulate;
   // while requested time hasnt passed
@@ -85,15 +74,18 @@ void SignalSimulator::pass_time(ullong ms_to_simulate,
   // max time to wait
   llong max_time_to_wait = 0;
   for(const auto & triple : _pipes){
-    max_time_to_wait = BIGGER(EMISSION_INTERVAL_MS(triple), (ullong)max_time_to_wait);
+    max_time_to_wait = std::max<ullong>(EMISSION_INTERVAL_MS(triple), (ullong)max_time_to_wait);
   }
 
+  bool all_exhausted = false;
   while(ms_left > 0 || ms_to_simulate==0){
-    bool should_continue = false;
+    all_exhausted = false;
     for(const auto & t : _pipes){
-      if(!PIPE_UP(t)->is_exhausted()) should_continue = true;
+      if(!PIPE_UP(t)->is_exhausted()) all_exhausted = true;
     }
-    if(!should_continue) break;
+    if(!all_exhausted && !force_wait){
+      break;
+    }
 
     auto start = std::chrono::high_resolution_clock::now();
     // find sleep period for next frame emission
@@ -131,7 +123,7 @@ void SignalSimulator::pass_time(ullong ms_to_simulate,
     // Wait correct amount of time (tries to include the delay caused by computation)
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end-start;
-    llong ttw = BIGGER(0,round(time_passing_modifier*time_to_wait - elapsed.count()));
+    llong ttw = std::max<llong>(0,round(time_passing_modifier*time_to_wait - elapsed.count()));
     std::this_thread::sleep_for(std::chrono::milliseconds((llong)ttw));
     _time_passed += time_to_wait;
     // printf("Sleeping for: %lldms. Passing: %dms.\n", ttw, time_to_wait);
@@ -147,6 +139,7 @@ void SignalSimulator::pass_time(ullong ms_to_simulate,
       PIPE_UP(*t)->pass_next_frame_with_timestamp(ts);
     }
   }
+  return all_exhausted;
 }
 
 void SignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,

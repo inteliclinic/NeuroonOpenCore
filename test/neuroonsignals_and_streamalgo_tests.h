@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <random>
 
-#define BIGGER(a,b) a>b?a:b
 
 struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
 
@@ -71,7 +70,7 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsSimpleEegConsume) {
       ef.signal[j] = i+j;
     }
 
-    auto ts = ef.timestamp + BIGGER(0, ef.Length - 1) * ns.specs(SignalOrigin::EEG).ms_per_sample();
+    auto ts = ef.timestamp + std::max<llong>(0, ef.Length - 1) * ns.specs(SignalOrigin::EEG).ms_per_sample();
     ns.consume(ef);
 
     EXPECT_EQ(ts, ns.last_timestamp(SignalOrigin::EEG));

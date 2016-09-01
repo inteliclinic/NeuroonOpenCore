@@ -90,8 +90,22 @@ public:
   void add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
                           uint pipe_frame_emission_interval_ms);
 
-  void pass_time(ullong ms_to_simulate,
-                 double time_passing_modifier=1.0);
+  /** this function simulate passage of time and emits frame of data according
+   *   to provided data frame sinks.
+   *   @param ms_to_simulate this many ms will be simulated.
+   *                         Pass 0 for emiting entire data.
+   *   @param time_passing_modifier rate at which real time passes.
+   *                                 0 - passing take not real time
+   *                                 1 - passing take normal time
+   *   @param force_wait waits ms_to_simulate * time_passing_modifier, even if all pipes are exhausted.
+   *
+   *   @return Returns false, if all pipes are already exhausted.
+   *
+   *   @warning This function may actually emit the data a bit slower than expected
+   */
+  bool pass_time(ullong ms_to_simulate,
+                 double time_passing_modifier=1.0,
+                 bool force_wait=false);
 
 };
 

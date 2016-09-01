@@ -8,8 +8,6 @@
 #define TOTAL_COUNT(t) std::get<0>(t)
 #define LAST_TS(t) std::get<1>(t)
 #define SIGNAL_VEC(t) std::get<2>(t)
-#define BIGGER(a,b) a>b?a:b
-
 
 
 // -------------- PUBLIC API -----------------------
@@ -85,7 +83,7 @@ void NeuroonSignals::consume(EegFrame & frame){
   // insert new data
   signal.insert(signal.end(),frame.signal, frame.signal + frame.Length);
   TOTAL_COUNT(_eeg_signal) += signal.size() - old_sz;
-  LAST_TS(_eeg_signal) = frame.timestamp + BIGGER(0, frame.Length - 1) * ms_per_sample;
+  LAST_TS(_eeg_signal) = frame.timestamp + std::max<llong>(0, frame.Length - 1) * ms_per_sample;
 }
 
 void NeuroonSignals::consume(AccelLedsTempFrame & frame){
@@ -125,7 +123,7 @@ void NeuroonSignals::consume(AccelLedsTempFrame & frame){
       (double)frame.accel_axes.x,
       (double)frame.accel_axes.y,
       (double)frame.accel_axes.z});
-  temperature_signal.push_back((double)BIGGER(frame.temperature[0],frame.temperature[1]));
+  temperature_signal.push_back((double)std::max<int8_t>(frame.temperature[0],frame.temperature[1]));
 
 
   TOTAL_COUNT(_ir_led_signal) += ir_signal.size() - ir_old_sz;
