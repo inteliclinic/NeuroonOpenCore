@@ -1,4 +1,4 @@
-// #include <random>
+#include <random>
 #include "EegQualityStream.h"
 
 void EegQualityStream::process_input(const INeuroonSignals & ns){
