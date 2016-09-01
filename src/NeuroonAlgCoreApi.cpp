@@ -66,7 +66,7 @@ void start_sleep(NeuroonAlgCoreData* data) {
 
 
 void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size) {
-	LOG(INFO) << "API CALL";
+	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
 	frame.bytes = bytes;
@@ -74,11 +74,11 @@ void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size) {
 	frame.source_stream = NeuroonFrameBytes::SourceStream::EEG;
 	data->_daemon.consume(frame);
 
-	LOG(INFO) << "API CALL END";
+	LOG(DEBUG) << "API CALL END";
 }
 
 void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size) {
-	LOG(INFO) << "API CALL";
+	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
 	frame.bytes = bytes;
@@ -86,7 +86,7 @@ void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size) {
 	frame.source_stream = NeuroonFrameBytes::SourceStream::ALT;
 	data->_daemon.consume(frame);
 
-	LOG(INFO) << "API CALL END";
+	LOG(DEBUG) << "API CALL END";
 }
 
 void install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback) {

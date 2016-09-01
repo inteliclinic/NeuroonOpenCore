@@ -116,7 +116,7 @@ void CsvSignalSimulator::_set_timestamp_to_now(){
 *
 *   \warning This function may actually emit the data a bit slower than expected
 */
-void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
+bool CsvSignalSimulator::pass_time(ullong ms_to_simulate,
                                    double time_passing_modifier){
 
 
@@ -134,7 +134,7 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
     for(const auto & t : _pipes){
       if(!PIPE_UP(t)->is_exhausted()) should_continue = true;
     }
-    if(!should_continue) break;
+    if(!should_continue) return false;
 
     auto start = std::chrono::high_resolution_clock::now();
     // find sleep period for next frame emission
@@ -173,7 +173,9 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end-start;
     llong ttw = std::max(static_cast<double>(0), round(time_passing_modifier*time_to_wait - elapsed.count()));
-    std::this_thread::sleep_for(std::chrono::milliseconds((llong)ttw));
+    if (ttw != 0) {
+    	std::this_thread::sleep_for(std::chrono::milliseconds((llong)ttw));
+    }
     _time_passed += time_to_wait;
     // printf("Sleeping for: %lldms. Passing: %dms.\n", ttw, time_to_wait);
 
@@ -184,10 +186,12 @@ void CsvSignalSimulator::pass_time(ullong ms_to_simulate,
     for(auto & t : minpipes){
       ullong ts = _starting_timestamp + _time_passed - EMISSION_INTERVAL_MS(*t);
       // Add frame to prepared for emission frames
-      LOG(INFO) << "Emiting frame from pipe: " << PIPE_UP(*t).get();
+      LOG(DEBUG) << "Emiting frame from pipe: " << PIPE_UP(*t).get();
       PIPE_UP(*t)->pass_next_frame_with_timestamp(ts);
     }
   }
+
+  return true;
 }
 
 void CsvSignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,

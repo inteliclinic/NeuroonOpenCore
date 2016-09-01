@@ -60,7 +60,7 @@ std::size_t NeuroonSignals::total_signal_samples(SignalOrigin so) const {
 // receive frame of data
 void NeuroonSignals::consume(EegFrame & frame){
 
-  LOG(INFO) << "Received eeg signal frame with timestamp: " << frame.timestamp;
+  LOG(DEBUG) << "Received eeg signal frame with timestamp: " << frame.timestamp;
 
   auto & signal = SIGNAL_VEC(_eeg_signal);
   auto ms_per_sample = _signal_specs.at(SignalOrigin::EEG).ms_per_sample();
@@ -83,11 +83,10 @@ void NeuroonSignals::consume(EegFrame & frame){
   signal.insert(signal.end(),frame.signal, frame.signal + frame.Length);
   TOTAL_COUNT(_eeg_signal) += signal.size() - old_sz;
   LAST_TS(_eeg_signal) = frame.timestamp + std::max(static_cast<std::size_t>(0), frame.Length - 1) * ms_per_sample;
-  LOG(INFO) << LAST_TS(_eeg_signal);
 }
 
 void NeuroonSignals::consume(AccelLedsTempFrame & frame){
-  LOG(INFO) << "Received AccelLedsTemp signal frame with timestamp: " << frame.timestamp;
+  LOG(DEBUG) << "Received AccelLedsTemp signal frame with timestamp: " << frame.timestamp;
 
   // ir led
   auto & ir_signal = SIGNAL_VEC(_ir_led_signal);

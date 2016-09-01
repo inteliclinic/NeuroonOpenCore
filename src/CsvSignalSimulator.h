@@ -79,7 +79,7 @@ public:
   void add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> & pipe,
                           uint pipe_frame_emission_interval_ms);
 
-  void pass_time(ullong ms_to_simulate,
+  bool pass_time(ullong ms_to_simulate,
                  double time_passing_modifier=1.0);
 
 };
