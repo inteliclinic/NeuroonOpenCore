@@ -1,6 +1,7 @@
 #ifndef FUNCTIONAL_TESTS_DATA_H
 #define FUNCTIONAL_TESTS_DATA_H
 
+#include "dlib_utils.h"
 #include <dlib/matrix.h>
 #include <sstream>
 

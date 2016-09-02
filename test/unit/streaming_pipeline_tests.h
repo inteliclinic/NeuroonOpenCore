@@ -2,10 +2,10 @@
 #define __STREAMING_PIPELINE_TESTS__
 
 #include "test_utils.h"
-#include "../src/DataSink.h"
-#include "../src/AlgCoreDaemon.h"
-#include "../src/CsvSignalSimulator.h"
-#include "../src/StreamingAlgorithm.h"
+#include "DataSink.h"
+#include "AlgCoreDaemon.h"
+#include "CsvSignalSimulator.h"
+#include "StreamingAlgorithm.h"
 
 #include <memory>
 #include <gtest/gtest.h>
