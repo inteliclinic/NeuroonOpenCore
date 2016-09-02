@@ -1,13 +1,9 @@
 #include <gtest/gtest.h>
 
+
 /*
  * ======= UNIT TESTS ===================
  */
-
-#include "neuroonsignals_and_streamalgo_tests.h"
-#include "streaming_pipeline_and_csvsimulator_tests.h"
-#include "signal_utils_test.h"
-#include "spectrogram_test.h"
 
 #include "csvutils_tests.h"
 #include "rolling_test.h"
@@ -24,18 +20,8 @@
 #include "expanding_std_test.h"
 #include "online_viterbi_search_test.h"
 #include "logger_test.h"
-#include "offline_staging_classifier_test.h"
-#include "online_staging_feature_preprocessor_test.h"
 #include "rolling_mean_test.h"
-#include "online_staging_algorithm_test.h"
-
-/*
- * ====== FUNCTIONAL TESTS ===============
- */
-
-#include "eeg_features_functional_test.h"
-#include "staging_functional_test.h"
-#include "online_staging_functional_test.h"
+#include "offline_staging_classifier_test.h"
 
 #include "logger.h"
 
