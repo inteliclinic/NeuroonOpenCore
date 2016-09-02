@@ -1,7 +1,9 @@
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-add_executable(unit_tests unit_tests.cpp)
+FILE (GLOB_RECURSE sources *.cpp)
+
+add_executable(unit_tests ${sources})
 target_link_libraries(unit_tests
     ${GTEST_LIBRARIES}
      neuroon-alg-core

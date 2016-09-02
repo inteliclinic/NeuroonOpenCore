@@ -1,5 +1,4 @@
-#ifndef __STREAMING_PIPELINE_TESTS__
-#define __STREAMING_PIPELINE_TESTS__
+#ifdef false
 
 #include "test_utils.h"
 #include "DataSink.h"

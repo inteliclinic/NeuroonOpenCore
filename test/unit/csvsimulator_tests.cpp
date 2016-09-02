@@ -25,7 +25,7 @@
 #include <sstream>
 #include <stdio.h>
 
-struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
+struct CsvSimulatorTests : public ::testing::Test {
 
   // ------------ CSV FRAMES SOURCES -------------------
 
@@ -60,7 +60,7 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
 };
 
 
-TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
+TEST_F(CsvSimulatorTests, SimpleCsvEegFrameSource1) {
 
   auto frames = eeg_source_sample1->get_frames();
   auto frame_length = EegFrame::Length;
@@ -77,7 +77,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleCsvEegFrameSource1) {
 
 }
 
-TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
+TEST_F(CsvSimulatorTests, TrivialSinkTest) {
 
   std::vector<int> v = {};
   auto sink = accumulate_to_vector_sink(v);

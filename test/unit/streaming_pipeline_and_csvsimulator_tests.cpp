@@ -1,14 +1,14 @@
-#include "../src/CsvSignalSimulator.h"
+#include "CsvSignalSimulator.h"
 #include "test_utils.h"
-#include "../src/DataSink.h"
+#include "DataSink.h"
 
 #include <gtest/gtest.h>
 #include <chrono>
-#include "../src/CsvSignalSimulator.h"
+#include "CsvSignalSimulator.h"
 #include "test_utils.h"
-#include "../src/DataSink.h"
-#include "../src/NeuroonSignals.h"
-#include "../src/FrameStreamPipe.h"
+#include "DataSink.h"
+#include "NeuroonSignals.h"
+#include "FrameStreamPipe.h"
 
 #include <gtest/gtest.h>
 #include <memory>
