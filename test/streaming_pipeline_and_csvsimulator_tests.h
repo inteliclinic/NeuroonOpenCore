@@ -231,27 +231,10 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
   for(uint16_t i=0; i<120/frame_length; i++){
     // only full frames are created
     if(120 - i*frame_length >= frame_length){
-      auto & passed = eeg_source_sample1->get_values()[i];
-      // std::cout << "\n-------------------------\n";
-      // for(auto &d: eeg_source_sample1->get_values()){
-      //   std::cout<<"\n";
-      //   for(uint16_t j=0; j<frame_length;j++){
-      //     std::cout << d.signal[j] << " ";
-      //   }
-      // }
-      // std::cout << "\n-------------------------\n";
-      // for(auto &d: v){
-      //   std::cout<<"\n";
-      //   for(uint16_t j=0; j<frame_length;j++){
-      //     std::cout << d.signal[j] << " ";
-      //   }
-      // }
-      std::cout << "\n-------------------------\n";
-      auto & received = v[i];
+      auto passed = eeg_source_sample1->get_values()[i];
+      auto received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for(uint16_t j=0; j<frame_length;j++){
-        std::cout << passed.signal[j] << " " << received.signal[j];
-        std::cout << "\n";
         EXPECT_EQ(passed.signal[j], received.signal[j]);
       }
     }
@@ -262,7 +245,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
   for(uint16_t i=120/frame_length; i<250/frame_length; i++){
     // only full frames are created
     if(250 - i*frame_length >= frame_length){
-      auto & passed = eeg_source_sample1->get_values()[i];
+      auto  passed = eeg_source_sample1->get_values()[i];
       auto & received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for(uint16_t j=0; j<frame_length;j++){
