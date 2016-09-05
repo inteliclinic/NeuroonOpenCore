@@ -8,22 +8,21 @@
 #include "AmplitudeFilter.h"
 #include <cmath>
 #include <vector>
+#include <cassert>
+#include "logger.h"
 #include "dlib_utils.h"
 
-AmplitudeFilter::AmplitudeFilter(double critical_value, int column)
-	: m_critical_value(critical_value)
-	, m_column(column)
-{
-	// TODO Auto-generated constructor stub
+AmplitudeFilter::AmplitudeFilter(double critical_value)
+	: m_critical_value(critical_value) {}
 
-}
+dlib::matrix<double> AmplitudeFilter::transform(const dlib::matrix<double> &data, const dlib::matrix<double> &filter_column) {
+	if (data.nr() != filter_column.nr()) {
+		throw std::logic_error("Incorrect filter!");
+	}
 
-AmplitudeFilter::~AmplitudeFilter() {
-	// TODO Auto-generated destructor stub
-}
+	LOG(WARNING) << "filter: " << filter_column(0,0);
 
-dlib::matrix<double> AmplitudeFilter::transform(const dlib::matrix<double> &data) {
-	dlib::matrix<int> incorrect_rows = rows_greater_than(dlib::colm(data, m_column), m_critical_value);
+	dlib::matrix<int> incorrect_rows = rows_greater_than(filter_column, m_critical_value);
 	dlib::matrix<double> result = data;
 
 	if (incorrect_rows.size() > 0) {

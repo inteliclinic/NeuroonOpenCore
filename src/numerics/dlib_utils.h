@@ -25,13 +25,17 @@ dlib::matrix<double> load_matrix(const std::string& filename);
 
 dlib::matrix<double> load_matrix(std::istream &input);
 
+template <typename I>
+dlib::matrix<typename I::value_type> range_to_dlib_matrix(const I& begin, const I& end);
+
 template <typename T>
 void dump_matrix(const dlib::matrix<T> &data, const std::string &filename);
 
 template <typename T>
 dlib::matrix<T> vector_to_dlib_matrix(const std::vector<T> &input);
 
-std::vector<int> dlib_matrix_to_vector(const dlib::matrix<int> &input);
+template <typename T>
+std::vector<T> dlib_matrix_to_vector(const dlib::matrix<T> &input);
 
 
 dlib::matrix<double> logistic(const dlib::matrix<double>& input);

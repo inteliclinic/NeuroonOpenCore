@@ -4,7 +4,7 @@
 
 #define ELPP_DISABLE_DEBUG_LOGS
 
-#ifdef __linux__
+#ifndef ANDROID
 	#define ELPP_STACKTRACE_ON_CRASH
 #endif
 
@@ -43,17 +43,17 @@ struct DummyCallback : public LoggingCallback {
 	virtual void save_log(const std::string& ) {}
 };
 
-template<typename T=DummyCallback>
-void configure_logger() {
-	el::Helpers::installLogDispatchCallback<T>("default");
-	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+struct FunctionPointerCallback : public LoggingCallback {
 
-	// el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %logger %fbase:%line  %msg");
-	el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime{%d/%M %h:%m:%s,%g} %level [%logger] %fbase:%line: %msg");
-  // michal debug
-	// el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime{%d/%M %h:%m:%s,%g} %level %logger | %func@%fbase:%line\n%msg");
+	typedef void (*f_pointer)(const char*);
+	static f_pointer _callback;
 
-	CLOG(INFO, "default") << "Logger initialized";
-}
+	virtual void save_log(const std::string& message) {
+		if (_callback != nullptr) {
+			(*_callback)(message.c_str());
+		}
+	}
+};
 
+void configure_logger(FunctionPointerCallback::f_pointer callback = nullptr);
 #endif

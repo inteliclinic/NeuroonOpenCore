@@ -15,7 +15,7 @@
 OnlineStagingClassifier::OnlineStagingClassifier() {
 
 	dlib::matrix<int> c = dlib::matrix_cast<int>(load_matrix(ONLINE_MODEL_RES_DIRECTORY "/classes.csv"));
-	m_classes = dlib_matrix_to_vector(dlib::trans(c));
+	m_classes = dlib_matrix_to_vector<int>(dlib::trans(c));
 
 	initialize_mlp();
 	initialize_viterbi(m_classes);
@@ -53,7 +53,7 @@ void OnlineStagingClassifier::initialize_viterbi(const std::vector<int> classes)
 	assert(transition_matrix.nc() != 0);
 	assert(transition_matrix.nr() != 0);
 
-	const double VITERBI_WEIGHT = 0.5;
+	const double VITERBI_WEIGHT = 1;
 	m_viterbi = new OnLineViterbiSearch(classes, start_p, final_p, transition_matrix, VITERBI_WEIGHT);
 }
 
@@ -74,7 +74,7 @@ std::vector<int> OnlineStagingClassifier::predict(const dlib::matrix<double> &fe
 }
 
 dlib::matrix<double> OnlineStagingClassifier::get_probability_when_nan(bool beginning) {
-    static std::vector<double> bad_signal_p({0.063141, 0.301530, 0.327178,0.278493});
+    static std::vector<double> bad_signal_p({0.1, 0.29, 0.30, 0.31});
     static std::vector<double> bad_signal_p_beginning({0.15, 0.15, 0.15, 0.55});
 
 

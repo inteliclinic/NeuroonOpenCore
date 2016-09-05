@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "dlib_utils.h"
 #include <iostream>
+#include <algorithm>
+#include <numeric>
 //TODO: write tests for all functions in singal_utils header
 
 
@@ -40,4 +42,17 @@ TEST(SignalUtilsTest, basic_logistic_test) {
 	}
 	EXPECT_EQ(result.nr(), input.nr());
 	EXPECT_EQ(result.nc(), input.nc());
+}
+
+
+TEST(SignalUtilsTest, basic_range_to_dlib_matrix) {
+	const int SIZE = 30;
+	std::vector<double> data(SIZE);
+	std::iota(data.begin(), data.end(), 0);
+
+	for (int i = 0; i != data.size(); ++i) {
+		auto res = range_to_dlib_matrix(data.begin(), data.begin() + i);
+		std::cout << dlib::trans(res);
+	}
+
 }

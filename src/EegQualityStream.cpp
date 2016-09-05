@@ -1,7 +1,7 @@
-// #include <random>
+#include <random>
 #include "EegQualityStream.h"
 
-void EegQualityStream::process_input(const NeuroonSignals & ns){
+void EegQualityStream::process_input(const INeuroonSignals & ns){
   // TODO: now is dummy implementation
 
   // number of windows for computing signal quality value

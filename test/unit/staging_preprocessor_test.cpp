@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "StagingPreprocessor.h"
 #include <iostream>
 #include <dlib/matrix.h>

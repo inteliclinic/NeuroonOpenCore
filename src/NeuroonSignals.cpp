@@ -2,13 +2,12 @@
 #include "Constants.h"
 #include "logger.h"
 #include <cmath>
-
+#include <algorithm>
 // --------------
 
 #define TOTAL_COUNT(t) std::get<0>(t)
 #define LAST_TS(t) std::get<1>(t)
 #define SIGNAL_VEC(t) std::get<2>(t)
-
 
 // -------------- PUBLIC API -----------------------
 
@@ -45,15 +44,15 @@ ullong NeuroonSignals::last_timestamp(SignalOrigin so) const {
 std::size_t NeuroonSignals::total_signal_samples(SignalOrigin so) const {
   switch(so){
   case SignalOrigin::EEG:
-    return LAST_TS(_eeg_signal);
+    return TOTAL_COUNT(_eeg_signal);
   case SignalOrigin::IR_LED:
-    return LAST_TS(_ir_led_signal);
+    return TOTAL_COUNT(_ir_led_signal);
   case SignalOrigin::RED_LED:
-    return LAST_TS(_red_led_signal);
+    return TOTAL_COUNT(_red_led_signal);
   case SignalOrigin::ACCELEROMETER:
-    return LAST_TS(_accel_axes_signal);
+    return TOTAL_COUNT(_accel_axes_signal);
   case SignalOrigin::TEMPERATURE:
-    return LAST_TS(_temperature_signal);
+    return TOTAL_COUNT(_temperature_signal);
   }
 }
 
@@ -61,7 +60,7 @@ std::size_t NeuroonSignals::total_signal_samples(SignalOrigin so) const {
 // receive frame of data
 void NeuroonSignals::consume(EegFrame & frame){
 
-  LOG(INFO) << "Received eeg signal frame with timestamp: " << frame.timestamp;
+  LOG(DEBUG) << "Received eeg signal frame with timestamp: " << frame.timestamp;
 
   auto & signal = SIGNAL_VEC(_eeg_signal);
   auto ms_per_sample = _signal_specs.at(SignalOrigin::EEG).ms_per_sample();
@@ -83,11 +82,11 @@ void NeuroonSignals::consume(EegFrame & frame){
   // insert new data
   signal.insert(signal.end(),frame.signal, frame.signal + frame.Length);
   TOTAL_COUNT(_eeg_signal) += signal.size() - old_sz;
-  LAST_TS(_eeg_signal) = frame.timestamp + std::max<llong>(0, frame.Length - 1) * ms_per_sample;
+  LAST_TS(_eeg_signal) = frame.timestamp + std::max(static_cast<std::size_t>(0), frame.Length - 1) * ms_per_sample;
 }
 
 void NeuroonSignals::consume(AccelLedsTempFrame & frame){
-  LOG(INFO) << "Received AccelLedsTemp signal frame with timestamp: " << frame.timestamp;
+  LOG(DEBUG) << "Received AccelLedsTemp signal frame with timestamp: " << frame.timestamp;
 
   // ir led
   auto & ir_signal = SIGNAL_VEC(_ir_led_signal);
@@ -123,7 +122,7 @@ void NeuroonSignals::consume(AccelLedsTempFrame & frame){
       (double)frame.accel_axes.x,
       (double)frame.accel_axes.y,
       (double)frame.accel_axes.z});
-  temperature_signal.push_back((double)std::max<int8_t>(frame.temperature[0],frame.temperature[1]));
+  temperature_signal.push_back((double) std::max(frame.temperature[0],frame.temperature[1]));
 
 
   TOTAL_COUNT(_ir_led_signal) += ir_signal.size() - ir_old_sz;

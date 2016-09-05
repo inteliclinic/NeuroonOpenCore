@@ -1,6 +1,7 @@
 #include "MlpClassifier.h"
 #include <gtest/gtest.h>
 #include <dlib/matrix.h>
+#include "dlib_utils.h"
 #include <iostream>
 
 
