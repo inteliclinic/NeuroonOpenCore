@@ -41,8 +41,8 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
   // ------------ GOOGLE TEST'S ------------------------
 
   virtual void SetUp(){
-    eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1));
-    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2));
+    eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1,0));
+    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2,"signal"));
 	}
 
 

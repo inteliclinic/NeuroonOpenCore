@@ -20,7 +20,12 @@ class EegFramesSource : public IPullBasedOfflineSource<EegFrame>{
   void _check_and_parse_csv(std::string path);
 public:
 
-  EegFramesSource (std::string path, std::size_t frame_size = EegFrame::Length);
+  EegFramesSource (std::string csv_path, std::string csv_header, std::size_t frame_size = EegFrame::Length) :
+    EegFramesSource(SignalSource<std::int16_t>::csv_column(csv_path, csv_header), frame_size) {}
+
+  EegFramesSource (std::string csv_path, std::size_t csv_column_index, std::size_t frame_size = EegFrame::Length) :
+    EegFramesSource(SignalSource<std::int16_t>::csv_column(csv_path, csv_column_index), frame_size) {}
+
   EegFramesSource (SignalSource<std::int16_t> signal_source, std::size_t frame_size = EegFrame::Length);
   EegFramesSource (EegFramesSource && other) :
     _frames(std::move(other._frames)),

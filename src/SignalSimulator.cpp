@@ -10,40 +10,15 @@
 #define PIPE_UP(t) std::get<1>(t)
 
 
-
-EegFramesSource::EegFramesSource(const std::string path, std::size_t frame_size) :
+EegFramesSource::EegFramesSource(SignalSource<std::int16_t> signal_source, std::size_t frame_size) :
   _frame_size(frame_size) {
 
-  // read csv
-  // parse & check signal from csv
-  _check_and_parse_csv(path);
-}
-
-void EegFramesSource::_check_and_parse_csv(std::string path){
-
-  auto csv_map = CsvReader::read_csv_with_headers_from_path(path);
-
-  std::vector<InValue> samples;
-  if (csv_map.find("signal") == csv_map.end()) {
-    csv_map.clear();
-    samples = CsvReader::read_csv_no_headers_from_path(path)[0];
-    // throw std::invalid_argument("No signal column in the csv file.");
-
-  }
-  else{
-    samples = csv_map["signal"];
-  }
+  auto samples = signal_source.get_values();
 
   for (std::size_t i = 0;i<samples.size()/_frame_size;i++) {
     EegFrame frame;
     for(std::size_t j=0;j<_frame_size;j++){
-      auto & iv = samples[i*_frame_size + j];
-      if(iv.type() != InValue::Type::LLONG){
-        std::stringstream ss;
-        ss << "Invalid signal value: " << iv << " at index: " << i;
-        throw std::invalid_argument(ss.str());
-      }
-      frame.signal[j] = iv.llong_value();
+      frame.signal[j] = samples[i*_frame_size + j];
     }
     _frames.push_back(frame);
   }
