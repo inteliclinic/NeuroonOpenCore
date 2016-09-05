@@ -92,7 +92,7 @@ public:
     return SignalSource(SourceSpec(SourceSpec::SourceOption::GEN_FUN, "", "", -1, default_samples_count), gen_fun);
   }
 
-  const std::vector<T> get_values(std::size_t count=0) const{
+  std::vector<T> get_values(std::size_t count=0) const{
     return get_values_internal(count);
   }
 
