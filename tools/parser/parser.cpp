@@ -1,11 +1,12 @@
 #include "NeuroonAlgCoreApi.h"
 
-#include "SignalSimulator.h"
+#include "NeuroonSignalFrames.h"
 #include <fstream>
 #include <functional>
 #include <memory>
 #include <iostream>
 #include <unistd.h>
+
 
 void parse_eeg(const std::string& filename) {
 	std::ifstream eeg_in(filename);

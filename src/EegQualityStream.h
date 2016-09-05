@@ -14,7 +14,7 @@ private:
   int _overlap;
   std::size_t _last_counter;
 
-  EegQuality _compute_quality(VectorView<double>&& eeg_signal);
+  EegQuality _compute_quality(VectorView<double> eeg_signal);
 public:
 
   /**

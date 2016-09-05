@@ -32,11 +32,9 @@ public:
     _frame_size(other._frame_size) {}
   // ~EegFramesSource () {}
 
-  std::vector<EegFrame> get_values (std::size_t count=0) override {
-
-    if(count == 0) return _frames;
-    if(count < _frames.size()) return std::vector<EegFrame>(_frames.begin(), _frames.begin()+count);
-    return _frames;
+  VectorView<EegFrame> get_values (std::size_t count=0) override {
+    if(count == 0 || count >= _frames.size()) return VectorView<EegFrame>(_frames);
+    return VectorView<EegFrame>(_frames.begin(), _frames.begin()+count);
   }
 };
 
@@ -73,11 +71,9 @@ public:
 
 
 
-  std::vector<AccelLedsTempFrame> get_values (std::size_t count=0) override {
-
-    if(count == 0) return _frames;
-    if(count < _frames.size()) return std::vector<AccelLedsTempFrame>(_frames.begin(), _frames.begin()+count);
-    return _frames;
+  VectorView<AccelLedsTempFrame> get_values (std::size_t count=0) override {
+    if(count == 0 || count >= _frames.size()) return VectorView<AccelLedsTempFrame>(_frames);
+    return VectorView<AccelLedsTempFrame>(_frames.begin(), _frames.begin()+count);
   }
 
 };

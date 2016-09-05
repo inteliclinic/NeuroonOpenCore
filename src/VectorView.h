@@ -12,15 +12,21 @@ class VectorView {
   cit _end;
 public:
   // ...
+
+  VectorView():
+    _begin(0), _end(0) {}
   VectorView(cit begin, cit end):
     _begin(begin), _end(end) {}
+  VectorView(const std::vector<T> & v):
+    _begin(v.begin()), _end(v.end()) {}
 
   cit begin() const { return this->_begin; }
   cit end()   const { return this->_end; }
-  const T& operator[](std::size_t index) { return this->_begin[index]; }
+  const T& operator[](std::size_t index) const { return this->_begin[index]; }
 
   std::size_t size() const{ return _end - _begin;}
 };
+
 
 template <typename T>
 class ArrayView {

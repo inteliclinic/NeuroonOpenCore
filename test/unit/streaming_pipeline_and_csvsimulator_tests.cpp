@@ -1,22 +1,20 @@
-#include "../src/SignalSimulator.h"
-#include "test_utils.h"
-#include "../src/DataSink.h"
-#include "../src/DataSource.h"
-
-#include <gtest/gtest.h>
-#include <chrono>
-#include "../src/SignalSimulator.h"
-#include "test_utils.h"
-#include "DataSink.h"
-#include "NeuroonSignals.h"
-#include "FrameStreamPipe.h"
-
 #include <gtest/gtest.h>
 #include <memory>
 #include <chrono>
 #include <thread>
 #include <sstream>
 #include <stdio.h>
+
+#include "test_utils.h"
+#include "test_utils.h"
+#include "../../src/SignalSimulator.h"
+#include "../../src/DataSink.h"
+#include "../../src/DataSource.h"
+
+#include "../../src/SignalSimulator.h"
+#include "../../src/DataSink.h"
+#include "../../src/NeuroonSignals.h"
+#include "../../src/FrameStreamPipe.h"
 
 struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
 
@@ -215,7 +213,6 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleFrameStreamPipe) {
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_time) {
 
-  auto frames = eeg_source_sample1->get_values();
   auto frame_length = EegFrame::Length;
 
   std::vector<EegFrame> v = {};
@@ -277,7 +274,6 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimSingleEegPipe_1020ms_normal_
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant) {
 
-  auto frames = eeg_source_sample1->get_values();
 
   std::vector<EegFrame> v = {};
   auto sink = accumulate_to_vector_sink(v);
@@ -307,8 +303,6 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSink_instant
 
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, CsvSimTwoEegPipeSingleSource_instant) {
-
-  auto frames = eeg_source_sample1->get_values();
 
   std::size_t frame_count = 0;
   llong frame_sum = 0;

@@ -46,9 +46,9 @@ AccelLedsTempFrameSource::AccelLedsTempFrameSource (SignalSource<std::int32_t> i
     temperature_2.spec(),
   };
 
-  std::vector<std::int32_t> led_signals[2] = {{},{}};
-  std::vector<std::int16_t> accel_axes[3] ={{},{},{}};
-  std::vector<std::int8_t> temperatures[2] = {{},{}};
+  VectorView<std::int32_t> led_signals[2] = {{},{}};
+  VectorView<std::int16_t> accel_axes[3] ={{},{},{}};
+  VectorView<std::int8_t> temperatures[2] = {{},{}};
 
   std::size_t final_source_length = std::numeric_limits<std::size_t>::max();
   bool any_csv_source = false;

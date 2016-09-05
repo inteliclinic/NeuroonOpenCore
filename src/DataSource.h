@@ -9,12 +9,13 @@
 #include "CommonTypes.h"
 #include "logger.h"
 #include "InValue.h"
+#include "VectorView.h"
 
 template<class T>
 class IPullBasedOfflineSource{
 
  public:
-  virtual std::vector<T> get_values(std::size_t count = 0) = 0;
+  virtual VectorView<T> get_values(std::size_t count = 0) = 0;
 
 };
 
@@ -65,6 +66,7 @@ class SignalSource : public IPullBasedOfflineSource<T>{
   typedef std::function<T (ulong)> GenFun;
   SourceSpec _spec;
   GenFun _gen_fun;
+  std::vector<T> _data = {};
 
   SignalSource(SourceSpec spec, GenFun gen_fun=nullptr) : _spec(spec), _gen_fun(gen_fun) {}
 
@@ -92,11 +94,7 @@ public:
     return SignalSource(SourceSpec(SourceSpec::SourceOption::GEN_FUN, "", "", -1, default_samples_count), gen_fun);
   }
 
-  std::vector<T> get_values(std::size_t count=0) const{
-    return get_values_internal(count);
-  }
-
-  std::vector<T> get_values(std::size_t count=0) override{
+  VectorView<T> get_values(std::size_t count=0) override{
     return get_values_internal(count);
   }
 
@@ -155,21 +153,21 @@ public:
     }
   }
 
-  const std::vector<T> get_values_internal(std::size_t count=0) const{
+  VectorView<T> get_values_internal(std::size_t count=0) {
     typedef typename invalue_dispatch_type_tag<T>::type tag;
 
 
     std::vector<InValue> invalues = {};
+    _data.clear();
     switch(_spec.option()){
     case SourceSpec::SourceOption::GEN_FUN:{
       if(count == 0){
         count = _spec.default_size();
       }
-      std::vector<T> rets = {};
       for(std::size_t i = 0; i < count; i++){
-        rets.push_back(_gen_fun(i));
+        _data.push_back(_gen_fun(i));
       }
-      return rets;
+      return VectorView<T>(_data.begin(), _data.end());
     }
       break;
     case SourceSpec::SourceOption::ZEROS:
@@ -197,12 +195,11 @@ public:
       break;
     }
 
-    std::vector<T> rets = {};
     if(count >= invalues.size()){ count = invalues.size();}
     for(std::size_t i=0; i<count; i++){
-      rets.push_back(dispatch(tag(), invalues[i]));
+      _data.push_back(dispatch(tag(), invalues[i]));
     }
-    return rets;
+    return VectorView<T>(_data.begin(), _data.end());
   }
 
 
