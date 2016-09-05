@@ -40,23 +40,27 @@ void parse_other(const std::string& filename) {
 	}
 
 	std::ofstream ir_parsed("./IrLedSignal.csv");
+	std::ofstream red_parsed("./RedLedSignal.csv");
 	std::ofstream acc_parsed("./AccelAxes.csv");
 	std::ofstream termo_parsed("./Termometer.csv");
 	const int SIZE = 20;
 	char buffer[20];
-	ir_parsed << "timestamp,ir_led,red_led" << std::endl;
+	ir_parsed << "timestamp,signal" << std::endl;
+	red_parsed << "timestamp,signal" << std::endl;
 	acc_parsed << "timestamp,x,y,z" << std::endl;
-	termo_parsed << "timestamp,x,y,z" << std::endl;
+	termo_parsed << "timestamp, temp_0, temp_1" << std::endl;
 	while (other_in.good()) {
 		other_in.read(buffer, SIZE);
 		AccelLedsTempFrame frame = AccelLedsTempFrame::from_bytes_array(buffer, SIZE);
-		ir_parsed << frame.timestamp << "," << frame.ir_led << "," << frame.red_led << std::endl;
+		ir_parsed << frame.timestamp << "," << frame.ir_led << std::endl;
+		red_parsed << frame.timestamp << "," << frame.red_led << std::endl;
 		acc_parsed << frame.timestamp << "," << frame.accel_axes.x << ","  << frame.accel_axes.y << "," << frame.accel_axes.z << std::endl;
 		termo_parsed << frame.timestamp << "," << frame.temperature[0] << "," << frame.temperature[1] << std::endl;
 	}
 
 	other_in.close();
 	ir_parsed.close();
+	red_parsed.close();
 	acc_parsed.close();
 	termo_parsed.close();
 }
