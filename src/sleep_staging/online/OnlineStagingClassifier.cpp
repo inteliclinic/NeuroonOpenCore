@@ -11,6 +11,9 @@
 #include "logger.h"
 #include "MlpClassifier.h"
 #include "OnLineViterbiSearch.h"
+#include "W1Online.h"
+#include "W2Online.h"
+#include "IOnline.h"
 
 OnlineStagingClassifier::OnlineStagingClassifier() {
 
@@ -25,16 +28,16 @@ void OnlineStagingClassifier::initialize_mlp() {
 	std::vector<dlib::matrix<double>> weights(2);
 	std::vector<dlib::matrix<double>> intercepts(2);
 
-	std::string W1_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/w1.csv");
-	std::string W2_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/w2.csv");
-	std::string I1_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/i1.csv");
-	std::string I2_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/i2.csv");
+	// std::string W1_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/w1.csv");
+	// std::string W2_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/w2.csv");
+	// std::string I1_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/i1.csv");
+	// std::string I2_MATRIX_FILENAME(ONLINE_MODEL_RES_DIRECTORY "/i2.csv");
 
-	weights[0] = load_matrix(W1_MATRIX_FILENAME);
-	weights[1] = load_matrix(W2_MATRIX_FILENAME);
+	weights[0] = online_model::W1;
+	weights[1] = online_model::W2;
 
-	intercepts[0] = load_matrix(I1_MATRIX_FILENAME);
-	intercepts[1] = load_matrix(I2_MATRIX_FILENAME);
+	intercepts[0] = online_model::I1;
+	intercepts[1] = online_model::I2;
 
 	m_mlp = new MlpClassifier(weights, intercepts);
 }
