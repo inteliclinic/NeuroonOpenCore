@@ -11,13 +11,13 @@
 #include "logger.h"
 #include "MlpClassifier.h"
 #include "OnLineViterbiSearch.h"
-#include "W1Online.h"
-#include "W2Online.h"
-#include "IOnline.h"
+#include "ModelOnline.h"
+#include "ModelOnlineW1.h"
+#include "ModelOnlineW2.h"
 
 OnlineStagingClassifier::OnlineStagingClassifier() {
 
-	dlib::matrix<int> c = dlib::matrix_cast<int>(load_matrix(ONLINE_MODEL_RES_DIRECTORY "/classes.csv"));
+	dlib::matrix<int> c = online_model::Classes;
 	m_classes = dlib_matrix_to_vector<int>(dlib::trans(c));
 
 	initialize_mlp();
@@ -51,8 +51,9 @@ void OnlineStagingClassifier::initialize_viterbi(const std::vector<int> classes)
 	dlib::set_all_elements(final_p, 0);
 	final_p(3, 0) = 1;
 
-	dlib::matrix<double> transition_matrix = load_matrix(ONLINE_MODEL_RES_DIRECTORY "/transitions.csv");
-
+	// dlib::matrix<double> transition_matrix = load_matrix(ONLINE_MODEL_RES_DIRECTORY "/transitions.csv");
+	dlib::matrix<double> transition_matrix = online_model::Transitions;
+  // LOG(INFO) << transition_matrix;
 	assert(transition_matrix.nc() != 0);
 	assert(transition_matrix.nr() != 0);
 
