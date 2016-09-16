@@ -42,7 +42,7 @@ target_include_directories (neuroon-alg-core PUBLIC 3rd_party/dlib)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/easylogging)
 
 target_link_libraries(neuroon-alg-core
-    dlib_shared
+    dlib
     )
 
 add_custom_command(

@@ -175,9 +175,6 @@ if (NOT TARGET dlib)
          sockets/sockets_kernel_2.cpp
          sockstreambuf/sockstreambuf.cpp
          sockstreambuf/sockstreambuf_unbuffered.cpp
-         server/server_kernel.cpp
-         server/server_iostream.cpp
-         server/server_http.cpp
          threads/multithreaded_object_extension.cpp
          threads/threaded_object_extension.cpp
          threads/threads_kernel_1.cpp
