@@ -44,7 +44,8 @@ TEST(OnlineStagingFeaturePreprocessorTest, functional_test) {
 		LOG(DEBUG) << "eeg index: " << eeg_index << "eeg.shape = [" << eeg_window.nr() << "," << eeg_window.nc() << "]";
 
 		double seconds_since_start = eeg_index * 0.008;
-		dlib::matrix<double> processed_sample = pre.transform(eeg_window, ir_window, seconds_since_start);
+		auto preprocessed = pre.transform(eeg_window, ir_window, seconds_since_start);
+		dlib::matrix<double> processed_sample = preprocessed.features;
 		out << dlib::csv << processed_sample;
 		LOG(DEBUG) << processed_sample;
 

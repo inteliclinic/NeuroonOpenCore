@@ -27,17 +27,24 @@ class OnlineStagingClassifier {
 
 	dlib::matrix<double> get_probability_when_nan(bool beginning);
 
+	std::vector<int> m_current_staging;
+	std::vector<int> m_current_quality;
+
 public:
 	OnlineStagingClassifier();
 	~OnlineStagingClassifier();
 
 	std::vector<int> predict(const dlib::matrix<double> &features);
 
-	std::vector<int> step(const dlib::matrix<double> eeg_signal,
+	void step(const dlib::matrix<double> eeg_signal,
 						  const dlib::matrix<double> ir_signal,
 						  double seconds_since_start);
-	std::vector<int> stop();
+	void stop();
 	void reset();
+
+	const std::vector<int>& current_staging() const;
+	const std::vector<int>& current_quality() const;
+
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINESTAGINGCLASSIFIER_H_ */

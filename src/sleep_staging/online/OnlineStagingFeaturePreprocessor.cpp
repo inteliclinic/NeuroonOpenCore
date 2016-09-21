@@ -12,9 +12,9 @@
 #include "AmplitudeFilter.h"
 #include "EntropyFilter.h"
 #include "dlib_utils.h"
-
+#include <tuple>
 #include <cassert>
-
+#include <utility>
 OnlineStagingFeaturePreprocessor::OnlineStagingFeaturePreprocessor()
 {
 
@@ -33,7 +33,8 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::EegSumsFeatures()
 	//m_feature_stds(0,3) = 0.21;
 }
 
-dlib::matrix<double> OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const dlib::matrix<double>& eeg_signal) {
+std::pair<dlib::matrix<double>, int>
+OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const dlib::matrix<double>& eeg_signal) {
 	assert(eeg_signal.nr() == EEG_FFT_WINDOW);
 	assert(eeg_signal.nc() == 1);
 
@@ -57,7 +58,10 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::EegSumsFeatures::transfor
 	m_mean.consume(band_sums);
 	band_sums = standardize(band_sums, m_mean.value(), m_feature_stds);
 
-	return band_sums;
+
+	int quality;
+
+	return std::make_pair(band_sums, quality);
 }
 
 OnlineStagingFeaturePreprocessor::IrFeatures::IrFeatures()
@@ -91,20 +95,27 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(con
 	return result;
 }
 
-dlib::matrix<double> OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,
+OnlineStagingFeaturePreprocessor::preprocessing_result_t OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,
 																 const dlib::matrix<double>& ir_signal,
 																 double seconds_since_start) {
-	dlib::matrix<double> result(1, NUMBER_OF_FEATURES);
 
-	auto eeg_features = m_eeg_features.transform(eeg_signal);
+	preprocessing_result_t result;
+	dlib::matrix<double> features(1, NUMBER_OF_FEATURES);
+
+	auto eeg_preprocessing = m_eeg_features.transform(eeg_signal);
+	auto eeg_features = eeg_preprocessing.first;
+	auto eeg_quality = eeg_preprocessing.second;
+
 	auto ir_features = m_ir_features.transform(ir_signal);
 
-	dlib::set_colm(result, dlib::range(0, eeg_features.nc() - 1)) = eeg_features;
-	dlib::set_colm(result, dlib::range(eeg_features.nc(), eeg_features.nc() + ir_features.nc() - 1)) = ir_features;
+	dlib::set_colm(features, dlib::range(0, eeg_features.nc() - 1)) = eeg_features;
+	dlib::set_colm(features, dlib::range(eeg_features.nc(), eeg_features.nc() + ir_features.nc() - 1)) = ir_features;
 
 	//ugly hack that makes it exactly as in scipy's spectrogram
 	double beginning_feature = (seconds_since_start <= 45 * 60) ? 1 : 0;
 
-	dlib::set_colm(result, NUMBER_OF_FEATURES-1) = beginning_feature;
+	dlib::set_colm(features, NUMBER_OF_FEATURES-1) = beginning_feature;
+	result.features = features;
+	result.quality = eeg_quality;
 	return result;
 }

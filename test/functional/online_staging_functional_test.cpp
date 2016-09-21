@@ -27,9 +27,11 @@ TEST(OnlineStagingFunctionalTest, DISABLED_online_staging_functional_test) {
 	std::vector<int> stages;
 	for (int r = 0; r != features.nr(); ++r) {
 		dlib::matrix<double> sample = dlib::rowm(features, r);
-		stages = clf.predict(sample);
+		clf.predict(sample);
+		stages = clf.current_staging();
 	}
-	stages = clf.stop();
+	clf.stop();
+	stages = clf.current_staging();
 
 
 	std::ofstream out("./functional_test_results/online_staging.csv");
@@ -63,7 +65,8 @@ TEST(OnlineStagingFunctionalTest, full_online_staging_functional_test) {
 		LOG(DEBUG) << "eeg index: " << eeg_index << "eeg.shape = [" << eeg_window.nr() << "," << eeg_window.nc() << "]";
 
 		double seconds_since_start = eeg_index * 0.008;
-		stages = clf.step(eeg_window, ir_window, seconds_since_start);
+		clf.step(eeg_window, ir_window, seconds_since_start);
+		stages = clf.current_staging();
 
 		LOG(DEBUG) << "classified: "<< stages.size();
 		eeg_index += eeg_stride;
@@ -72,7 +75,8 @@ TEST(OnlineStagingFunctionalTest, full_online_staging_functional_test) {
 		if (eeg_index > eeg_signal.nr() - EEG_WINDOW_SIZE) break;
 		if (ir_index > ir_signal.nr() - IR_WINDOW_SIZE) break;
 	}
-	stages = clf.stop();
+	clf.stop();
+	stages = clf.current_staging();
 	dlib::matrix<int> matrix_stages = vector_to_dlib_matrix<int>(stages);
 	std::ofstream out("./functional_test_results/full_online_staging.csv");
 	if(!out.good()) {

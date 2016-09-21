@@ -94,20 +94,33 @@ OnlineStagingClassifier::~OnlineStagingClassifier() {
 	delete m_viterbi;
 }
 
-std::vector<int> OnlineStagingClassifier::stop() {
+void OnlineStagingClassifier::stop() {
 	m_viterbi->stop();
-	return m_viterbi->best_sequence();
+	m_current_staging = m_viterbi->best_sequence();
 }
 
 void OnlineStagingClassifier::reset() {
 	delete m_viterbi;
+	m_current_quality.clear();
+	m_current_staging.clear();
 	initialize_viterbi(m_classes);
 }
 
-std::vector<int> OnlineStagingClassifier::step(const dlib::matrix<double> eeg_signal,
+void OnlineStagingClassifier::step(const dlib::matrix<double> eeg_signal,
 											  const dlib::matrix<double> ir_signal,
 											  double seconds_since_start) {
 
-	dlib::matrix<double> features = m_preprocessor.transform(eeg_signal, ir_signal, seconds_since_start);
-	return predict(features);
+	auto preprocessed = m_preprocessor.transform(eeg_signal, ir_signal, seconds_since_start);
+	m_current_staging = predict(preprocessed.features);
+
+	m_current_quality.push_back(preprocessed.quality);
 }
+
+const std::vector<int>& OnlineStagingClassifier::current_staging() const {
+	return m_current_staging;
+}
+
+const std::vector<int>& OnlineStagingClassifier::current_quality() const {
+	return m_current_quality;
+}
+
