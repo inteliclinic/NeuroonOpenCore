@@ -84,3 +84,9 @@ TEST(OnlineStagingFunctionalTest, full_online_staging_functional_test) {
 	}
 	out << matrix_stages;
 }
+
+
+TEST(OnlineStagingFunctionalTest, fast_stop_test) {
+	OnlineStagingClassifier clf;
+	clf.stop();
+}

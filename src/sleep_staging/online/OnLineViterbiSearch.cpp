@@ -106,6 +106,9 @@ int OnLineViterbiSearch::most_probable_final() const {
 
 std::vector<int> OnLineViterbiSearch::best_sequence() const {
 	std::vector<int> best_sequence;
+	if (m_current_step == INVALID_STATE_INDEX) {
+		return best_sequence;
+	}
 
 	int state = most_probable_final();
 	int step = m_current_step;
