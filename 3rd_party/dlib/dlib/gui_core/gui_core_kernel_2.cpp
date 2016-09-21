@@ -22,7 +22,6 @@
 #include <cmath>
 #include <X11/Xatom.h>
 #include "../sync_extension.h"
-#include "../logger.h"
 #include <vector>
 #include <set>
 #include "../smart_pointers_thread_safe.h"
@@ -67,7 +66,6 @@ namespace dlib
             };
 
             et_state status;
-            logger dlog;
 
 
             int depth;
@@ -99,7 +97,6 @@ namespace dlib
 
             event_handler_thread(
             ) :
-                dlog("dlib.gui_core"),
                 depth(0),
                 disp(0),
                 xim(0),
@@ -189,7 +186,6 @@ namespace dlib
                     // sometimes causes XCloseDisplay() to hang.
                     if (XInitThreads() == 0)
                     {
-                        dlog << LFATAL << "Unable to initialize threading support.";
                         // signal that an error has occurred
                         window_table.get_mutex().lock();
                         status = failure_to_init;
@@ -208,7 +204,6 @@ namespace dlib
                         window_table.get_mutex().unlock();
                         if (disp == 0)
                         {
-                            dlog << LFATAL << "Unable to connect to the X display.";
                             // signal that an error has occurred
                             window_table.get_mutex().lock();
                             status = failure_to_init;
@@ -1232,11 +1227,11 @@ namespace dlib
             }
             catch (std::exception& e)
             {
-                dlog << LFATAL << "Exception thrown in event handler: " << e.what();
+            	;
             }
             catch (...)
             {
-                dlog << LFATAL << "Unknown exception thrown in event handler.";
+            	;
             }
         }
  
@@ -1293,7 +1288,6 @@ namespace dlib
             XFreeModifiermap( map );
             if ( alt_mask == 0 )
             {
-                dlog << LWARN << "Search for Alt-key faild.";
                 if ( meta_mask != 0 )
                     alt_mask = meta_mask;
                 else

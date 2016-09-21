@@ -24,7 +24,6 @@
 #include "../queue.h"
 #include "../sync_extension.h"
 #include "../queue.h"
-#include "../logger.h"
 #include <cmath>
 #include <vector>
 
@@ -84,7 +83,6 @@ namespace dlib
 
             queue_of_user_events user_events;
             queue_of_user_events user_events_temp;
-            logger dlog;
 
             HINSTANCE hInstance;
             HWND helper_window;    
@@ -122,7 +120,6 @@ namespace dlib
 
             event_handler_thread(
             ) :
-                dlog("dlib.gui_core"),
                 hInstance(0),
                 helper_window(0),
                 window_class_name(TEXT ("w3049u6qc2d94thw9m34f4we0gvwa3-tgkser0-b9gm 05")),
@@ -182,7 +179,6 @@ namespace dlib
                 {
                     if (PostMessage(helper_window,WM_USER+QUIT_EVENT_HANDLER_THREAD,0,0)==0)
                     {
-                        dlog << LWARN << "Unable to schedule function for execution in event handling thread.";
                         // No point calling wait() here since the thread isn't going to
                         // terminate gracefully in this case.  So we just let the program
                         // end as it will and hope for the best.
@@ -206,7 +202,6 @@ namespace dlib
                 hInstance = GetModuleHandle(NULL);
                 if (hInstance == NULL)
                 {
-                    dlog << LFATAL << "Error gathering needed resources";
 
                     // signal that an error has occurred
                     window_table.get_mutex().lock();
@@ -232,7 +227,6 @@ namespace dlib
 
                 if (!RegisterClass (&wndclass))  
                 {
-                    dlog << LFATAL << "Error registering window class";
 
                     // signal that an error has occurred
                     window_table.get_mutex().lock();
@@ -249,7 +243,6 @@ namespace dlib
                 helper_window = CreateWindow(window_class_name,nothing,WS_DISABLED,0,0,0,0,HWND_MESSAGE,NULL,hInstance,NULL);
                 if (helper_window == NULL)
                 {
-                    dlog << LFATAL << "Error gathering needed resources";
 
                     // signal that an error has occurred
                     window_table.get_mutex().lock();
