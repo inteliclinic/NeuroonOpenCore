@@ -14,6 +14,14 @@ enum SLEEP_STAGE {
 };
 
 
+enum SIGNAL_QUALITY {
+	NO_SIGNAL = 0,
+	VERY_BAD = 1,
+	BAD = 2,
+	GOOD = 3,
+	VERY_GOOD = 4
+};
+
 /**
  * A structure with a single datum about the sleep stage.
  * SLEEP_STAGE a value representing the stage
@@ -21,6 +29,7 @@ enum SLEEP_STAGE {
  */
 struct staging_element_t {
 	SLEEP_STAGE stage;
+	SIGNAL_QUALITY signal_quality;
 	unsigned long long timestamp;
 };
 

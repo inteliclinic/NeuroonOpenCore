@@ -12,7 +12,7 @@ std::ofstream* log_out;
 void staging_callback(const staging_element_t* stages, int size) {
 	std::ofstream out("simulator_online_staging.csv", std::ios_base::trunc);
 	for (int i = 0; i != size; ++i) {
-		out << stages[i].timestamp << " " << static_cast<int>(stages[i].stage) << std::endl;
+		out << stages[i].timestamp << " " << static_cast<int>(stages[i].stage) << " " << static_cast<int>(stages[i].signal_quality) << std::endl;
 	}
 	out.close();
 }

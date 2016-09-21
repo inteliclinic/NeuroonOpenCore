@@ -25,13 +25,14 @@ class SleepStagingResult {
 public:
 	SleepStagingResult() {}
 
-	SleepStagingResult(const std::vector<int> &stages, const std::vector<ullong> &timestamps) {
+	SleepStagingResult(const std::vector<int> &stages, const std::vector<int> &quality, const std::vector<ullong> &timestamps) {
 
 		m_stages.resize(stages.size());
 
 		for (int i = 0; i != stages.size(); ++i) {
 			m_stages[i].stage = static_cast<SLEEP_STAGE>(stages[i]);
 			m_stages[i].timestamp = timestamps[i];
+			m_stages[i].signal_quality = static_cast<SIGNAL_QUALITY> (quality[i]);
 		}
 	}
 

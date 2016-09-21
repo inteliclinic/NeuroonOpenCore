@@ -15,6 +15,8 @@
 #include <tuple>
 #include <cassert>
 #include <utility>
+#include "EegSignalQuality.h"
+
 OnlineStagingFeaturePreprocessor::OnlineStagingFeaturePreprocessor()
 {
 
@@ -27,10 +29,6 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::EegSumsFeatures()
 
 {
 	dlib::set_all_elements(m_feature_stds, 0.3);
-	//m_feature_stds(0,0) = 0.34;
-	//m_feature_stds(0,1) = 0.26;
-	//m_feature_stds(0,2) = 0.27;
-	//m_feature_stds(0,3) = 0.21;
 }
 
 std::pair<dlib::matrix<double>, int>
@@ -41,7 +39,6 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const dlib::matrix<
 	const int overlap = 0;
 	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, overlap);
 
-//std::vector<double> borders({2.5, 7.5, 10, 14, 21});
 	std::vector<double> borders({ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
 							       18, 19, 20, 21});
 	dlib::matrix<double> band_sums = EegFeatures::sum_by_borders(eeg_spectrogram, borders, true);
@@ -58,8 +55,8 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const dlib::matrix<
 	m_mean.consume(band_sums);
 	band_sums = standardize(band_sums, m_mean.value(), m_feature_stds);
 
-
-	int quality;
+	EegSignalQuality quality_computer;
+	int quality = quality_computer.predict(eeg_spectrogram);
 
 	return std::make_pair(band_sums, quality);
 }
@@ -95,9 +92,10 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(con
 	return result;
 }
 
-OnlineStagingFeaturePreprocessor::preprocessing_result_t OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,
-																 const dlib::matrix<double>& ir_signal,
-																 double seconds_since_start) {
+OnlineStagingFeaturePreprocessor::preprocessing_result_t
+OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,
+											const dlib::matrix<double>& ir_signal,
+											double seconds_since_start) {
 
 	preprocessing_result_t result;
 	dlib::matrix<double> features(1, NUMBER_OF_FEATURES);
