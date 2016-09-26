@@ -12,6 +12,7 @@
 #include <cassert>
 #include "dlib_utils.h"
 #include "logger.h"
+#include <iostream>
 
 OnlineStagingAlgorithm::OnlineStagingAlgorithm(const std::vector<OnlineStagingAlgorithm::sink_t*> & sinks)
 : SinkStreamingAlgorithm<SleepStagingResult>(sinks)

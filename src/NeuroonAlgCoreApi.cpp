@@ -4,8 +4,10 @@
 
 #include "AlgCoreDaemon.h"
 #include "OnlineStagingAlgorithm.h"
+#include "OnlinePresentationAlgorithm.h"
 #include "logger.h"
 #include <sstream>
+
 struct NeuroonAlgCoreData {
 	AlgCoreDaemon _daemon;
 };
@@ -39,7 +41,20 @@ struct callback_staging_sink : public OnlineStagingAlgorithm::sink_t {
 	}
 };
 
-NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback) {
+struct callback_presentation_sink : public OnlinePresentationAlgorithm::sink_t {
+	virtual ~callback_presentation_sink() {}
+
+	presentation_callback_t _callback;
+	callback_presentation_sink(presentation_callback_t callback) {
+		_callback = callback;
+	}
+
+	void consume(OnlinePresentationResult& res) {
+		(*_callback)(res.data, res.size);
+	}
+};
+
+NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback, presentation_callback_t presentation_callback) {
 	LOG(INFO) << "API CALL";
 	NeuroonAlgCoreData* data = new NeuroonAlgCoreData();
 
@@ -47,6 +62,12 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
 	callback_staging_sink* css = new callback_staging_sink(staging_callback);
 	auto online_alg = std::unique_ptr<IStreamingAlgorithm>(new OnlineStagingAlgorithm({ls, css}));
 	data->_daemon.add_streaming_algorithms(online_alg);
+
+	if (reinterpret_cast<long> (presentation_callback) != 0) {
+		callback_presentation_sink* ps = new callback_presentation_sink(presentation_callback);
+		auto presentation_alg = std::unique_ptr<IStreamingAlgorithm>(new OnlinePresentationAlgorithm({ps}));
+		data->_daemon.add_streaming_algorithms(presentation_alg);
+	}
 
 	LOG(INFO) << "API CALL END";
 	return data;
@@ -67,7 +88,7 @@ void start_sleep(NeuroonAlgCoreData* data) {
 void stop_sleep(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.end_processing();
-	LOG(INFO) << "API CALL";
+	LOG(INFO) << "API CALL END";
 }
 
 void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size) {

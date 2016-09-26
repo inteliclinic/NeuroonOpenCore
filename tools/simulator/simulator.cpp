@@ -1,5 +1,5 @@
 #include "NeuroonAlgCoreApi.h"
-
+#include <sstream>
 #include "SignalSimulator.h"
 #include <fstream>
 #include <functional>
@@ -10,9 +10,9 @@
 std::ofstream* log_out;
 
 void staging_callback(const staging_element_t* stages, int size) {
-	std::ofstream out("simulator_online_staging.csv", std::ios_base::trunc);
+	std::stringstream ss;
 	for (int i = 0; i != size; ++i) {
-		out << stages[i].timestamp << " " << static_cast<int>(stages[i].stage)
+		ss << stages[i].timestamp << " " << static_cast<int>(stages[i].stage)
 			<< " " << static_cast<int>(stages[i].signal_quality)
 			<< " " << stages[i].brain_waves.delta
 			<< " " << stages[i].brain_waves.theta
@@ -20,6 +20,25 @@ void staging_callback(const staging_element_t* stages, int size) {
 			<< " " << stages[i].brain_waves.beta
 			<< std::endl;
 	}
+	std::ofstream out("simulator_online_staging.csv", std::ios_base::trunc);
+	out << ss.str();
+	out.flush();
+	out.close();
+}
+
+void presentation_callback(const presentation_element_t* data, int size) {
+	std::stringstream ss;
+	for (int i = 0; i != size; ++i) {
+		ss << data->heart_rate
+			<< " " << data[i].brain_waves.delta
+			<< " " << data[i].brain_waves.theta
+			<< " " << data[i].brain_waves.alpha
+			<< " " << data[i].brain_waves.beta
+			<< std::endl;
+	}
+	std::ofstream out("presentation.csv", std::ios_base::trunc);
+	out << ss.str();
+	out.flush();
 	out.close();
 }
 
@@ -67,12 +86,22 @@ struct EegSink : public IDataSink<EegFrame> {
 
 int main(int argc, char** argv) {
 
-	if (argc != 2) {
-		std::cout << "Usage: simulator <path to directory containing RawSignal.csv and IrLedSignal.csv>" << std::endl;
+	if (argc < 2) {
+		std::cout << "Usage: simulator <path to directory containing RawSignal.csv and IrLedSignal.csv> [--normal] [--presentation]" << std::endl;
 		return -1;
 	}
 
+	bool presentation = false;
+	double speed = 0;
 	std::string directory(argv[1]);
+	for (int i = 0; i != argc; ++i) {
+		std::string arg(argv[i]);
+		if (arg == "--normal") {
+			speed = 1;
+		} else if (arg == std::string("--presentation")) {
+			presentation = true;
+		}
+	}
 
 	std::string eeg_csv(directory + "/RawSignal.csv");
 	std::string ir_csv(directory + "IrLedSignal.csv");
@@ -95,12 +124,17 @@ int main(int argc, char** argv) {
 
 	log_out = new std::ofstream("simulator_log.csv", std::ios_base::trunc);
 
-	NeuroonAlgCoreData* neuroon = initialize_neuroon_alg_core(staging_callback);
-	install_log_callback(neuroon, logger_callback);
+	NeuroonAlgCoreData* neuroon = NULL;
+	if (presentation) {
+		neuroon = initialize_neuroon_alg_core(staging_callback, presentation_callback);
+	} else {
+		neuroon = initialize_neuroon_alg_core(staging_callback, reinterpret_cast<presentation_callback_t>(0));
+	}
 
+	install_log_callback(neuroon, logger_callback);
 	start_sleep(neuroon);
 
-	for (int i = 0; sim.pass_time(10, 0); ++i) {
+	for (int i = 0; sim.pass_time(10, speed); ++i) {
 
 		char bytes[20];
 		if (sink_sp_eeg->has_frame) {

@@ -41,10 +41,23 @@ struct staging_element_t {
 	unsigned long long timestamp;
 };
 
+
+struct presentation_element_t {
+	brain_wave_levels_t brain_waves;
+	double heart_rate;
+};
+
 /**
  * Type of the callback for collecting the data about sleep stages
  */
 typedef void (*staging_callback_t)(const staging_element_t*, int);
+
+
+/**
+ *
+ */
+typedef void (*presentation_callback_t)(const presentation_element_t*, int);
+
 
 /**
  * Type of the callback for receiving logs from the library
@@ -58,7 +71,7 @@ typedef void (*logger_callback_t)(const char*);
  *
  * @return a pointer to NeuroonAlgCoreData structure necessary for calling other API functions
  */
-NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback);
+NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback, presentation_callback_t presentation_callback);
 
 
 /**
