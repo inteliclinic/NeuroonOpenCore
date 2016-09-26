@@ -6,13 +6,14 @@
  */
 
 #include "BrainWaveLevels.h"
+#include "EegFeatures.h"
 
-BrainWaveLevels::BrainWaveLevels() {
-	// TODO Auto-generated constructor stub
+BrainWaveLevels::BrainWaveLevels(const std::vector<double> &borders)
+: m_borders(borders) {}
 
+BrainWaveLevels::~BrainWaveLevels() {}
+
+dlib::matrix<double> BrainWaveLevels::predict(const Spectrogram &spectrogram) const {
+	dlib::matrix<double> result = EegFeatures::sum_by_borders(spectrogram, m_borders);
+	return result;
 }
-
-BrainWaveLevels::~BrainWaveLevels() {
-	// TODO Auto-generated destructor stub
-}
-
