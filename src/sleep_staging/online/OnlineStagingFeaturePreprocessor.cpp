@@ -31,13 +31,13 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::EegSumsFeatures()
 	dlib::set_all_elements(m_feature_stds, 0.3);
 }
 
-std::pair<dlib::matrix<double>, int>
-OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const dlib::matrix<double>& eeg_signal) {
-	assert(eeg_signal.nr() == EEG_FFT_WINDOW);
-	assert(eeg_signal.nc() == 1);
-
-	const int overlap = 0;
-	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, overlap);
+dlib::matrix<double>
+OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const Spectrogram& eeg_spectrogram) {
+//	assert(eeg_signal.nr() == EEG_FFT_WINDOW);
+//	assert(eeg_signal.nc() == 1);
+//
+//	const int overlap = 0;
+//	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, overlap);
 
 	std::vector<double> borders({ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
 							       18, 19, 20, 21});
@@ -55,10 +55,7 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const dlib::matrix<
 	m_mean.consume(band_sums);
 	band_sums = standardize(band_sums, m_mean.value(), m_feature_stds);
 
-	EegSignalQuality quality_computer;
-	int quality = quality_computer.predict(eeg_spectrogram);
-
-	return std::make_pair(band_sums, quality);
+	return band_sums;
 }
 
 OnlineStagingFeaturePreprocessor::IrFeatures::IrFeatures()
@@ -68,12 +65,12 @@ OnlineStagingFeaturePreprocessor::IrFeatures::IrFeatures()
 {}
 
 
-dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(const dlib::matrix<double>& ir_signal) {
-	assert(ir_signal.nr() == IR_FFT_WINDOW);
-	assert(ir_signal.nc() == 1);
-
-	const int overlap = 0;
-	Spectrogram ir_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, overlap);
+dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(const Spectrogram &ir_spectrogram) {
+//	assert(ir_signal.nr() == IR_FFT_WINDOW);
+//	assert(ir_signal.nc() == 1);
+//
+//	const int overlap = 0;
+//	Spectrogram ir_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, overlap);
 	dlib::matrix<double> pulse_band = ir_spectrogram.get_band(0.6, 1.5502);
 
 	const double CRITICAL_PULSE_SPECTROGRAM_ENTROPY = 4.3;
@@ -93,18 +90,17 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(con
 }
 
 OnlineStagingFeaturePreprocessor::preprocessing_result_t
-OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_signal,
-											const dlib::matrix<double>& ir_signal,
+OnlineStagingFeaturePreprocessor::transform(const Spectrogram& eeg_spectrogram,
+											const Spectrogram& ir_spectrogram,
 											double seconds_since_start) {
 
 	preprocessing_result_t result;
 	dlib::matrix<double> features(1, NUMBER_OF_FEATURES);
 
-	auto eeg_preprocessing = m_eeg_features.transform(eeg_signal);
-	auto eeg_features = eeg_preprocessing.first;
-	auto eeg_quality = eeg_preprocessing.second;
+	auto eeg_preprocessing = m_eeg_features.transform(eeg_spectrogram);
+	auto eeg_features = eeg_preprocessing;
 
-	auto ir_features = m_ir_features.transform(ir_signal);
+	auto ir_features = m_ir_features.transform(ir_spectrogram);
 
 	dlib::set_colm(features, dlib::range(0, eeg_features.nc() - 1)) = eeg_features;
 	dlib::set_colm(features, dlib::range(eeg_features.nc(), eeg_features.nc() + ir_features.nc() - 1)) = ir_features;
@@ -114,6 +110,5 @@ OnlineStagingFeaturePreprocessor::transform(const dlib::matrix<double>& eeg_sign
 
 	dlib::set_colm(features, NUMBER_OF_FEATURES-1) = beginning_feature;
 	result.features = features;
-	result.quality = eeg_quality;
 	return result;
 }

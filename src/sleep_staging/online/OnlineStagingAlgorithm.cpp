@@ -68,7 +68,7 @@ void OnlineStagingAlgorithm::process_input(const INeuroonSignals & input) {
 
 	m_model.step(eeg_signal, ir_signal, seconds_since_start);
 	std::vector<int> staging_from_model = m_model.current_staging();
-	SleepStagingResult result(staging_from_model, m_model.current_quality(), m_timestamps);
+	SleepStagingResult result(staging_from_model, m_model.current_quality(), m_model.current_brain_waves() ,m_timestamps);
 
 	LOG(INFO) << "computed! feeding the sinks...";
 	feed_all_sinks(result);
@@ -77,6 +77,8 @@ void OnlineStagingAlgorithm::process_input(const INeuroonSignals & input) {
 void OnlineStagingAlgorithm::end_streaming(const INeuroonSignals & input) {
 	m_model.stop();
 	std::vector<int> staging_from_model = m_model.current_staging();
-	SleepStagingResult result(staging_from_model, m_model.current_quality(), m_timestamps);
+	SleepStagingResult result(staging_from_model, m_model.current_quality(),
+			m_model.current_brain_waves(), m_timestamps);
+
 	feed_all_sinks(result);
 }

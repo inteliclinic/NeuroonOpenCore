@@ -5,6 +5,8 @@
 #include "logger.h"
 #include "functional_tests_data.h"
 #include "OnlineStagingFeaturePreprocessor.h"
+#include "Spectrogram.h"
+#include "Config.h"
 
 TEST(OnlineStagingFeaturePreprocessorTest, basic_sizes_test) {
 	OnlineStagingFeaturePreprocessor pre;
@@ -12,7 +14,14 @@ TEST(OnlineStagingFeaturePreprocessorTest, basic_sizes_test) {
 	dlib::matrix<double> eeg_signal = dlib::zeros_matrix<double>(2048 * 5, 1);
 	dlib::matrix<double> ir_signal = dlib::zeros_matrix<double>(2048, 1);
 	double seconds_since_start = 0;
-	pre.transform(eeg_signal, ir_signal, seconds_since_start);
+
+	const int overlap = 0;
+	const int EEG_FFT_WINDOW = 10 * 1024;
+	const int IR_FFT_WINDOW = 2048;
+
+	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, overlap);
+	Spectrogram ir_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, overlap);
+	pre.transform(eeg_spectrogram, ir_spectrogram, seconds_since_start);
 }
 
 TEST(OnlineStagingFeaturePreprocessorTest, functional_test) {
@@ -44,7 +53,15 @@ TEST(OnlineStagingFeaturePreprocessorTest, functional_test) {
 		LOG(DEBUG) << "eeg index: " << eeg_index << "eeg.shape = [" << eeg_window.nr() << "," << eeg_window.nc() << "]";
 
 		double seconds_since_start = eeg_index * 0.008;
-		auto preprocessed = pre.transform(eeg_window, ir_window, seconds_since_start);
+
+		const int overlap = 0;
+		const int EEG_FFT_WINDOW = 10 * 1024;
+		const int IR_FFT_WINDOW = 2048;
+
+		Spectrogram eeg_spectrogram(eeg_window, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, overlap);
+		Spectrogram ir_spectrogram(ir_window, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, overlap);
+
+		auto preprocessed = pre.transform(eeg_spectrogram, ir_spectrogram, seconds_since_start);
 		dlib::matrix<double> processed_sample = preprocessed.features;
 		out << dlib::csv << processed_sample;
 		LOG(DEBUG) << processed_sample;

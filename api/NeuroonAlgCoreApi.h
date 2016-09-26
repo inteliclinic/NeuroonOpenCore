@@ -22,6 +22,13 @@ enum SIGNAL_QUALITY {
 	VERY_GOOD = 4
 };
 
+struct brain_wave_levels_t {
+	double alpha;
+	double beta;
+	double delta;
+	double theta;
+};
+
 /**
  * A structure with a single datum about the sleep stage.
  * SLEEP_STAGE a value representing the stage
@@ -30,6 +37,7 @@ enum SIGNAL_QUALITY {
 struct staging_element_t {
 	SLEEP_STAGE stage;
 	SIGNAL_QUALITY signal_quality;
+	brain_wave_levels_t brain_waves;
 	unsigned long long timestamp;
 };
 

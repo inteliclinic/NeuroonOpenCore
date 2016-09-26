@@ -11,17 +11,15 @@
 #include <dlib/matrix.h>
 #include <vector>
 #include "Spectrogram.h"
-
+#include "NeuroonAlgCoreApi.h"
 
 class BrainWaveLevels {
 
-	std::vector<double> m_borders;
-
 public:
-	BrainWaveLevels(const std::vector<double> &borders);
+	BrainWaveLevels();
 	virtual ~BrainWaveLevels();
 
-	dlib::matrix<double> predict(const Spectrogram &spectrogram) const;
+	brain_wave_levels_t predict(const Spectrogram &spectrogram) const;
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINE_BRAINWAVELEVELS_H_ */

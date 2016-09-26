@@ -12,6 +12,7 @@
 #include "ExpandingMean.h"
 #include "ExpandingStd.h"
 #include "RollingMean.h"
+#include "Spectrogram.h"
 #include <tuple>
 
 class OnlineStagingFeaturePreprocessor {
@@ -34,7 +35,7 @@ class OnlineStagingFeaturePreprocessor {
     public:
     	EegSumsFeatures();
     	void reset();
-    	std::pair<dlib::matrix<double>, int> transform(const dlib::matrix<double> &eeg_signal);
+    	dlib::matrix<double> transform(const Spectrogram& eeg_spectrogram);
     };
 
     class IrFeatures {
@@ -48,7 +49,7 @@ class OnlineStagingFeaturePreprocessor {
     public:
     	IrFeatures();
     	void reset();
-    	dlib::matrix<double> transform(const dlib::matrix<double> &ir_signal);
+    	dlib::matrix<double> transform(const Spectrogram& ir_spectrogram);
     };
 
     EegSumsFeatures m_eeg_features;
@@ -58,14 +59,13 @@ public:
 
     struct preprocessing_result_t {
     	dlib::matrix<double> features;
-    	int quality;
     };
 
     static const int ROLLING_WINDOW_SIZE = 3;
 	OnlineStagingFeaturePreprocessor();
 
 	void reset();
-	preprocessing_result_t transform(const dlib::matrix<double>& eeg_signal, const dlib::matrix<double>& ir_signal,
+	preprocessing_result_t transform(const Spectrogram& eeg_spectrogram, const Spectrogram& ir_spectrogram,
 								   double seconds_since_start);
 };
 

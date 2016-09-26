@@ -14,6 +14,9 @@
 #include "ModelOnline.h"
 #include "ModelOnlineW1.h"
 #include "ModelOnlineW2.h"
+#include "Config.h"
+#include "BrainWaveLevels.h"
+#include "EegSignalQuality.h"
 
 OnlineStagingClassifier::OnlineStagingClassifier() {
 
@@ -106,14 +109,41 @@ void OnlineStagingClassifier::reset() {
 	initialize_viterbi(m_classes);
 }
 
+void OnlineStagingClassifier::compute_staging(const Spectrogram& eeg_spectrogram, const Spectrogram& ir_spectrogram,
+											  double seconds_since_start) {
+
+	auto preprocessed = m_preprocessor.transform(eeg_spectrogram, ir_spectrogram, seconds_since_start);
+	m_current_staging = predict(preprocessed.features);
+}
+
+void OnlineStagingClassifier::compute_quality(const Spectrogram& eeg_spectrogram) {
+	EegSignalQuality quality_computer;
+	int quality = quality_computer.predict(eeg_spectrogram);
+	m_current_quality.push_back(quality);
+}
+
+void OnlineStagingClassifier::compute_brain_waves(const Spectrogram& eeg_spectrogram) {
+	BrainWaveLevels bw;
+	brain_wave_levels_t levels = bw.predict(eeg_spectrogram);
+	m_current_brain_waves.push_back(levels);
+}
+
 void OnlineStagingClassifier::step(const dlib::matrix<double> eeg_signal,
 											  const dlib::matrix<double> ir_signal,
 											  double seconds_since_start) {
 
-	auto preprocessed = m_preprocessor.transform(eeg_signal, ir_signal, seconds_since_start);
-	m_current_staging = predict(preprocessed.features);
+	const int overlap = 0;
+	const int EEG_FFT_WINDOW = 10 * 1024;
+	//const int EEG_FFT_OVERLAP = (EEG_FFT_WINDOW * 3) / 4;
+	const int IR_FFT_WINDOW = 2048;
+	//const int IR_FFT_OVERLAP = (2048 *3) / 4;
 
-	m_current_quality.push_back(preprocessed.quality);
+	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_FFT_WINDOW, overlap);
+	Spectrogram ir_spectrogram(ir_signal, Config::instance().neuroon_ir_freq(), IR_FFT_WINDOW, overlap);
+
+	compute_quality(eeg_spectrogram);
+	compute_staging(eeg_spectrogram, ir_spectrogram, seconds_since_start);
+	compute_brain_waves(eeg_spectrogram);
 }
 
 const std::vector<int>& OnlineStagingClassifier::current_staging() const {
@@ -124,3 +154,6 @@ const std::vector<int>& OnlineStagingClassifier::current_quality() const {
 	return m_current_quality;
 }
 
+const std::vector<brain_wave_levels_t>& OnlineStagingClassifier::current_brain_waves() const {
+	return m_current_brain_waves;
+}

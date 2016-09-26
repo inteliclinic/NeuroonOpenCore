@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "OnlineStagingFeaturePreprocessor.h"
+#include "NeuroonAlgCoreApi.h"
 
 class MlpClassifier;
 class OnLineViterbiSearch;
@@ -29,6 +30,12 @@ class OnlineStagingClassifier {
 
 	std::vector<int> m_current_staging;
 	std::vector<int> m_current_quality;
+	std::vector<brain_wave_levels_t> m_current_brain_waves;
+
+	void compute_quality(const Spectrogram& eeg_spectrogram);
+	void compute_staging(const Spectrogram& eeg_spectrogram, const Spectrogram &ir_spectrogram, double seconds_since_start);
+	void compute_brain_waves(const Spectrogram& eeg_spectrogram);
+
 
 public:
 	OnlineStagingClassifier();
@@ -44,6 +51,7 @@ public:
 
 	const std::vector<int>& current_staging() const;
 	const std::vector<int>& current_quality() const;
+	const std::vector<brain_wave_levels_t>& current_brain_waves() const;
 
 };
 
