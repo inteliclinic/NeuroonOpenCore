@@ -1,3 +1,5 @@
+#ifdef DESKTOP_BUILD
+
 #ifndef __SIGNAL_SIMULATOR__
 #define __SIGNAL_SIMULATOR__
 
@@ -131,5 +133,7 @@ public:
                  bool force_wait=false);
 
 };
+
+#endif
 
 #endif

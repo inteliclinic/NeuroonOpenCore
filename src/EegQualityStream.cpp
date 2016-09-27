@@ -1,3 +1,5 @@
+#ifdef DESKTOP_BUILD
+
 #include <random>
 #include "EegQualityStream.h"
 
@@ -26,3 +28,4 @@ EegQuality EegQualityStream::_compute_quality(VectorView<double>){
 void EegQualityStream::reset_state(){
   _last_counter = 0;
 }
+#endif

@@ -1,3 +1,5 @@
+#ifdef DESKTOP_BUILD
+
 #ifndef __VECTOR_VIEW__
 #define __VECTOR_VIEW__
 
@@ -27,7 +29,6 @@ public:
   std::size_t size() const{ return _end - _begin;}
 };
 
-
 template <typename T>
 class ArrayView {
   std::iterator<std::random_access_iterator_tag, T> _begin;
@@ -44,5 +45,7 @@ public:
   operator[](std::size_t index) { return this->_begin[index]; }
   std::size_t size() const{ return _end - _begin;}
 };
+
+#endif
 
 #endif

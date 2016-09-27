@@ -72,6 +72,8 @@ if (desktop_build)
 #        dlib
 #        )
 #    target_include_directories (runTests PUBLIC 3rd_party/easylogging)
+     
+    add_definitions(-D DESKTOP_BUILD)
         
     add_subdirectory(test)
     add_subdirectory(tools)

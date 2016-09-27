@@ -1,3 +1,5 @@
+#ifdef DESKTOP_BUILD
+
 #include "SignalSimulator.h"
 #include "Exceptions.h"
 #include "NeuroonSignals.h"
@@ -270,3 +272,5 @@ void SignalSimulator::add_streaming_pipe(std::unique_ptr<IFrameStreamPipe> pipe,
                                             uint pipe_frame_emission_interval_ms){
   _pipes.push_back(std::make_tuple(pipe_frame_emission_interval_ms, std::move(pipe)));
 }
+
+#endif

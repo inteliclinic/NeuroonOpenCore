@@ -1,3 +1,5 @@
+#ifdef DESKTOP_BUILD
+
 #ifndef __EEG_QUALITY_STREAM__
 #define __EEG_QUALITY_STREAM__
 
@@ -31,5 +33,7 @@ public:
   virtual void end_streaming (const INeuroonSignals & ) override {}
 
 };
+
+#endif
 
 #endif

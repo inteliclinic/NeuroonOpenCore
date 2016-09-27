@@ -2,7 +2,6 @@
 #define __NEUROON_SIGNAL_TYPES__
 
 #include "CommonTypes.h"
-#include "VectorView.h"
 
 
 // source of signal in Neuroon Mask
