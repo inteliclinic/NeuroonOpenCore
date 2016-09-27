@@ -20,6 +20,7 @@ OnlinePresentationAlgorithm::OnlinePresentationAlgorithm(const std::vector<Onlin
 : SinkStreamingAlgorithm<OnlinePresentationResult>(sinks)
 {
 	m_last_eeg_index = 0;
+	m_active = false;
 }
 
 OnlinePresentationAlgorithm::~OnlinePresentationAlgorithm() {}
@@ -27,6 +28,10 @@ OnlinePresentationAlgorithm::~OnlinePresentationAlgorithm() {}
 void OnlinePresentationAlgorithm::reset_state() {}
 
 void OnlinePresentationAlgorithm::process_input(const INeuroonSignals & input) {
+	if (!m_active) {
+		return;
+	}
+
 	const int EEG_WINDOW = 256;
 	const int OVERLAP = EEG_WINDOW - 8;
 
@@ -61,4 +66,13 @@ void OnlinePresentationAlgorithm::process_input(const INeuroonSignals & input) {
 }
 
 void OnlinePresentationAlgorithm::end_streaming(const INeuroonSignals & input) {
+}
+
+
+void OnlinePresentationAlgorithm::activate() {
+	m_active = true;
+}
+
+void OnlinePresentationAlgorithm::deactivate() {
+	m_active = false;
 }

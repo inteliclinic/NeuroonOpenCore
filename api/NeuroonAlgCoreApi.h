@@ -38,6 +38,7 @@ struct staging_element_t {
 	SLEEP_STAGE stage;
 	SIGNAL_QUALITY signal_quality;
 	brain_wave_levels_t brain_waves;
+	double heart_rate;
 	unsigned long long timestamp;
 };
 
@@ -54,7 +55,9 @@ typedef void (*staging_callback_t)(const staging_element_t*, int);
 
 
 /**
- *
+ * Type of callback for receiving online data about brain waves and heart rate.
+ * Works only if presentation mode is activated. Will be called relatively frequently
+ * (a few times per second)
  */
 typedef void (*presentation_callback_t)(const presentation_element_t*, int);
 
@@ -68,6 +71,8 @@ typedef void (*logger_callback_t)(const char*);
  * Initializes the NeuronAlgoCore library. Call this function only once on initialization.
  *
  * @param staging_callback : pointer to a function called each time a new online sleep staging is generated
+ *
+ * @param presentation_callback : pointer to a function called for real-time presentation of brain waves and heart rate
  *
  * @return a pointer to NeuroonAlgCoreData structure necessary for calling other API functions
  */
@@ -89,6 +94,22 @@ void start_sleep(NeuroonAlgCoreData* data);
  * Stops the sleep. Afterwards the staging_callback (passed to initialize_neuroon_alg_core function) will be called with the final sleep staging.
  */
 void stop_sleep(NeuroonAlgCoreData* data);
+
+/**
+ * Start computing the data for real-time presentation of brain waves and heart rate.
+ * Activating this mode can potentially consume quite a lot of CPU resources of the device.
+ *
+ * After calling this function the 'presentation_callback' will be called
+ * each time the real-time presentation algorithm returns the data to be presented
+ * (brain waves and heart rate)
+ */
+void start_presentation(NeuroonAlgCoreData* data);
+
+
+/**
+  * Stop computing the data for real-time presentation of brain waves and heart rate
+  */
+void stop_presentation(NeuroonAlgCoreData* data);
 
 /**
  * Feeds BLE EEG frame to the library

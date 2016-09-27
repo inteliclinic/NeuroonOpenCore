@@ -26,7 +26,7 @@ class OnlinePresentationAlgorithm : public SinkStreamingAlgorithm<OnlinePresenta
 
 	std::vector<presentation_element_t> m_buffer;
 	int m_last_eeg_index;
-
+	bool m_active;
 
 public:
 
@@ -38,6 +38,9 @@ public:
 	virtual void reset_state() override;
 	virtual void process_input(const INeuroonSignals & input) override;
 	virtual void end_streaming(const INeuroonSignals & input) override;
+
+	void activate();
+	void deactivate();
 
 private:
 };

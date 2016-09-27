@@ -127,6 +127,7 @@ int main(int argc, char** argv) {
 	NeuroonAlgCoreData* neuroon = NULL;
 	if (presentation) {
 		neuroon = initialize_neuroon_alg_core(staging_callback, presentation_callback);
+		start_presentation(neuroon);
 	} else {
 		neuroon = initialize_neuroon_alg_core(staging_callback, reinterpret_cast<presentation_callback_t>(0));
 	}
