@@ -12,6 +12,7 @@
 #include <vector>
 #include "Spectrogram.h"
 #include "NeuroonAlgCoreApi.h"
+#include <vector>
 
 class BrainWaveLevels {
 
@@ -19,7 +20,7 @@ public:
 	BrainWaveLevels();
 	virtual ~BrainWaveLevels();
 
-	brain_wave_levels_t predict(const Spectrogram &spectrogram) const;
+	std::vector<brain_wave_levels_t> predict(const Spectrogram &spectrogram) const;
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINE_BRAINWAVELEVELS_H_ */

@@ -50,7 +50,7 @@ void OnlinePresentationAlgorithm::process_input(const INeuroonSignals & input) {
 
 	BrainWaveLevels bw;
 	presentation_element_t pe;
-	pe.brain_waves = bw.predict(eeg_spectrogram);
+	pe.brain_waves = bw.predict(eeg_spectrogram).front();
 	pe.heart_rate = 0;
 
 	const int ELEMENTS_TO_REMEMBER = 256;
