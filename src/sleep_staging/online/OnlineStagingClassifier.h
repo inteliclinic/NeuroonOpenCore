@@ -11,6 +11,7 @@
 
 #include "OnlineStagingFeaturePreprocessor.h"
 #include "NeuroonAlgCoreApi.h"
+#include "BrainWaveLevels.h"
 
 class MlpClassifier;
 class OnLineViterbiSearch;
@@ -19,6 +20,7 @@ class OnlineStagingClassifier {
 
 	MlpClassifier* m_mlp = nullptr;
 	OnLineViterbiSearch* m_viterbi = nullptr;
+	BrainWaveLevels m_bw;
 
 	OnlineStagingFeaturePreprocessor m_preprocessor;
 	std::vector<int> m_classes;

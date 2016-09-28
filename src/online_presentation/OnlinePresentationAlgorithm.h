@@ -13,6 +13,7 @@
 #include "CommonTypes.h"
 #include <vector>
 #include <stdexcept>
+#include "BrainWaveLevels.h"
 
 #include "NeuroonAlgCoreApi.h"
 
@@ -27,6 +28,7 @@ class OnlinePresentationAlgorithm : public SinkStreamingAlgorithm<OnlinePresenta
 	std::vector<presentation_element_t> m_buffer;
 	int m_last_eeg_index;
 	bool m_active;
+	BrainWaveLevels m_bw;
 
 public:
 

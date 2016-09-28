@@ -25,7 +25,9 @@ OnlinePresentationAlgorithm::OnlinePresentationAlgorithm(const std::vector<Onlin
 
 OnlinePresentationAlgorithm::~OnlinePresentationAlgorithm() {}
 
-void OnlinePresentationAlgorithm::reset_state() {}
+void OnlinePresentationAlgorithm::reset_state() {
+	m_bw.reset_state();
+}
 
 void OnlinePresentationAlgorithm::process_input(const INeuroonSignals & input) {
 	if (!m_active) {
@@ -48,9 +50,8 @@ void OnlinePresentationAlgorithm::process_input(const INeuroonSignals & input) {
 	dlib::matrix<double> eeg_signal = range_to_dlib_matrix(input.eeg_signal().end() - EEG_WINDOW, input.eeg_signal().end());
 	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_WINDOW, OVERLAP);
 
-	BrainWaveLevels bw;
 	presentation_element_t pe;
-	pe.brain_waves = bw.predict(eeg_spectrogram).front();
+	pe.brain_waves = m_bw.predict(eeg_spectrogram).front();
 	pe.heart_rate = 0;
 
 	const int ELEMENTS_TO_REMEMBER = 256;
@@ -65,9 +66,7 @@ void OnlinePresentationAlgorithm::process_input(const INeuroonSignals & input) {
 	feed_all_sinks(result);
 }
 
-void OnlinePresentationAlgorithm::end_streaming(const INeuroonSignals & input) {
-}
-
+void OnlinePresentationAlgorithm::end_streaming(const INeuroonSignals & input) {}
 
 void OnlinePresentationAlgorithm::activate() {
 	m_active = true;

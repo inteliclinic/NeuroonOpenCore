@@ -123,8 +123,8 @@ void OnlineStagingClassifier::compute_quality(const Spectrogram& eeg_spectrogram
 }
 
 void OnlineStagingClassifier::compute_brain_waves(const Spectrogram& eeg_spectrogram) {
-	BrainWaveLevels bw;
-	brain_wave_levels_t levels = bw.predict(eeg_spectrogram).front();
+	BrainWaveLevels m_bw;
+	brain_wave_levels_t levels = m_bw.predict(eeg_spectrogram).front();
 	m_current_brain_waves.push_back(levels);
 }
 

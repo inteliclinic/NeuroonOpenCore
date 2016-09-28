@@ -22,6 +22,8 @@ public:
 
 	void feed(dlib::matrix<double> input);
 	dlib::matrix<double> value();
+
+	void reset();
 };
 
 #endif /* SRC_NUMERICS_ROLLINGMEAN_H_ */

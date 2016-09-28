@@ -9,35 +9,45 @@
 #include "EegFeatures.h"
 #include "NeuroonAlgCoreApi.h"
 #include <stdexcept>
-
-BrainWaveLevels::BrainWaveLevels() {}
+#include <utility>
+BrainWaveLevels::BrainWaveLevels()
+: m_smoother(4, 4)
+{}
 
 BrainWaveLevels::~BrainWaveLevels() {}
 
-std::vector<brain_wave_levels_t> BrainWaveLevels::predict(const Spectrogram &spectrogram) const {
+std::vector<brain_wave_levels_t> BrainWaveLevels::predict(const Spectrogram &spectrogram) {
 
 	bool normalized = true;
-	std::vector<brain_wave_levels_t> result;
 
-	dlib::matrix<double> delta = EegFeatures::sum_in_band(spectrogram, 0.1, 3, normalized);
-	dlib::matrix<double> theta = EegFeatures::sum_in_band(spectrogram, 4, 7, normalized);
-	dlib::matrix<double> alpha = EegFeatures::sum_in_band(spectrogram, 8, 13, normalized);
-	dlib::matrix<double> beta = EegFeatures::sum_in_band(spectrogram, 16, 31, normalized);
-	dlib::matrix<double> sum = delta + theta + alpha + beta;
-	delta = dlib::pointwise_multiply(delta, 1 / sum);
-	theta= dlib::pointwise_multiply(theta, 1 / sum);
-	alpha = dlib::pointwise_multiply(alpha, 1 / sum);
-	beta = dlib::pointwise_multiply(beta, 1 / sum);
+	std::vector<std::pair<double, double>> bands({
+		std::make_pair(0.1, 3),
+		std::make_pair(4, 7),
+		std::make_pair(8, 13),
+		std::make_pair(16, 31)
+	});
 
-
-	for (int i = 0; i != spectrogram.size(); ++i) {
-		brain_wave_levels_t levels;
-		levels.alpha = alpha(i, 0);
-		levels.beta = beta(i, 0);
-		levels.delta = delta(i, 0);
-		levels.theta = theta(i, 0);
-		result.push_back(levels);
+	dlib::matrix<double> sums = EegFeatures::sum_in_bands(spectrogram, bands);
+	dlib::matrix<double> sum = dlib::sum_cols(sums);
+	std::cout << "sum " << sum << std::endl;
+	std::cout << "bands: " << sums << std::endl;
+	for (int i = 0; i != sums.nc(); ++i) {
+		dlib::set_colm(sums, i) = dlib::pointwise_multiply(dlib::colm(sums, i), 1 / sum);
 	}
 
+	std::vector<brain_wave_levels_t> result;
+	for (int i = 0; i != spectrogram.size(); ++i) {
+		dlib::matrix<double> row = dlib::rowm(sums, i);
+		m_smoother.feed(row);
+		row = m_smoother.value();
+		std::cout << "after filter: " << row << std::endl;
+
+		brain_wave_levels_t levels;
+		levels.delta = row(0, 0);
+		levels.theta = row(0, 1);
+		levels.alpha = row(0, 2);
+		levels.beta = row(0, 3);
+		result.push_back(levels);
+	}
 	return result;
 }

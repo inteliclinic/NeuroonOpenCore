@@ -13,14 +13,18 @@
 #include "Spectrogram.h"
 #include "NeuroonAlgCoreApi.h"
 #include <vector>
+#include "RollingMean.h"
+#include "BrainWaveLevels.h"
 
 class BrainWaveLevels {
+	RollingMean m_smoother;
 
 public:
 	BrainWaveLevels();
 	virtual ~BrainWaveLevels();
 
-	std::vector<brain_wave_levels_t> predict(const Spectrogram &spectrogram) const;
+	std::vector<brain_wave_levels_t> predict(const Spectrogram &spectrogram);
+	void reset_state() {m_smoother.reset();}
 };
 
 #endif /* SRC_SLEEP_STAGING_ONLINE_BRAINWAVELEVELS_H_ */

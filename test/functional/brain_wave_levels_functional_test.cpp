@@ -3,6 +3,8 @@
 #include "functional_tests_data.h"
 #include "BrainWaveLevels.h"
 #include "Spectrogram.h"
+#include <cmath>
+#include <iostream>
 
 TEST(BrainWaveLevelsFunctional, basic_functional) {
 	dlib::matrix<double> eeg(get_eeg_data());
@@ -16,6 +18,17 @@ TEST(BrainWaveLevelsFunctional, basic_functional) {
 
 	for (int i = 0; i != result.size(); ++i) {
 		brain_wave_levels_t l = result[i];
+		if (i < 100 && isnan(l.alpha)) {
+			continue;
+		}
+
+		std::cout << i
+				<< " " << l.delta
+				<< " " << l.theta
+				<< " " << l.alpha
+				<< " " << l.beta
+				<< std::endl;
+
 		ASSERT_TRUE(l.alpha < 1);
 		ASSERT_TRUE(l.alpha > 0);
 
