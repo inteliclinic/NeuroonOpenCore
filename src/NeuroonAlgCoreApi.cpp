@@ -51,7 +51,8 @@ struct callback_presentation_sink : public OnlinePresentationAlgorithm::sink_t {
 	}
 
 	void consume(OnlinePresentationResult& res) {
-		(*_callback)(res.data, res.size);
+		(*_callback)(res.brain_waves, res.bw_size,
+				     res.heart_rate, res.pulse_data, res.pd_size);
 	}
 };
 

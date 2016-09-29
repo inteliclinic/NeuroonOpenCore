@@ -26,20 +26,44 @@ void staging_callback(const staging_element_t* stages, int size) {
 	out.close();
 }
 
-void presentation_callback(const presentation_element_t* data, int size) {
+void write_brain_waves(const brain_wave_levels_t* brain_waves, int size) {
 	std::stringstream ss;
 	for (int i = 0; i != size; ++i) {
-		ss << data->heart_rate
-			<< " " << data[i].brain_waves.delta
-			<< " " << data[i].brain_waves.theta
-			<< " " << data[i].brain_waves.alpha
-			<< " " << data[i].brain_waves.beta
+		ss 	<< " " << brain_waves[i].delta
+			<< " " << brain_waves[i].theta
+			<< " " << brain_waves[i].alpha
+			<< " " << brain_waves[i].beta
 			<< std::endl;
 	}
-	std::ofstream out("presentation.csv", std::ios_base::trunc);
+	std::ofstream out("brain_waves.csv", std::ios_base::trunc);
 	out << ss.str();
 	out.flush();
 	out.close();
+}
+
+void write_pulseoximetry(const double* data, int size) {
+	std::stringstream ss;
+	for (int i = 0; i != size; ++i) {
+		ss 	<< " " << data[i] << std::endl;
+	}
+	std::ofstream out("pulseoximetry.csv", std::ios_base::trunc);
+	out << ss.str();
+	out.flush();
+	out.close();
+}
+
+void write_heart_rate(double hr) {
+	std::ofstream out("hr.csv", std::ios_base::trunc);
+	out << hr << std::endl;
+	out.flush();
+	out.close();
+
+}
+
+void presentation_callback(const brain_wave_levels_t* brain_waves, int bw_size, double hr, const double* pulseoximetry, int po_size) {
+	write_brain_waves(brain_waves, bw_size);
+	write_pulseoximetry(pulseoximetry, po_size);
+	write_heart_rate(hr);
 }
 
 void logger_callback(const char* message) {
