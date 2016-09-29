@@ -71,6 +71,8 @@ public:
 
 	dlib::matrix<double> compute_moment(const std::vector<int>& degrees) const;
 
+
+
 	void print(std::ostream& out) const;
 };
 

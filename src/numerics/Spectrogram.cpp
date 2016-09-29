@@ -174,3 +174,4 @@ dlib::matrix<double> Spectrogram::compute_moment(const std::vector<int>& degrees
 void Spectrogram::print(std::ostream& out) const {
 	out << dlib::csv << buffer;
 }
+
