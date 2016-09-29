@@ -42,12 +42,6 @@ struct staging_element_t {
 	unsigned long long timestamp;
 };
 
-
-struct presentation_element_t {
-	brain_wave_levels_t brain_waves;
-	double heart_rate;
-};
-
 /**
  * Type of the callback for collecting the data about sleep stages
  */
@@ -59,7 +53,7 @@ typedef void (*staging_callback_t)(const staging_element_t*, int);
  * Works only if presentation mode is activated. Will be called relatively frequently
  * (a few times per second)
  */
-typedef void (*presentation_callback_t)(const presentation_element_t*, int);
+typedef void (*presentation_callback_t)(const brain_wave_levels_t*, int, double, const double*, int);
 
 
 /**
