@@ -18,7 +18,7 @@ TEST(BrainWaveLevelsFunctional, basic_functional) {
 
 	for (int i = 0; i != result.size(); ++i) {
 		brain_wave_levels_t l = result[i];
-		if (i < 100 && isnan(l.alpha)) {
+		if (i < 100 && std::isnan(l.alpha)) {
 			continue;
 		}
 

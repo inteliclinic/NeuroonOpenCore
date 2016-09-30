@@ -59,13 +59,26 @@ void OnlinePresentationAlgorithm::update_heart_rate(const INeuroonSignals & inpu
 	m_heart_rate = hr;
 }
 
+void rolling_mean_ac_filter(std::vector<double> &data) {
+ 	RollingMean rm(40, 1);
+ 	std::vector<double> rolling_m(data.size());
+ 	for (int i = 0; i != data.size(); ++i) {
+ 		dlib::matrix<double> mat(1,1);
+ 		mat(0,0) = data[i];
+ 		rm.feed(mat);
+ 		rolling_m[i] = rm.value();
+ 		data[i] -= rm.value();
+ 	}
+}
+
 void OnlinePresentationAlgorithm::update_pulseoximeter_data(const INeuroonSignals & input) {
- 	std::size_t PULSE_ELEMENTS = 5 * 25;
+ 	std::size_t PULSE_ELEMENTS = 5 * 25;// * 16;
  	m_pulse_data.resize(PULSE_ELEMENTS);
  	std::fill(m_pulse_data.begin(), m_pulse_data.end(), 0);
- 	std::copy(input.ir_led_signal().end() - std::min(PULSE_ELEMENTS, input.ir_led_signal().size()), input.ir_led_signal().end(),
- 			  m_pulse_data.begin()
- 	);
+ 	std::copy(input.ir_led_signal().end() - std::min(PULSE_ELEMENTS, input.ir_led_signal().size()),
+ 			  input.ir_led_signal().end(), m_pulse_data.begin());
+
+ 	rolling_mean_ac_filter(m_pulse_data);
 }
 
 void OnlinePresentationAlgorithm::process_pulseoximetry(const INeuroonSignals & input) {
@@ -117,7 +130,7 @@ void OnlinePresentationAlgorithm::update_results() {
 	result.brain_waves = m_brain_waves_data.data();
 	result.bw_size = m_brain_waves_data.size();
 	result.heart_rate = m_heart_rate;
-	result.pulse_data = m_pulse_data.data();
-	result.pd_size = m_pulse_data.size();
+	result.pulse_data = m_pulse_data.data();// + m_pulse_data.size()/2;
+	result.pd_size = m_pulse_data.size();// - m_pulse_data.size()/2;
 	feed_all_sinks(result);
 }
