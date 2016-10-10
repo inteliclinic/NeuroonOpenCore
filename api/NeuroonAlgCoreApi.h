@@ -159,7 +159,7 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
  * the token will be invalid after calling the function,
  * so please do not use it afterwards as it may result in undefined behavior.
  */
-void destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
+bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
 
 /**
  * Initializes the processing steps before sleep. 
@@ -169,7 +169,7 @@ void destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
  * 
  * @param data : the private data of the library
  */
-void start_sleep(NeuroonAlgCoreData* data);
+bool start_sleep(NeuroonAlgCoreData* data);
 
 /**
  * Stops the sleep. Afterwards one last staging_callback 
@@ -178,7 +178,7 @@ void start_sleep(NeuroonAlgCoreData* data);
  * 
  * @param data : the private data of the library
  */
-void stop_sleep(NeuroonAlgCoreData* data);
+bool stop_sleep(NeuroonAlgCoreData* data);
 
 /**
  * Start computing the data for real-time presentation of brain waves and heart rate.
@@ -190,7 +190,7 @@ void stop_sleep(NeuroonAlgCoreData* data);
  *
  * @param data : pointer to the private data of the library
  */
-void start_presentation(NeuroonAlgCoreData* data);
+bool start_presentation(NeuroonAlgCoreData* data);
 
 
 /**
@@ -199,7 +199,7 @@ void start_presentation(NeuroonAlgCoreData* data);
   * @param data : pointer to the private data of the library
   *  
   */
-void stop_presentation(NeuroonAlgCoreData* data);
+bool stop_presentation(NeuroonAlgCoreData* data);
 
 /**
  * Feeds BLE EEG frame to the library
@@ -213,7 +213,7 @@ void stop_presentation(NeuroonAlgCoreData* data);
  *
  * @param data : pointer to the private data of the library
  */
-void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream0(NeuroonAlgCoreData* data, char* bytes, int size);
 
 /**
  * Feeds BLE IR,ACC,TEMP frame to the library.
@@ -223,8 +223,15 @@ void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size);
  *
  * @param size : size of the array passed; currently only 20 byte frames are supported.
  */
-void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size);
 
+/**
+ * Currently not used, but may be used in the future
+ *
+ * @param bytes : pointer to the first element of an array of chars with the IR,ACC and TEMP data received from Neuroon mask
+ * @param size : size of the array passed; currently only 20 bytes frames are supported
+ */
+bool feed_data_stream2(NeuroonAlgCoreData* data, char* bytes, int size);
 
 /**
  * Installs a log callback to the library
@@ -238,6 +245,6 @@ void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size);
  * this function will be called every time a log message is generated.
  *
  */
-void install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback);
+bool install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback);
 
 #endif
