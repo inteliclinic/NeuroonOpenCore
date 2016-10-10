@@ -78,25 +78,28 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
 	return data;
 }
 
-void destroy_neuroon_alg_core(NeuroonAlgCoreData* data) {
+bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL";
 	delete data;
 	LOG(INFO) << "API CALL END";
+    return true;
 }
 
-void start_sleep(NeuroonAlgCoreData* data) {
+bool start_sleep(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.start_processing();
 	LOG(INFO) << "API CALL END";
+    return true;
 }
 
-void stop_sleep(NeuroonAlgCoreData* data) {
+bool stop_sleep(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.end_processing();
 	LOG(INFO) << "API CALL END";
+    return true;
 }
 
-void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size) {
+bool feed_data_stream0(NeuroonAlgCoreData* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
@@ -106,9 +109,10 @@ void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size) {
 	data->_daemon.consume(frame);
 
 	LOG(DEBUG) << "API CALL END";
+    return true;
 }
 
-void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size) {
+bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
@@ -118,32 +122,41 @@ void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size) {
 	data->_daemon.consume(frame);
 
 	LOG(DEBUG) << "API CALL END";
+    return true;
 }
 
-void install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback) {
+bool feed_data_stream2(NeuroonAlgCoreData* data, char* bytes, int size) {
+	LOG(DEBUG) << "API CALL -- NOT USED CURRENTLY";
+    return true;
+}
+ 
+bool install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback) {
 	LOG(INFO) << "API CALL";
 	configure_logger(callback);
 	LOG(INFO) << "API CALL END";
+    return true;
 }
 
-void start_presentation(NeuroonAlgCoreData* data) {
+bool start_presentation(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL";
 
 	if (!data->_online_presentation) {
-		return;
+		return false;
 	}
 
 	data->_online_presentation->activate();
 	LOG(INFO) << "API CALL END";
+    return true;
 }
 
-void stop_presentation(NeuroonAlgCoreData* data) {
+bool stop_presentation(NeuroonAlgCoreData* data) {
 	LOG(INFO) << "API CALL";
 
 	if (!data->_online_presentation) {
-		return;
+		return false;
 	}
 
 	data->_online_presentation->deactivate();
 	LOG(INFO) << "API CALL END";
+    return true;
 }

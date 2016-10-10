@@ -165,13 +165,13 @@ int main(int argc, char** argv) {
 		if (sink_sp_eeg->has_frame) {
 			EegFrame f = sink_sp_eeg->take_frame();
 			f.to_bytes(bytes);
-			feed_eeg_data (neuroon, bytes, 20);
+			feed_data_stream0 (neuroon, bytes, 20);
 		}
 
 		if (sink_sp_ir->has_frame) {
 			AccelLedsTempFrame f = sink_sp_ir->take_frame();
 			f.to_bytes(bytes);
-			feed_ir_led_data(neuroon, bytes, 20);
+			feed_data_stream1(neuroon, bytes, 20);
 		}
 	}
 

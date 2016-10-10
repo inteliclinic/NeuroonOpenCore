@@ -76,18 +76,18 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
 /**
  * Destroys the NeuroonAlgCoreData object and deinitializes the entire library
  */
-void destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
+bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
 
 /**
  * Initializes the processing steps before sleep; It's necessary to call this function before starting to
  * feed BLE frames using feed_* functions below
  */
-void start_sleep(NeuroonAlgCoreData* data);
+bool start_sleep(NeuroonAlgCoreData* data);
 
 /**
  * Stops the sleep. Afterwards the staging_callback (passed to initialize_neuroon_alg_core function) will be called with the final sleep staging.
  */
-void stop_sleep(NeuroonAlgCoreData* data);
+bool stop_sleep(NeuroonAlgCoreData* data);
 
 /**
  * Start computing the data for real-time presentation of brain waves and heart rate.
@@ -97,13 +97,13 @@ void stop_sleep(NeuroonAlgCoreData* data);
  * each time the real-time presentation algorithm returns the data to be presented
  * (brain waves and heart rate)
  */
-void start_presentation(NeuroonAlgCoreData* data);
+bool start_presentation(NeuroonAlgCoreData* data);
 
 
 /**
   * Stop computing the data for real-time presentation of brain waves and heart rate
   */
-void stop_presentation(NeuroonAlgCoreData* data);
+bool stop_presentation(NeuroonAlgCoreData* data);
 
 /**
  * Feeds BLE EEG frame to the library
@@ -111,7 +111,7 @@ void stop_presentation(NeuroonAlgCoreData* data);
  * @param bytes : pointer to the first element of an array of chars with the EEG data received from Neuroon mask
  * @param size : size of the array passed; currently only 20 bytes frames are supported
  */
-void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream0(NeuroonAlgCoreData* data, char* bytes, int size);
 
 /**
  * Feeds BLE IR,ACC,TEMP frame to the library
@@ -119,8 +119,15 @@ void feed_eeg_data(NeuroonAlgCoreData* data, char* bytes, int size);
  * @param bytes : pointer to the first element of an array of chars with the IR,ACC and TEMP data received from Neuroon mask
  * @param size : size of the array passed; currently only 20 bytes frames are supported
  */
-void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size);
 
+/**
+ * Currently not used, but may be used in the future
+ *
+ * @param bytes : pointer to the first element of an array of chars with the IR,ACC and TEMP data received from Neuroon mask
+ * @param size : size of the array passed; currently only 20 bytes frames are supported
+ */
+bool feed_data_stream2(NeuroonAlgCoreData* data, char* bytes, int size);
 
 /**
  * Installs a log callback to the library
@@ -133,6 +140,6 @@ void feed_ir_led_data(NeuroonAlgCoreData* data, char* bytes, int size);
  * every time a log message is generated
  *
  */
-void install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback);
+bool install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback);
 
 #endif
