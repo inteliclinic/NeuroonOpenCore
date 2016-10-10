@@ -155,3 +155,4 @@ destroy_neuroon_alg_core(neuroon);
 This will result in releasing all the resources handled by the library and invalidating the access token provided to the call.
 
 
+    
