@@ -26,39 +26,6 @@ typedef enum {
 /********************************** COMMON  **********************************/
 /**
  * @brief
- * Sink for data from D19E0201-D97F-E2D3-840C-A11CB81C0886 characteristic
- *
- * @param in_frame
- * @param in_len
- *
- * @return
- */
-bool data_stream0_sink(char *in_frame, size_t in_len);
-
-/**
- * @brief
- * Sink for data from D19E0202-D97F-E2D3-840C-A11CB81C0886 characteristic
- *
- * @param in_frame
- * @param in_len
- *
- * @return
- */
-bool data_stream1_sink(char *in_frame, size_t in_len);
-
-/**
- * @brief
- * Sink for data from D19E0301-D97F-E2D3-840C-A11CB81C0886 characteristic
- *
- * @param in_frame
- * @param in_len
- *
- * @return
- */
-bool data_stream2_sink(char *in_frame, size_t in_len);
-
-/**
- * @brief
  * Sink for responses from D19E0302-D97F-E2D3-840C-A11CB81C0886 characteristic
  *
  * @param in_frame
@@ -83,25 +50,25 @@ bool response_sink(char *in_frame, size_t in_len);
 bool goto_dfu(char *out_frame, size_t *out_len, e_firmwareMilestone firmware);
 
 /**
- * @brief 
+ * @brief
  *
  * @param in_frame
  * @param in_len
  * @param out_frame
  * @param out_len
  *
- * @return 
+ * @return
  */
 bool dfu_response_sink(char *in_frame, size_t in_len, char* out_frame, size_t *out_len);
 
 /**
- * @brief 
+ * @brief
  * Generate start update command for dfu
  *
  * @param out_frame
  * @param out_len
  *
- * @return 
+ * @return
  */
 bool dfu_start_update(char *out_frame, size_t *out_len);
 /*****************************************************************************/
