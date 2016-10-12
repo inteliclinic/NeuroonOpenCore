@@ -1,5 +1,5 @@
 /**
- * @file    NeuroonMaskCommApi.h
+ * @file    NeuroonDfuApi.h
  * @Author  Paweł Kaźmierzewski <p.kazmierzewski@inteliclinic.com>
  * @date    October, 2016
  * @brief   Brief description
@@ -17,39 +17,61 @@
 #error "Char is not 8 bit!"
 #endif
 
-typedef enum {
-  LEGACY_NEUROON_FIRMWARE = 0x00,
-  NEW_NEUROON_FIRMWARE = 0x01
+/**
+ * @brief Firmaware major release
+ *
+ * Encodes major releases.
+ * */
+typedef enum{
+  LEGACY_NEUROON_FIRMWARE = 0x00, /**< firmware 2.0.x.x */
+  NEW_NEUROON_FIRMWARE = 0x01     /**< firmware 2.1.x.x */
 }e_firmwareMilestone;
+
+/**
+ * @brief Next step order
+ *
+ * Encoded orders for application to execute
+ */
+typedef enum{
+  DFU_SEND_NEXT_DATASET = 0x00, /**< send data stored in output frame */
+  DFU_RESEND_DATASET,           /**< resend previous data set */
+  DFU_TERMINATE,                /**< Mask encoutered critical error in DFU mode */
+  DFU_END                       /**< Update finished */
+}e_dfuAction;
 
 /**
  * @brief Generate "go to dfu" command
  *
- * @param[out] frame
- * @param[out] len
- * @param[in] firmware
+ * @param[out]  frame     pointer to 20 bytes array where frame will be
+ * stored
+ * @param[out]  len       pointer to size_t value where function will put length
+ * of array
+ * @param[in]   firmware  choose firmware type
  *
  * @return
  */
 bool goto_dfu(char *frame, size_t *len, e_firmwareMilestone firmware);
 
 /**
- * @brief
+ * @brief Receive data from rdfu response characteristic
  *
- * @param[in]   frame
- * @param[in]   len
- * @param[out]  frame
- * @param[out]  len
+ * @param[in]   response_frame  20 byte array with response frame
+ * @param[in]   response_len    response array length
+ * @param[out]  frame           pointer to 20 bytes array where binary data will
+ * be stored
+ * @param[out]  len             pointer to size_t value where function will pit
+ * output frame length
  *
  * @return
  */
-bool dfu_response_sink(char *in_frame, size_t in_len, char* out_frame, size_t *out_len);
+e_dfuAction dfu_response_sink(char *response_frame, size_t response_len, char* frame, size_t *len);
 
 /**
  * @brief Generate start update command for dfu
  *
- * @param[out]  frame
- * @param[out]  len
+ * @param[out]  frame pointer to 20 bytes array where frame will be stored
+ * @param[out]  len   pointer to size_t value where function will put lenght of
+ * array
  *
  * @return
  */
