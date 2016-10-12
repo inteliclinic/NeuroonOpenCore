@@ -22,54 +22,37 @@ typedef enum {
   NEW_NEUROON_FIRMWARE = 0x01
 }e_firmwareMilestone;
 
-
-/********************************** COMMON  **********************************/
 /**
- * @brief
- * Sink for responses from D19E0302-D97F-E2D3-840C-A11CB81C0886 characteristic
+ * @brief Generate "go to dfu" command
  *
- * @param in_frame
- * @param in_len
+ * @param[out] frame
+ * @param[out] len
+ * @param[in] firmware
  *
  * @return
  */
-bool response_sink(char *in_frame, size_t in_len);
-/*****************************************************************************/
-
-
-/************************************ DFU ************************************/
-/**
- * @brief
- * Generate "go to dfu" command
- *
- * @param out_frame
- * @param out_len
- *
- * @return
- */
-bool goto_dfu(char *out_frame, size_t *out_len, e_firmwareMilestone firmware);
+bool goto_dfu(char *frame, size_t *len, e_firmwareMilestone firmware);
 
 /**
  * @brief
  *
- * @param in_frame
- * @param in_len
- * @param out_frame
- * @param out_len
+ * @param[in]   frame
+ * @param[in]   len
+ * @param[out]  frame
+ * @param[out]  len
  *
  * @return
  */
 bool dfu_response_sink(char *in_frame, size_t in_len, char* out_frame, size_t *out_len);
 
 /**
- * @brief
- * Generate start update command for dfu
+ * @brief Generate start update command for dfu
  *
- * @param out_frame
- * @param out_len
+ * @param[out]  frame
+ * @param[out]  len
  *
  * @return
  */
-bool dfu_start_update(char *out_frame, size_t *out_len);
-/*****************************************************************************/
+bool dfu_start_update(char *frame, size_t *len);
+
 #endif /* !NEUROONMASKCOMMAPI_H */
