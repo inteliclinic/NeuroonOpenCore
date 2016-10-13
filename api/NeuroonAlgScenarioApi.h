@@ -28,12 +28,12 @@ typedef enum {
 /**
  * @brief
  *
- * @param[in] cmd_frame
- * @param[in] cmd_len
- * @param[in] response_frame
- * @param[in] response_len
+ * @param[in] cmd_frame       sent data
+ * @param[in] cmd_len         sent data lenght
+ * @param[in] response_frame  response data from mask
+ * @param[in] response_len    response data length
  *
- * @return
+ * @return  returns next step
  */
 e_frameValidation response_sink(char *cmd_frame, size_t cmd_len, char *response_frame, size_t response_len);
 

@@ -48,7 +48,8 @@ typedef enum{
  * of array
  * @param[in]   firmware  choose firmware type
  *
- * @return
+ * @return true if function was able to generate frame, false otherwise(ex.
+ * wrong frame len or unsupported firmware)
  */
 bool goto_dfu(char *frame, size_t *len, e_firmwareMilestone firmware);
 
@@ -62,7 +63,7 @@ bool goto_dfu(char *frame, size_t *len, e_firmwareMilestone firmware);
  * @param[out]  len             pointer to size_t value where function will pit
  * output frame length
  *
- * @return
+ * @return returns next step for update
  */
 e_dfuAction dfu_response_sink(char *response_frame, size_t response_len, char* frame, size_t *len);
 
@@ -73,7 +74,8 @@ e_dfuAction dfu_response_sink(char *response_frame, size_t response_len, char* f
  * @param[out]  len   pointer to size_t value where function will put lenght of
  * array
  *
- * @return
+ * @return true if function was able to generate frame, false otherwise(ex.
+ * wrong frame len)
  */
 bool dfu_start_update(char *frame, size_t *len);
 
