@@ -5,14 +5,14 @@
 #include <exception>
 
 #include <dlib/matrix.h>
-#include "EegFeatures.h"
+#include "Features.h"
 #include "Spectrogram.h"
 
 #include "Config.h"
 #include <cmath>
 #include "dlib_utils.h"
 
-struct EegFeaturesTest : public ::testing::Test {
+struct FeaturesTest : public ::testing::Test {
 	virtual void SetUp() {
 	}
 
@@ -21,7 +21,7 @@ struct EegFeaturesTest : public ::testing::Test {
 	}
 };
 
-TEST_F(EegFeaturesTest, basic_sum_in_bands) {
+TEST_F(FeaturesTest, basic_sum_in_bands) {
 	std::vector<double> band_borders;
 	std::unique_ptr<Spectrogram> spectrogram;
 
@@ -39,7 +39,7 @@ TEST_F(EegFeaturesTest, basic_sum_in_bands) {
 	spectrogram.reset(new Spectrogram(data, 1, window, 0));
 
 	for (int i = 0; i != band_borders.size() - 1; ++i) {
-		dlib::matrix<double> band_sum = EegFeatures::sum_in_band(*spectrogram,
+		dlib::matrix<double> band_sum = Features::sum_in_band(*spectrogram,
 				band_borders[i], band_borders[i+1]);
 
 		EXPECT_EQ(band_sum.nc(), 1);
@@ -60,13 +60,13 @@ TEST_F(EegFeaturesTest, basic_sum_in_bands) {
 	}
 }
 
-TEST_F(EegFeaturesTest, basic_rolling_mean_test) {
+TEST_F(FeaturesTest, basic_rolling_mean_test) {
 	const int size = 20;
 	dlib::matrix<double> signal(size, 1);
 	dlib::set_colm(signal, 0) =  dlib::trans(dlib::range(0, size - 1));
 
 	const int window_size = 5;
-	auto result = EegFeatures::rolling_mean(signal, window_size);
+	auto result = Features::rolling_mean(signal, window_size);
 	EXPECT_EQ(result.nc(), 1);
 	EXPECT_EQ(result.nr(), size);
 
@@ -82,14 +82,14 @@ TEST_F(EegFeaturesTest, basic_rolling_mean_test) {
 	//std::cout << to_print;
 }
 
-TEST_F(EegFeaturesTest, basic_sparse_rolling_mean_test) {
+TEST_F(FeaturesTest, basic_sparse_rolling_mean_test) {
 	const int size = 20;
 	dlib::matrix<double> signal(size, 1);
 	dlib::set_colm(signal, 0) =  dlib::trans(dlib::range(0, size - 1));
 
 	signal(5,0) = NAN;
 	const int window_size = 5;
-	auto result = EegFeatures::sparse_rolling_mean(signal, window_size);
+	auto result = Features::sparse_rolling_mean(signal, window_size);
 	EXPECT_EQ(result.nc(), 1);
 	EXPECT_EQ(result.nr(), size);
 
@@ -108,7 +108,7 @@ TEST_F(EegFeaturesTest, basic_sparse_rolling_mean_test) {
 	//std::cout << to_print;
 }
 
-TEST_F(EegFeaturesTest, multiple_nans_sparse_rolling_mean_test) {
+TEST_F(FeaturesTest, multiple_nans_sparse_rolling_mean_test) {
 	const int size = 20;
 	dlib::matrix<double> signal(size, 1);
 	dlib::set_colm(signal, 0) =  dlib::trans(dlib::range(0, size - 1));
@@ -120,7 +120,7 @@ TEST_F(EegFeaturesTest, multiple_nans_sparse_rolling_mean_test) {
 	signal(9,0) = NAN;
 
 	const int window_size = 5;
-	auto result = EegFeatures::sparse_rolling_mean(signal, window_size);
+	auto result = Features::sparse_rolling_mean(signal, window_size);
 	EXPECT_EQ(result.nc(), 1);
 	EXPECT_EQ(result.nr(), size);
 
@@ -145,29 +145,29 @@ TEST_F(EegFeaturesTest, multiple_nans_sparse_rolling_mean_test) {
 
 
 
-TEST_F(EegFeaturesTest, basic_n_max_to_median_test) {
+TEST_F(FeaturesTest, basic_n_max_to_median_test) {
 	dlib::matrix<double> input_data(3, 6);
 	dlib::set_all_elements(input_data, 1);
 
 	input_data(2, 0) = 2;
 
-	auto result = EegFeatures::n_max_to_median(input_data, 3);
+	auto result = Features::n_max_to_median(input_data, 3);
 	std::cout << result;
 }
 
-TEST_F(EegFeaturesTest, basic_n_max_to_median_test2) {
+TEST_F(FeaturesTest, basic_n_max_to_median_test2) {
 	dlib::matrix<double> input_data(1, 7);
 	dlib::set_all_elements(input_data, 0.1);
 	input_data(0, 4) = 1;
 	input_data(0, 5) = 2;
 	input_data(0, 6) = 3;
 
-	auto result = EegFeatures::n_max_to_median(input_data, 1);
+	auto result = Features::n_max_to_median(input_data, 1);
 	EXPECT_EQ(result, 30);
 }
 
 
-TEST_F(EegFeaturesTest, basic_standardize_test) {
+TEST_F(FeaturesTest, basic_standardize_test) {
 	const int SIZE = 10;
 	dlib::matrix<double> signal_to_standardize(SIZE, 1);
 	for (int i = 0; i != SIZE; ++i) {
@@ -175,7 +175,7 @@ TEST_F(EegFeaturesTest, basic_standardize_test) {
 	}
 
 	//std::cout << signal_to_standardize << std::endl;
-	dlib::matrix<double> standardized = EegFeatures::standardize(signal_to_standardize);
+	dlib::matrix<double> standardized = Features::standardize(signal_to_standardize);
 
 	double st = standard_deviation(standardized);
 	double m = dlib::mean(standardized);
@@ -184,7 +184,7 @@ TEST_F(EegFeaturesTest, basic_standardize_test) {
 	EXPECT_EQ(0, m);
 }
 
-TEST_F(EegFeaturesTest, standardize_with_nans_test) {
+TEST_F(FeaturesTest, standardize_with_nans_test) {
 	const int SIZE = 10;
 	dlib::matrix<double> signal_to_standardize(SIZE, 1);
 	for (int i = 0; i != SIZE; ++i) {
@@ -195,7 +195,7 @@ TEST_F(EegFeaturesTest, standardize_with_nans_test) {
 	signal_to_standardize(1,0) = NAN;
 
 	//std::cout << signal_to_standardize << std::endl;
-	dlib::matrix<double> standardized = EegFeatures::standardize(signal_to_standardize);
+	dlib::matrix<double> standardized = Features::standardize(signal_to_standardize);
 
 	for (int i = 0; i != standardized.nr(); ++i) {
 		bool isnan = standardized(i, 0) != standardized(i, 0);
@@ -208,7 +208,7 @@ TEST_F(EegFeaturesTest, standardize_with_nans_test) {
 }
 
 
-TEST_F(EegFeaturesTest, standardize_all_nans_test) {
+TEST_F(FeaturesTest, standardize_all_nans_test) {
 	const int SIZE = 4;
 	dlib::matrix<double> signal_to_standardize(SIZE, 1);
 	for (int i = 0; i != SIZE; ++i) {
@@ -216,7 +216,7 @@ TEST_F(EegFeaturesTest, standardize_all_nans_test) {
 	}
 
 	//std::cout << signal_to_standardize << std::endl;
-	dlib::matrix<double> standardized = EegFeatures::standardize(signal_to_standardize);
+	dlib::matrix<double> standardized = Features::standardize(signal_to_standardize);
 
 	for (int i = 0; i != standardized.nr(); ++i) {
 		bool isnan = standardized(i, 0) != standardized(i, 0);

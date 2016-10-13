@@ -16,11 +16,10 @@
 
 #include "NeuroonAlgCoreApi.h"
 
-//struct sleep_stage_t {
-//	SLEEP_STAGE stage;
-//	llong timestamp;
-//};
-
+/**
+ * Represents the results of the sleep staging algorithm. The objects of this
+ * class are returned in the sinks of the online staging algorithm
+ */
 class SleepStagingResult {
 public:
 	SleepStagingResult() {}
@@ -41,6 +40,10 @@ public:
 	std::vector<staging_element_t> m_stages;
 };
 
+/**
+ * Implementation of a SinkStreamingAlgorithm for the problem of online staging.
+ * The algorithm 
+ */
 class OnlineStagingAlgorithm : public SinkStreamingAlgorithm<SleepStagingResult> {
 
 	const int EEG_WINDOW = 2048 * 5;

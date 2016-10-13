@@ -17,6 +17,11 @@
 
 #include "NeuroonAlgCoreApi.h"
 
+/**
+ * The result of the online presentation algorithm
+ * contains all the information necessary for drawing the onine-presentation
+ * screen for the end-user of the application
+ */
 struct OnlinePresentationResult {
 	brain_wave_levels_t* brain_waves;
 	int bw_size;
@@ -25,7 +30,9 @@ struct OnlinePresentationResult {
 	int pd_size;
 };
 
-
+/**
+ * An implementation of a SinkStreamingAlgorithm for the online presentation mode 
+ */
 class OnlinePresentationAlgorithm : public SinkStreamingAlgorithm<OnlinePresentationResult> {
 
 	std::vector<brain_wave_levels_t> m_brain_waves_data;

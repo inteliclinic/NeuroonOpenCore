@@ -10,10 +10,20 @@
 
 #include <dlib/matrix.h>
 
+
+/**
+ * A simple filter for spectrograms. Assigns NaN for samples that have the 
+ * vaulue in filter_column greater than the critical value
+ */
 class AmplitudeFilter {
 public:
 	AmplitudeFilter(double critical_value);
 
+    /**
+     * Returns a copy of the input matrix with the noisy rows set to NaN
+     * a row is considered noisy if the value in its filter_column is
+     * greater than the critical value for the filter.
+     */
 	dlib::matrix<double> transform(const dlib::matrix<double> &data, const dlib::matrix<double> &filter_column);
 
 private:

@@ -6,7 +6,7 @@
  */
 
 #include "EegSignalQuality.h"
-#include "EegFeatures.h"
+#include "Features.h"
 #include <vector>
 
 EegSignalQuality::EegSignalQuality() {}
@@ -26,7 +26,7 @@ int EegSignalQuality::power_to_quality(double power) const {
 }
 
 int EegSignalQuality::predict(const Spectrogram& spectrogram) const {
-	dlib::matrix<double> band_sum = EegFeatures::sum_in_band(spectrogram, 10, 14);
+	dlib::matrix<double> band_sum = Features::sum_in_band(spectrogram, 10, 14);
 	band_sum = dlib::log(band_sum);
 	double sum_value = band_sum(0,0);
 	int quality = power_to_quality(sum_value);

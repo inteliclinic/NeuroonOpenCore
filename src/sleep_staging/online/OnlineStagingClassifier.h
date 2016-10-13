@@ -16,6 +16,13 @@
 class MlpClassifier;
 class OnLineViterbiSearch;
 
+/**
+ * Aggregates all tasks and logic for online processing of sleep
+ * i.e.: sleep staging, computing quality, brain wave levels etc.
+ * also computes the necessary spectrograms. This aggregation was developed
+ * to ensure the most CPU-intensive tasks (spectrograms) aren't
+ * being carried out repeatedly
+ */
 class OnlineStagingClassifier {
 
 	MlpClassifier* m_mlp = nullptr;

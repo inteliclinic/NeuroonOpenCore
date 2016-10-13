@@ -6,7 +6,7 @@
  */
 
 #include "BrainWaveLevels.h"
-#include "EegFeatures.h"
+#include "Features.h"
 #include "NeuroonAlgCoreApi.h"
 #include <stdexcept>
 #include <utility>
@@ -27,7 +27,7 @@ std::vector<brain_wave_levels_t> BrainWaveLevels::predict(const Spectrogram &spe
 		std::make_pair(16, 31)
 	});
 
-	dlib::matrix<double> sums = EegFeatures::sum_in_bands(spectrogram, bands);
+	dlib::matrix<double> sums = Features::sum_in_bands(spectrogram, bands);
 	dlib::matrix<double> sum = dlib::sum_cols(sums);
 	std::cout << "sum " << sum << std::endl;
 	std::cout << "bands: " << sums << std::endl;

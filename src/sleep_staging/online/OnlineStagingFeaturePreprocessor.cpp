@@ -8,7 +8,7 @@
 #include "OnlineStagingFeaturePreprocessor.h"
 #include "Spectrogram.h"
 #include "Config.h"
-#include "EegFeatures.h"
+#include "Features.h"
 #include "AmplitudeFilter.h"
 #include "EntropyFilter.h"
 #include "dlib_utils.h"
@@ -41,13 +41,13 @@ OnlineStagingFeaturePreprocessor::EegSumsFeatures::transform(const Spectrogram& 
 
 	std::vector<double> borders({ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
 							       18, 19, 20, 21});
-	dlib::matrix<double> band_sums = EegFeatures::sum_by_borders(eeg_spectrogram, borders, true);
+	dlib::matrix<double> band_sums = Features::sum_by_borders(eeg_spectrogram, borders, true);
 	m_rolling.feed(band_sums);
 	band_sums = m_rolling.value();
 	band_sums = dlib::log(band_sums);
 
 	const double EEG_FILTER_CRITICAL = 19;
-	dlib::matrix<double> filter_band = EegFeatures::sum_in_band(eeg_spectrogram, 10, 14, false);
+	dlib::matrix<double> filter_band = Features::sum_in_band(eeg_spectrogram, 10, 14, false);
 	filter_band = dlib::log(filter_band);
 	AmplitudeFilter f(EEG_FILTER_CRITICAL);
 	band_sums = f.transform(band_sums, filter_band);
@@ -78,7 +78,7 @@ dlib::matrix<double> OnlineStagingFeaturePreprocessor::IrFeatures::transform(con
 	pulse_band = pulse_filter.transform(pulse_band);
 
 	const int N_MAX_TO_MEDIAN_N = 3;
-	dlib::matrix<double> result = EegFeatures::n_max_to_median(pulse_band, N_MAX_TO_MEDIAN_N);
+	dlib::matrix<double> result = Features::n_max_to_median(pulse_band, N_MAX_TO_MEDIAN_N);
 	m_rolling.feed(result);
 	result = m_rolling.value();
 	m_mean.consume(result);

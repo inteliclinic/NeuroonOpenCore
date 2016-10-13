@@ -11,6 +11,13 @@
 #include <vector>
 #include <dlib/matrix.h>
 
+
+/**
+ * This class implements a multilayer perceptron, i.e. a relatively simple 
+ * artificial neural network.
+ * 
+ * MLP can be used as a 'backend' for classification and regression tasks
+ */
 class MultilayerPerceptron {
 
 	struct ActivationFunction {
@@ -37,6 +44,12 @@ public:
 
 	MultilayerPerceptron(std::vector<dlib::matrix<double>> weights, std::vector<dlib::matrix<double>> intercepts);
 	virtual ~MultilayerPerceptron();
+
+    /**
+     * Return the outputs of the MLP for given inputs
+     * @param input : the values of inputs for the network
+     * @return a dlib matrix containing the outputs of the network
+     */
 	dlib::matrix<double> predict(const dlib::matrix<double>& input);
 
 };

@@ -11,6 +11,9 @@
 #include <dlib/matrix.h>
 #include <vector>
 
+/**
+ * A simle and straightforward implementation of a rolling mean algorithm
+ */
 class RollingMean {
 
 	int m_window;

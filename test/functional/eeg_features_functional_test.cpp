@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include <dlib/matrix.h>
-#include "EegFeatures.h"
+#include "Features.h"
 #include "Spectrogram.h"
 #include "StagingPreprocessor.h"
 
@@ -52,7 +52,7 @@ TEST(FunctionalTest, spectrogram_computation_functional_test) {
 //	//TODO: MAKE THIS CONFIGURABLE?
 //	std::vector<double> borders({2.5, 7.5, 10, 14, 21});
 //	auto bands = create_bands(borders);
-//	dlib::matrix<double> sums = EegFeatures::sum_in_bands(spectrogram, bands);
+//	dlib::matrix<double> sums = Features::sum_in_bands(spectrogram, bands);
 //	std::cout << dlib::log(sums);
 
 

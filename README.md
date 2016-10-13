@@ -19,7 +19,7 @@ API conventions
 
 At the moment the library can be thought of as a "passive" component, i.e. it doesn't start any threads of its own and is entirely dependable on the caller to call its functions. In other words all calls to the library are synchronous. Some functions such as passing the BLE frames into the library may once in a while trigger some computations, however in our experience these computations are not very heavy and should not block the calling thread for too long.
 
-All the results from the library are returned by callback functions. The client code is required to provide pointers to functions that will receive result data such as for example the results of sleep staging algorithm. As mentioned before, the library does not use its own threads nor any synchronization mechanisms, so the callbacks are called in the caller's thread. More specifically they're called in the thread that called the feed_eeg_data or feed_ir_led_data functions. Any heavy computations will also be called as a result of calling these two functions.
+All the results from the library are returned by callback functions. The client code is required to provide pointers to functions that will receive result data such as for example the results of sleep staging algorithm. As mentioned before, the library does not use its own threads nor any synchronization mechanisms, so the callbacks are called in the caller's thread. More specifically they're called in the thread that called the feed_data_stream0 or feed_data_stream1 functions. Any heavy computations will also be called as a result of calling these two functions.
 
 Dependencies
 ------------
@@ -111,14 +111,14 @@ start_sleep(neuroon);
 When receiving data from the Bluetooth Low Energy interface we can feed it to the library so it'll handle parsing the frame and analyse the data:
 ~~~~~~~~~~~~{.cpp}
 char bytes[20]; // normally this array would contain valid data received from BLE interface
-feed_eeg_data (neuroon, bytes, 20);
+feed_data_stream0 (neuroon, bytes, 20);
 ~~~~~~~~~~~~
 
 the same applies to the data from the second BLE characteristic:
 
 ~~~~~~~~~~~~{.cpp}
 char bytes[20]; // normally this array would containg valid data received from BLE interface
-feed_ir_led_data (neuroon, bytes, 20);
+feed_data_stream1(neuroon, bytes, 20);
 ~~~~~~~~~~~~
 
 These calls may (but don't have to!) trigger calls to the staging_callback provided by the library's client. The current implementation will trigger the callback once every 82 seconds of sleep data received. However, the frequency of receiving callbacks may change in the future.

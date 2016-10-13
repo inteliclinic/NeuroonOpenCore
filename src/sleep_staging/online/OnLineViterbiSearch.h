@@ -13,6 +13,18 @@
 #include <limits>
 #include <utility>
 
+
+/**
+ * This class implements a 'step-by-step' version of the Viterbi algorithm
+ * used for smoothing the hypnogram as a post-processing stage of the online
+ * staging algorithm.
+ *
+ * Each call to the step method results in returning the most probable sequence
+ * of sleep stages up to this point.
+ *
+ * Calling the stop method causes to take the probabilities of the final state
+ * into account
+ */ 
 class OnLineViterbiSearch {
 
 struct PathElement {
@@ -32,6 +44,24 @@ struct PathElement {
 };
 
 public:
+/**
+ * The constructor.
+ *
+ * @param states : the vector of states; only integer states are supported at the moment
+ * @param start_probabilities : a 1-D matrix containing the probabilities that
+ the state machines start stage is the i-th state of the model.
+ Can be used to force the first part of the hypnogram to point to 'Awake' stage.
+ * @param final_probabilities : same as above but refers to the last element of
+ the sequence. Can be used to force the last element of the hypnogram 
+ to be the 'Awake' sequence
+ * @param transition_matrix : the matrix giving the probabilities of transitions
+ * between the states.
+ * @param viterbi_weight : parameter controlling how much weight should this
+ step have. For low values, the emission probabilities have much larger impact
+ than the transition matrix, thus making the hypnogram more 'dynamic'. Values
+ greater than 1 make the transition matrix more and more important thus making
+ the hypnogram look more smooth.
+ */ 
 	OnLineViterbiSearch(const std::vector<int>& states, const dlib::matrix<double>& start_probabilities,
 				  const dlib::matrix<double>& final_probabilities, const dlib::matrix<double> transition_matrix,
 				  double viterbi_weight = 1

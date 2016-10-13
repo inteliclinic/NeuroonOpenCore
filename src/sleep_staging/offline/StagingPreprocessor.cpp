@@ -7,7 +7,7 @@
 
 #include "StagingPreprocessor.h"
 #include "Spectrogram.h"
-#include "EegFeatures.h"
+#include "Features.h"
 #include "AmplitudeFilter.h"
 #include "Config.h"
 #include <vector>
@@ -49,7 +49,7 @@ dlib::matrix<double> StagingPreprocessor::transform(const dlib::matrix<double>& 
 
 dlib::matrix<double> StagingPreprocessor::transform(const Spectrogram &eeg_spectrogram, const Spectrogram &pulse_spectrogram) {
 	std::vector<double> borders({2.5, 7.5, 10, 14, 21});
-	dlib::matrix<double> eeg_sums = EegFeatures::sum_by_borders(eeg_spectrogram, borders);
+	dlib::matrix<double> eeg_sums = Features::sum_by_borders(eeg_spectrogram, borders);
 	eeg_sums = dlib::log(eeg_sums);
 	const double EEG_FILTER_CRITICAL = 19;
 	const int EEG_FILTER_COLUMN = 2;
@@ -65,10 +65,10 @@ dlib::matrix<double> StagingPreprocessor::transform(const Spectrogram &eeg_spect
 	const double CRITICAL_PULSE_SPECTROGRAM_ENTROPY = 4.1;
 	EntropyFilter pulse_filter(CRITICAL_PULSE_SPECTROGRAM_ENTROPY);
 	pulse_band = pulse_filter.transform(pulse_band);
-	dlib::matrix<double> n_max_to_med = EegFeatures::n_max_to_median(pulse_band, N_MAX_FOR_SPREAD);
+	dlib::matrix<double> n_max_to_med = Features::n_max_to_median(pulse_band, N_MAX_FOR_SPREAD);
 	const int IR_ROLLING_MEAN_WINDOW = 50;
-	n_max_to_med = EegFeatures::sparse_rolling_mean(n_max_to_med, IR_ROLLING_MEAN_WINDOW);
-	n_max_to_med = EegFeatures::standardize(n_max_to_med);
+	n_max_to_med = Features::sparse_rolling_mean(n_max_to_med, IR_ROLLING_MEAN_WINDOW);
+	n_max_to_med = Features::standardize(n_max_to_med);
 
 	if (n_max_to_med.nr() != eeg_sums.nr()) {
 		std::stringstream s;
@@ -82,17 +82,17 @@ dlib::matrix<double> StagingPreprocessor::transform(const Spectrogram &eeg_spect
 	dlib::matrix<double> features(eeg_spectrogram.size(), NUMBER_OF_FEATURES);
 	int feature_index = 0;
 	for (; feature_index != eeg_sums.nc(); ++feature_index) {
-		dlib::set_colm(features, feature_index) = EegFeatures::sparse_rolling_mean(dlib::colm(eeg_sums, feature_index), ROLLING_MEAN_WINDOW);
+		dlib::set_colm(features, feature_index) = Features::sparse_rolling_mean(dlib::colm(eeg_sums, feature_index), ROLLING_MEAN_WINDOW);
 
-		dlib::set_colm(features, feature_index) = EegFeatures::standardize(dlib::colm(features, feature_index));
+		dlib::set_colm(features, feature_index) = Features::standardize(dlib::colm(features, feature_index));
 	}
 	std::cout << "after rolling and standardize: " << nan_ratio(features) << std::endl;
 
 	const int SPINDLE_BAND_INDEX = 2;
 	const int THETA_STANDARDIZATION_WINDOW_SIZE = 100;
 	dlib::set_colm(features, feature_index) = dlib::colm(eeg_sums, SPINDLE_BAND_INDEX);
-	dlib::set_colm(features, feature_index) = EegFeatures::sparse_rolling_mean(dlib::colm(features, feature_index), ROLLING_MEAN_WINDOW);
-	dlib::set_colm(features, feature_index) = EegFeatures::standardize_in_window(dlib::colm(features, feature_index),
+	dlib::set_colm(features, feature_index) = Features::sparse_rolling_mean(dlib::colm(features, feature_index), ROLLING_MEAN_WINDOW);
+	dlib::set_colm(features, feature_index) = Features::standardize_in_window(dlib::colm(features, feature_index),
 			THETA_STANDARDIZATION_WINDOW_SIZE);
 
 	++feature_index;
