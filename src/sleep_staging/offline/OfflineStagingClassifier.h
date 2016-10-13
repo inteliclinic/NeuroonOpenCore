@@ -12,6 +12,16 @@
 
 class MlpClassifier;
 
+
+/**
+ * This class was designed to compute the offline staging, i.e. the staging 
+ * after the all the data about sleep is already gathered. It can be considered 
+ * as deprecated, because very similar functionality is offered by the online
+ * staging functionality and keeping both versions of the algorithm up-to-date
+ * can be very resource intensive.
+ *
+ * You can consider removing this class.
+ */ 
 class OfflineStagingClassifier {
 	OfflineStagingClassifier();
 	static OfflineStagingClassifier* m_instance;

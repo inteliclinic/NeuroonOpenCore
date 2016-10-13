@@ -1,0 +1,19 @@
+1. Refactoring: move the simulator module to the tools/simulator directory, then it will probably be possible to drop the DESKTOP_BUILD macro from the source code (but keep the desktop_build option in CMakeLists.txt)
+
+2. Bug: Fix the timestamps in online staging -- currently there's some bug in conversion between integer types and the timestamps returned from the staging are truncated.
+
+3. Refactoring: place all the configuration about the parameters of the mask such as the sampling frequencies etc. to one place (e.g. the Config.h file)
+
+4. Refactoring: Remove the entire offline staging directory. You can also mark it as deprecated. The functionality of online and offline staging overlaps significantly, so there little point in keeping both versions of the algorithm.
+
+5. Refactoring: Put the loose files from the src/ directory into subdirectories.
+
+6. Important Feature: Catch all the exceptions coming out of the library in the NeuroonAlgCoreApi.cpp file. No exceptions should propagate to the API's client, this may cause the application to crash on the mobile devices.
+ 
+7. Important Feature: Add some error handling in the API, currently all the functions just return true always, this may prove very difficult to debug to the API client.
+
+8. Important Feature: Develop and implement a better method for recognizing the 'Awake' sleep stage and time to fall asleep. These two things are very important from the business point of view, but aren't working well at the moment.
+
+9. Test: check whether the library has no memory leaks. I don't expect it to have them, but if it's going to work for a long time on mobile devices it may prove beneficial to check it. This may be achieved e.g. by overriding the operator new and operator delete globally.
+
+10. Feature: Implement better AC filtering for the pulsoximetry data. Current implementation computes a rolling mean and subtracts it from the data. Obviously some better AC filter can be designed. However there's very little open source implementations of Butterworth filters available, so this task is not trivial.

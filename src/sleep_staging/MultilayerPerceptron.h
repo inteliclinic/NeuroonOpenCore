@@ -33,7 +33,6 @@ class MultilayerPerceptron {
 		virtual dlib::matrix<double> operator()(const dlib::matrix<double> &input) const override;
 	};
 
-
 	std::vector<dlib::matrix<double>> m_weights;
 	std::vector<dlib::matrix<double>> m_intercepts;
 	std::vector<ActivationFunction*> m_activations;
@@ -48,7 +47,9 @@ public:
     /**
      * Return the outputs of the MLP for given inputs
      * @param input : the values of inputs for the network
-     * @return a dlib matrix containing the outputs of the network
+     *        each row corresponding to one observation,
+     *        each column to one feature.
+     * @return a dlib matrix containing the outputs of the network,
      */
 	dlib::matrix<double> predict(const dlib::matrix<double>& input);
 

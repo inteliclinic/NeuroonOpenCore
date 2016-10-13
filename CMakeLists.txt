@@ -1,8 +1,23 @@
+# This is the main CMakeLists file for the neruoon-alg-core library
+#
+# author: Tomasz Grel, t.grel@inteliclinic.com
+# date: October 2016
+
 cmake_minimum_required(VERSION 3.0)
 link_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
+# This option specifies whether to generate the makefiles for the additional
+# targets i.e. the tests, simulator, parser etc.
+# 
+# This causes some dependencies (google-test, the simulator etc.) to be
+# required that can't be compiled on mobile devices.
+# 
+# If building for mobile please use cmake with this option turned OFF, like this:
+# 'cmake .. -Ddesktop_build=OFF'
+# if building for desktop you may just use cmake like this:
+# 'cmake ..' or 'cmake .. -Ddesktop_build=ON'
+# 
 option(desktop_build "desktop_build" ON)
-
 message("-- desktop_build: " ${desktop_build})
 
 add_subdirectory(3rd_party/dlib)
@@ -61,24 +76,19 @@ add_custom_command(
 
 
 if (desktop_build)
-#   find_package(GTest REQUIRED)
-#   include_directories(${GTEST_INCLUDE_DIRS})
-#  
-#   add_executable(runTests test/tests.cpp)
-#   target_link_libraries(runTests 
-#       ${GTEST_LIBRARIES}
-#        neuroon-alg-core
-#        pthread
-#        dlib
-#        )
-#    target_include_directories (runTests PUBLIC 3rd_party/easylogging)
-     
+    # the macro DESKTOP_BUILD will be defined for if cmake was invoked
+    # with the desktop_build option turned ON. 
     add_definitions(-D DESKTOP_BUILD)
-        
+
+    # the tests and tools directories are only searched for if the 
+    # desktop build is turned ON (building tests requires google-test
+    # framework to be available)
     add_subdirectory(test)
     add_subdirectory(tools)
 endif()
 
+# creating the common directories for storing the compilation
+# and test results.
 file(MAKE_DIRECTORY ./build)
 file(MAKE_DIRECTORY ./build/functional_test_results)
 file(MAKE_DIRECTORY ./build/res)

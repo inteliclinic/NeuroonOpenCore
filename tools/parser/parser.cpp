@@ -7,6 +7,19 @@
 #include <iostream>
 #include <unistd.h>
 
+/**
+ * This file contains the implementation of the 'parser' program for parsing
+ * raw neuroon continous transmission data into CSV files.
+ * 
+ * Usage: parser <binary eeg frames file> <binary acc,temp,ir frames file>
+ * 
+ * Output:
+ *    -- RawSignal.csv -- EEG signal frames
+ *    -- IrLedSignal.csv -- Infrared LED signal
+ *    -- RedLedSignal.csv -- Red LED signal
+ *    -- AccelAxes.csv -- Accelerometer data
+ *    -- Termometer.csv -- Termometer data
+ */ 
 
 void parse_eeg(const std::string& filename) {
 	std::ifstream eeg_in(filename);

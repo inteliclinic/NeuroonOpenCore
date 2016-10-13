@@ -7,6 +7,36 @@
 #include <iostream>
 #include <unistd.h>
 
+/**
+ * This file contains the implementation of the 'simulator' -- a program
+ * for simulating the behaviour of the neuroon-alg-core library as 
+ * if someone was sleeping in the mask, when in fact reading the raw
+ * data from CSV files.
+ *
+ * This is useful for two reasons:
+ *    1. It makes it possible to test the entire library from API calls to
+ *       the numerical methods and machine learning concepts.
+ *    2. It makes it possible to compute automatic sleep staging for
+ *       signals in CSV files.
+ *
+ * Usage: simulator <path to directory containing RawSignal.csv and IrLedSignal.csv> [--normal] [--presentation]"
+ *
+ * the '--normal' option forces the time to pass at a normal rate
+ *
+ * the '--presentation' option starts the simulation with the online
+ *     presentation mode active, so the brain_wave levels, heart rate and
+ *     pulsoximetry data will be returned very frequently
+ *
+ * The return values of the simulation will be written to files in
+ * the current working directory of the simulator process. Each time new data
+ * arrives the output files are truncated and written from the beginning
+ * in order to accomodate online plotting of their contents e.g. with
+ * the gnuplot command.
+ *
+ * @author Tomasz Grel, t.grel@inteliclinic.com
+ * @date October 2016
+ */ 
+
 std::ofstream* log_out;
 
 void staging_callback(const staging_element_t* stages, int size) {

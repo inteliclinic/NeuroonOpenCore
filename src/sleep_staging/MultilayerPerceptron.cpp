@@ -12,7 +12,10 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<dlib::matrix<double>> wei
 : m_weights(weights)
 ,  m_intercepts(intercepts)
 {
-	//CURRENTLY ONLY TWO HIDDEN LAYERS ARE SUPPORTED BUT THIS CAN BE EASILY CHANGED
+	// Currently only two hidden layers are supported but this can be
+    // easily changed.
+    // The activation functions can also be made more 'configurable' easily.
+    // For now, they're hardcoded here: 
 	m_activations.push_back(new RectifiedLinearActivationFunction());
 	m_activations.push_back(new LinearActivationFunction());
 

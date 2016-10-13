@@ -1,12 +1,21 @@
+/**
+ * This file contains the implementation of the public API for the
+ * neuroon-alg-core library. The implementation uses C++ constructions
+ * please make sure this constructions do not 'leak' to the header
+ * file containing the API, as the API is supposed to be pure C.
+ *
+ * @author Tomasz Grel, t.grel@inteliclinic.com
+ * @date October 2016
+ */ 
+
 #include <memory>
+#include <sstream>
 
 #include "NeuroonAlgCoreApi.h"
-
 #include "AlgCoreDaemon.h"
 #include "OnlineStagingAlgorithm.h"
 #include "OnlinePresentationAlgorithm.h"
 #include "logger.h"
-#include <sstream>
 
 struct NeuroonAlgCoreData {
 	AlgCoreDaemon _daemon;

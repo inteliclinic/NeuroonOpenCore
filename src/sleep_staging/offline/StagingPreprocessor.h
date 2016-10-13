@@ -11,6 +11,14 @@
 #include <dlib/matrix.h>
 #include "Spectrogram.h"
 
+
+/**
+ * Preprocesses the raw neuroon data into features that can be used
+ * for classification (sleep staging) after all the data is gathered (offline)
+ * This class is largely deprecated since the online staging algorithm is 
+ * also capable of computing offline staging. Therefore you may consider
+ * dropping this code.
+ */ 
 class StagingPreprocessor {
 
 

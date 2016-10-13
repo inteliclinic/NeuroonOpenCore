@@ -1,6 +1,15 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+/**
+ * This file contains the wrapper around the easylogging++ logging library
+ * for neuroon-alg-core. It makes it possible for the clients of the library 
+ * to install callbacks for receiving the logging information. 
+ *
+ * The solution presented in this file can be considered as an 'ugly hack'.
+ * Therefore if you think you can do something more elegant, 
+ * feel free to change the implementation completely.
+ */
 
 #define ELPP_DISABLE_DEBUG_LOGS
 
@@ -13,9 +22,9 @@
 #include "../3rd_party/easylogging/easylogging++.h"
 
 
-/*
- * You can use such a structure to capture the logs
- * this may be useful e.g. when using mobile devices
+/**
+ * You can use such a structure to capture the logs.
+ * This may be useful e.g. when using mobile devices
  * where you can't write to a file directly using
  * the C++ standard library
  */
