@@ -5,15 +5,15 @@
  * @author t.grel@inteliclinic.com
  * @date 5.10.2016
  * @brief Pulib API of the neuroon-alg-core library
- * 
+ *
  * This file provides the definitions of all the data structures
  * and functions required to use the neuron-alg-core library. Specifically
  * it defines the functions to initialize the library, change its state,
  * provide the callbacks for receiving the results of the computations etc.
- * 
+ *
  * The contents of this file are the complete API to the library,
- * using other header files is neither necessary nor advised. 
- * 
+ * using other header files is neither necessary nor advised.
+ *
  */
 
 /**
@@ -54,12 +54,12 @@ enum SIGNAL_QUALITY {
  *
  * For reference the frequency bands corresponding to every brain wave types
  * are defined as:
- * 
+ *
  * alpha: [8, 13] Hz
  * beta: [16, 31] Hz
  * delta: [0.1, 3] Hz
  * theta: [4, 7] Hz
- * 
+ *
  */
 struct brain_wave_levels_t {
 	double alpha;
@@ -83,15 +83,15 @@ struct staging_element_t {
 
 /**
  * The type of the callback for collecting the data about sleep stages.
- * 
+ *
  * The first parameter is an array of staging_element_t that contains
  * the information about the current sleep stages. The second parameter is
  * the size of this array.
- * 
+ *
  * Please be aware that this callback may be called quite rarely,
  * i.e. it is perfecly normal situation to receive this callback once
  * every 82 seconds.
- * 
+ *
  */
 typedef void (*staging_callback_t)(const staging_element_t* staging_data, int staging_data_size);
 
@@ -100,9 +100,9 @@ typedef void (*staging_callback_t)(const staging_element_t* staging_data, int st
  * Type of callback for receiving online data about brain waves and heart rate.
  * It's called only if presentation mode is activated, but when active it is going
  * to  be called relatively frequently (a few times per second).
- * 
+ *
  * The callback is supposed to have the following parameters:
- * 
+ *
  * @param bw_array : the array of brain_wave_levels_t elements, these elements will
  * contain the data about the levels of brain wave types to be presented on the
  * screen of the device.
@@ -121,7 +121,7 @@ typedef void (*presentation_callback_t)(const brain_wave_levels_t* bw_array,
 
 /**
  * Type of the callback for receiving logs from the library
- * 
+ *
  * This callback is intended for logging and debugging purposes only.
  * The only parameter is a C-style string containing the log message.
  * The caller may of course ignore the log messages if he so wishes
@@ -129,21 +129,21 @@ typedef void (*presentation_callback_t)(const brain_wave_levels_t* bw_array,
 typedef void (*logger_callback_t)(const char* log_message);
 
 /**
- * Initializes the NeuronAlgoCore library. 
+ * Initializes the NeuronAlgoCore library.
  *
  * Call this function only once on initialization of the library.
  * The value returned is the access token containing all the private data of the library.
  * The client of the library is supposed to save the token and pass it to all other calls
  * to the library.
  *
- * Modifying or deleting the token will most probably result in crashing the library so please 
- * don't attempt it. Should you wish to deinitialize the library and delete its data 
+ * Modifying or deleting the token will most probably result in crashing the library so please
+ * don't attempt it. Should you wish to deinitialize the library and delete its data
  * you can use the destroy_neuroon_alg_core function described below.
  *
- * @param staging_callback : non-NULL pointer to a function called 
+ * @param staging_callback : non-NULL pointer to a function called
  * each time a new online sleep staging is generated
  *
- * @param presentation_callback : non-NULL pointer to a function called 
+ * @param presentation_callback : non-NULL pointer to a function called
  * for real-time presentation of brain waves and heart rate
  *
  * @return a pointer to NeuroonAlgCoreData structure necessary
@@ -154,7 +154,7 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
 
 /**
  * Destroys the NeuroonAlgCoreData object and deinitializes the entire library.
- * 
+ *
  * @param data : the private data (access token) to the library,
  * the token will be invalid after calling the function,
  * so please do not use it afterwards as it may result in undefined behavior.
@@ -162,20 +162,20 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
 bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
 
 /**
- * Initializes the processing steps before sleep. 
+ * Initializes the processing steps before sleep.
  *
  * It's necessary to call this function before starting to
  * feed BLE frames using feed_eeg_data and feed_ir_led_data functions below.
- * 
+ *
  * @param data : the private data of the library
  */
 bool start_sleep(NeuroonAlgCoreData* data);
 
 /**
- * Stops the sleep. Afterwards one last staging_callback 
- * (passed to initialize_neuroon_alg_core function) will be called with 
+ * Stops the sleep. Afterwards one last staging_callback
+ * (passed to initialize_neuroon_alg_core function) will be called with
  * the final result of the sleep staging algorithm.
- * 
+ *
  * @param data : the private data of the library
  */
 bool stop_sleep(NeuroonAlgCoreData* data);
@@ -197,14 +197,14 @@ bool start_presentation(NeuroonAlgCoreData* data);
   * Stop computing the data for real-time presentation of brain waves and heart rate
   *
   * @param data : pointer to the private data of the library
-  *  
+  *
   */
 bool stop_presentation(NeuroonAlgCoreData* data);
 
 /**
  * Feeds BLE EEG frame to the library
  *
- * @param bytes : pointer to the first element of an array of chars 
+ * @param bytes : pointer to the first element of an array of chars
  * with the EEG data received from Neuroon mask. Please do not modify these bytes.
  * They're supposed to be exactly as received from the BLE connection.
  *
