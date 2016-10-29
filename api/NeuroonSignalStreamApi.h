@@ -1,20 +1,26 @@
-#ifndef NEUROON_ALG_CORE_API_H
-#define NEUROON_ALG_CORE_API_H
-
 /**
- * @author t.grel@inteliclinic.com
- * @date 5.10.2016
- * @brief Pulib API of the neuroon-alg-core library
+ * @file    NeuroonSignalStreamApi.h
+ * @author  Michał Adamczyk <m.adamczyk@inteliclinic.com>
+ * @author  Tomasz Grel <t.grel@inteliclinic.com>
+ * @date    October, 2016
+ * @brief   Public API for interacting with Neuroon Core signal stream processing algorithms.
  *
  * This file provides the definitions of all the data structures
- * and functions required to use the neuron-alg-core library. Specifically
- * it defines the functions to initialize the library, change its state,
+ * and functions required to use signal processing algorithms of Neuroon,
+ * i.e. sleep staging, brain-wave levels calculation.
+ *
+ * Specifically it defines the functions to initialize stream processing, change its state,
  * provide the callbacks for receiving the results of the computations etc.
  *
- * The contents of this file are the complete API to the library,
- * using other header files is neither necessary nor advised.
+ * The contents of this file are a part of API to the Neuroon-Core library.
  *
  */
+
+#ifndef NEUROON_SIGNAL_STREAM_API
+#define NEUROON_SIGNAL_STREAM_API
+
+
+// -------------------- The state. ---------------------------------------------
 
 /**
  * @struct This structure contains all the data held by the library.
@@ -24,7 +30,10 @@
  * access token to the library that is required to be passed to all the library
  * calls except the one used for initialization.
  */
-struct NeuroonAlgCoreData;
+struct NeuroonSignalProcessingState;
+
+
+// -------------------- Output data structures. --------------------------------
 
 /**
  * Enum defining the constants corresponding to the sleep stages
@@ -81,6 +90,9 @@ struct staging_element_t {
 	unsigned long long timestamp;
 };
 
+
+// -------------------- Callback types definitions. -----------------------------
+
 /**
  * The type of the callback for collecting the data about sleep stages.
  *
@@ -128,12 +140,16 @@ typedef void (*presentation_callback_t)(const brain_wave_levels_t* bw_array,
  */
 typedef void (*logger_callback_t)(const char* log_message);
 
+
+
+// -------------------- The interface. -----------------------------------------
+
 /**
- * Initializes the NeuronAlgoCore library.
+ * Initializes signal processing library module.
  *
  * Call this function only once on initialization of the library.
  * The value returned is the access token containing all the private data of the library.
- * The client of the library is supposed to save the token and pass it to all other calls
+ * The client of the library is supposed to save the state token and pass it to all other calls
  * to the library.
  *
  * Modifying or deleting the token will most probably result in crashing the library so please
@@ -146,20 +162,20 @@ typedef void (*logger_callback_t)(const char* log_message);
  * @param presentation_callback : non-NULL pointer to a function called
  * for real-time presentation of brain waves and heart rate
  *
- * @return a pointer to NeuroonAlgCoreData structure necessary
+ * @return a pointer to NeuroonSignalProcessingState structure necessary
  * for calling other API functions (access token)
  */
-NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback, presentation_callback_t presentation_callback);
+NeuroonSignalProcessingState* initialize_neuroon_alg_core(staging_callback_t staging_callback, presentation_callback_t presentation_callback);
 
 
 /**
- * Destroys the NeuroonAlgCoreData object and deinitializes the entire library.
+ * Destroys the NeuroonSignalProcessingState object and deinitializes the entire library.
  *
  * @param data : the private data (access token) to the library,
  * the token will be invalid after calling the function,
  * so please do not use it afterwards as it may result in undefined behavior.
  */
-bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
+bool destroy_neuroon_alg_core(NeuroonSignalProcessingState* data);
 
 /**
  * Initializes the processing steps before sleep.
@@ -169,7 +185,7 @@ bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data);
  *
  * @param data : the private data of the library
  */
-bool start_sleep(NeuroonAlgCoreData* data);
+bool start_sleep(NeuroonSignalProcessingState* data);
 
 /**
  * Stops the sleep. Afterwards one last staging_callback
@@ -178,7 +194,7 @@ bool start_sleep(NeuroonAlgCoreData* data);
  *
  * @param data : the private data of the library
  */
-bool stop_sleep(NeuroonAlgCoreData* data);
+bool stop_sleep(NeuroonSignalProcessingState* data);
 
 /**
  * Start computing the data for real-time presentation of brain waves and heart rate.
@@ -190,7 +206,7 @@ bool stop_sleep(NeuroonAlgCoreData* data);
  *
  * @param data : pointer to the private data of the library
  */
-bool start_presentation(NeuroonAlgCoreData* data);
+bool start_presentation(NeuroonSignalProcessingState* data);
 
 
 /**
@@ -199,7 +215,7 @@ bool start_presentation(NeuroonAlgCoreData* data);
   * @param data : pointer to the private data of the library
   *
   */
-bool stop_presentation(NeuroonAlgCoreData* data);
+bool stop_presentation(NeuroonSignalProcessingState* data);
 
 /**
  * Feeds BLE EEG frame to the library
@@ -213,17 +229,17 @@ bool stop_presentation(NeuroonAlgCoreData* data);
  *
  * @param data : pointer to the private data of the library
  */
-bool feed_data_stream0(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream0(NeuroonSignalProcessingState* data, char* bytes, int size);
 
 /**
  * Feeds BLE IR,ACC,TEMP frame to the library.
- * 
+ *
  * @param bytes : pointer to the first element of an array
  * of chars with the IR,ACC and TEMP data received from Neuroon mask
  *
  * @param size : size of the array passed; currently only 20 byte frames are supported.
  */
-bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream1(NeuroonSignalProcessingState* data, char* bytes, int size);
 
 /**
  * Currently not used, but may be used in the future
@@ -231,7 +247,7 @@ bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size);
  * @param bytes : pointer to the first element of an array of chars with the IR,ACC and TEMP data received from Neuroon mask
  * @param size : size of the array passed; currently only 20 bytes frames are supported
  */
-bool feed_data_stream2(NeuroonAlgCoreData* data, char* bytes, int size);
+bool feed_data_stream2(NeuroonSignalProcessingState* data, char* bytes, int size);
 
 /**
  * Installs a log callback to the library
@@ -245,6 +261,7 @@ bool feed_data_stream2(NeuroonAlgCoreData* data, char* bytes, int size);
  * this function will be called every time a log message is generated.
  *
  */
-bool install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback);
+bool install_log_callback(NeuroonSignalProcessingState* data, logger_callback_t callback);
 
 #endif
+
