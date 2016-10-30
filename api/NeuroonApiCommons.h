@@ -58,6 +58,10 @@ struct brain_wave_levels_t {
   double theta;
 };
 
+struct movement_description_t {
+  // TODO
+};
+
 /**
  * A structure with a single datum about the sleep stage.
  * SLEEP_STAGE a value representing the stage
@@ -68,6 +72,7 @@ struct staging_element_t {
   SIGNAL_QUALITY signal_quality;
   brain_wave_levels_t brain_waves;
   double heart_rate;
+  movement_description_t movement;
   unsigned long long timestamp;
 };
 
