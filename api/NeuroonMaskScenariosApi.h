@@ -113,8 +113,9 @@ void ld_destroy_scenario(LucidDreamScenario *);
  *  @param[in]  update_args Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList ld_get_mask_instructions(LucidDreamScenario *,
-                                             LucidDreamScenarioInput inp);
+MaskInstructionList
+ld_get_mask_instructions(LucidDreamScenario *scenario,
+                         const LucidDreamScenarioInput *update_args);
 
 // -------------------- WAKE-UP SCENARIO --------------------------------------
 
@@ -200,8 +201,9 @@ void wu_destroy_scenario(WakeUpScenario *);
  *  @param[in]  update_args Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList wu_get_mask_instructions(WakeUpScenario *scenario,
-                                             WakeUpScenarioInput update_args);
+MaskInstructionList
+wu_get_mask_instructions(WakeUpScenario *scenario,
+                         const WakeUpScenarioInput *update_args);
 
 // -------------------- CIRCADIAN RHYTHM ADJUSTMENT SCENARIO -------------------
 
@@ -248,9 +250,9 @@ void cra_destroy_scenario(CircadianRhythmAdjustmentScenario *);
  *  @param[in]  update_args Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList
-cra_get_mask_instructions(CircadianRhythmAdjustmentScenario *scenario,
-                          CircadianRhythmAdjustmentScenarioInput update_args);
+MaskInstructionList cra_get_mask_instructions(
+    CircadianRhythmAdjustmentScenario *scenario,
+    const CircadianRhythmAdjustmentScenarioInput *update_args);
 
 // -------------------- Light boost scenario  -------------------------
 
@@ -307,7 +309,7 @@ void lb_destroy_scenario(LightBoostScenario *);
 */
 MaskInstructionList
 lb_get_mask_instructions(LightBoostScenario *scenario,
-                         LightBoostScenarioInput update_args);
+                         const LightBoostScenarioInput *update_args);
 
 // -------------------- Scenario frame validation ------------------------------
 
