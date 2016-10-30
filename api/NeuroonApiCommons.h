@@ -13,7 +13,14 @@
 #ifndef NEUROON_COMMONS
 #define NEUROON_COMMONS
 
-// -------------------- Sleep related data structures. --------------------------------
+// -------------------- Time related types ------------------------------------
+
+/**
+ * @brief This type represents number seconds since 1st. Jan 1970.
+ */
+typedef int unix_timestamp;
+
+// -------------------- Sleep related data structures. ------------------------
 
 /**
  * Enum defining the constants corresponding to the sleep stages

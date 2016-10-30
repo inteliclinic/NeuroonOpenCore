@@ -33,10 +33,6 @@ struct day_time_instant_t {
   char minute;
 };
 
-/**
- * @brief This type represents number seconds since 1st. Jan 1970.
- */
-typedef int unix_timestamp;
 
 // -------------------- Crossover time computation. ----------------------------
 
