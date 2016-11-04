@@ -75,6 +75,18 @@ typedef void (*presentation_callback_t)(const brain_wave_levels_t *bw_array,
                                         int pulsoximetry_data_size);
 
 /**
+ * The type of the callback for collecting more frequent updates of signal
+ * quality.
+ * The first and only parameter is a level of signal quality since callback
+ * call or starting the algorithm.
+ *
+ *
+ *
+ */
+typedef void (*signal_quality_callback_t)(SIGNAL_QUALITY signal_quality);
+
+
+/**
  * Type of the callback for receiving logs from the library
  *
  * This callback is intended for logging and debugging purposes only.
@@ -104,6 +116,9 @@ typedef void (*logger_callback_t)(const char *log_message);
  * @param staging_callback : non-NULL pointer to a function called
  * each time a new online sleep staging is generated
  *
+ * @param signal_quality_callback : non-NULL pointer to a function called
+ * for real-time presentation of signal quality level.
+ *
  * @param presentation_callback : non-NULL pointer to a function called
  * for real-time presentation of brain waves and heart rate
  *
@@ -112,6 +127,7 @@ typedef void (*logger_callback_t)(const char *log_message);
  */
 NeuroonSignalProcessingState *
 initialize_neuroon_alg_core(staging_callback_t staging_callback,
+                            signal_quality_callback_t signal_quality_callback,
                             presentation_callback_t presentation_callback);
 
 /**
@@ -142,6 +158,26 @@ bool start_sleep(NeuroonSignalProcessingState *data);
  * @param data : the private data of the library
  */
 bool stop_sleep(NeuroonSignalProcessingState *data);
+
+/**
+ * Start signal grading algorithm. Use this in the need of more frequent
+ * signal quality updates.
+ *
+ * After calling this function the 'signal_quality_callback' will be called
+ * each time the real-time signal quality algorithm returns the data to be
+ * presented.
+ *
+ * @param data : pointer to the private data of the library
+ */
+bool start_signal_quality_measurement(NeuroonSignalProcessingState *data);
+
+/**
+ * Stop computing the data for real-time signal quality grading.
+ *
+ * @param data : pointer to the private data of the library
+ *
+ */
+bool stop_signal_quality_measurement(NeuroonSignalProcessingState *data);
 
 /**
  * Start computing the data for real-time presentation of brain waves and heart
