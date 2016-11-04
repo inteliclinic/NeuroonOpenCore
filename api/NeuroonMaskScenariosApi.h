@@ -205,6 +205,80 @@ MaskInstructionList
 wu_get_mask_instructions(WakeUpScenario *scenario,
                          const WakeUpScenarioInput *update_args);
 
+// -------------------- POWERNAP SCENARIO --------------------------------------
+
+/** @brief Structure holding internal state of powernap scenario
+ *         Do not try directly modifying its content.
+ *         Keep it and pass it to its interface functions.
+ */
+struct PowernapScenario;
+
+/** @enum Enumeration of types of naps.*/
+enum NAP_TYPE {
+  NT_POWERNAP,
+  NT_BODY_NAP,
+  NT_REM_NAP,
+  NT_ULTIMATE_NAP,
+};
+
+/** @struct Data structure aggregating all paremeters needed for
+ *          scenario initialization.
+ */
+struct PowernapScenarioInitArgs {
+  /** Type of the nap. */
+  NAP_TYPE nap_type;
+
+  /** Sunrise light intensity. */
+  WU_SUNRISE_INTENSITY sunrise_intensity;
+
+  /** Type of a nap */
+  /** Time in minutes before nap ends at which sunrise activates. */
+  unsigned int sunrise_window;
+
+  /** Determines whether ringtone will be played at the end
+      of nap */
+  bool is_ringtone_on;
+
+  /** Determines whether vibrations will be used for waking the user */
+  bool is_vibration_on;
+};
+
+/** @struct Data structure aggregating all paremeters needed for
+ *          periodical update and progress of the scenario.
+ */
+struct PowernapScenarioInput {
+  /** Time atm of the call for instructions */
+  unsigned long timestamp;
+
+  /** User's current sleep stage. */
+  SLEEP_STAGE current_sleep_stage;
+};
+
+/** @brief Use this function to create an instance of powernap scenario.
+ *
+ *  @param[in] init_args Structure aggregating arguments to initializatoin call.
+ *
+ *  @return Pointer to a structure holding internal state of the powernap
+ *          scenario. Do not try directly modifying its content.
+ *          Keep it and pass it to interface functions wrt powernap
+ *          scenario.
+ */
+PowernapScenario *wu_init_scenario(PowernapScenarioInitArgs init_args);
+
+/** @brief Destroys scenario releasing hold memory. */
+void wu_destroy_scenario(PowernapScenario *);
+
+/** @brief Gets an array of direct instructions to the Neuroon Mask according
+ *         to update parameters
+ *
+ *  @param[in]  scenario    Pointer token to the current scenario.
+ *  @param[in]  update_args Structure aggregating arguments for algorithm state
+ *                          update
+ */
+MaskInstructionList
+wu_get_mask_instructions(PowernapScenario *scenario,
+                         const PowernapScenarioInput *update_args);
+
 // -------------------- CIRCADIAN RHYTHM ADJUSTMENT SCENARIO -------------------
 
 /** @brief Structure holding internal state of circadian adjustment scenario.
@@ -318,11 +392,14 @@ lb_get_mask_instructions(LightBoostScenario *scenario,
  *
  * Description
  */
+
 typedef enum {
-  FRAMEVALIDATION_NEXT_STEP = 0x00,      /**< go to next step */
-  FRAMEVALIDATION_RESEND_FRAME = 0x01,   /**< resend */
-  FRAMEVALIDATION_FRAME_IS_VALID = 0x02, /**< valid */
-  FRAMEVALIDATION_FRAME_NOT_VALID = 0x03 /**< not valid */
+  FRAMEVALIDATION_NEXT_STEP = 0x00,          /**< go to next step */
+  OFRAMEVALIDATION_NEXT_STEP = 0x00,         /**< go to next step */
+  FRAMEVALIDATION_NEXT_STEP_HOLD_RES = 0x00, /**< go to next step */
+  FRAMEVALIDATION_RESEND_FRAME = 0x01,       /**< resend */
+  FRAMEVALIDATION_FRAME_IS_VALID = 0x02,     /**< valid */
+  FRAMEVALIDATION_FRAME_NOT_VALID = 0x03     /**< not valid */
 } e_frameValidation;
 
 /**
