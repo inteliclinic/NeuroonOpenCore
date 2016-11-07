@@ -388,31 +388,41 @@ lb_get_mask_instructions(LightBoostScenario *scenario,
 // -------------------- Scenario frame validation ------------------------------
 
 /**
- * @brief response function outcome
+ * @enum Enumeration of scenario execution decision.
  *
- * Description
+ * After sending an instruction frame from scenario to the Neuroon mask,
+ * the mask responses with another frame.
  */
-
 typedef enum {
-  FRAMEVALIDATION_NEXT_STEP = 0x00,          /**< go to next step */
-  OFRAMEVALIDATION_NEXT_STEP = 0x00,         /**< go to next step */
-  FRAMEVALIDATION_NEXT_STEP_HOLD_RES = 0x00, /**< go to next step */
-  FRAMEVALIDATION_RESEND_FRAME = 0x01,       /**< resend */
-  FRAMEVALIDATION_FRAME_IS_VALID = 0x02,     /**< valid */
-  FRAMEVALIDATION_FRAME_NOT_VALID = 0x03     /**< not valid */
+  /** go to next scenario step, discard response frame */
+  FV_NEXT_STEP = 0x00,
+  /** go to next scenario step, but hold the response */
+  FV_NEXT_STEP_HOLD_RESP = 0x01,
+  /** repeat sending procedure */
+  FV_RESEND_FRAME = 0x02,
+  /** extend waiting for a response frame */
+  FV_WAIT_MORE = 0x03,
+  /** there was something with the structures of call arguments */
+  FV_STRUCTURAL_ERROR = 0x04
 } e_frameValidation;
 
 /**
- * @brief
+ * @brief After sending an instruction frame from scenario to the Neuroon mask,
+ *        the mask responses with another frame. You should pass the scenario.
+ *        and both of the frames to this function. To inform scenario about possible
+ *        difficulties and get back decision about further execution of scenario.
+ *        Function output is documented in the description of the enum.
  *
- * @param[in] cmd_frame       sent data
- * @param[in] cmd_len         sent data lenght
- * @param[in] response_frame  response data from mask
- * @param[in] response_len    response data length
+ * @param[in] scenario_ptr    Scenario that generated sent frame.
+ * @param[in] cmd_frame       The frame sent to the mask. (raw bytes)
+ * @param[in] cmd_len         Length of the sent frame.
+ * @param[in] response_frame  The frame sent to the mask. (raw bytes)
+ * @param[in] response_len    Length of the response frame.
  *
- * @return  returns next step
+ * @return Enum value informing about decision wrt execution of scenario.
  */
-e_frameValidation response_sink(char *cmd_frame, size_t cmd_len,
-                                char *response_frame, size_t response_len);
+e_frameValidation response_sink(void *scenario_ptr, char *cmd_frame,
+                                size_t cmd_len, char *response_frame,
+                                size_t response_len);
 
 #endif /* !NEUROONMASKSCENARIOSAPI_H */
