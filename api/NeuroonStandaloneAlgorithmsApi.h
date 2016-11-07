@@ -235,7 +235,6 @@ char *serialize_jetlag_therapy(JetLagTherapyState *state);
  *           and use it as a token to jet lag therapy api functions.
  *           Or null if there was a problem with deserialization.
  */
-
 JetLagTherapyState *deserialize_jetlag_therapy(char *serialized_therapy);
 
 #endif

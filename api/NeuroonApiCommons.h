@@ -1,3 +1,4 @@
+
 /**
  * @file    NeuroonSignalStreamApi.h
  * @author  Michał Adamczyk <m.adamczyk@inteliclinic.com>
@@ -76,11 +77,10 @@ struct staging_element_t {
   unsigned long long timestamp;
 };
 
-
-//
-// @struct Simple struct holding time of day.
-//         Hour field should be an integer 0-23, and minutes 0-59.
-
+/**
+ * @struct Simple struct holding time of day.
+ *         Hour field should be an integer 0-23, and minutes 0-59.
+ */
 struct day_time_instant_t {
   char hour;
   char minute;
