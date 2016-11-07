@@ -287,10 +287,19 @@ wu_get_mask_instructions(PowernapScenario *scenario,
  */
 struct CircadianRhythmAdjustmentScenario;
 
+enum CIRCADIAN_RHYTHM_ADJUSTMENT_MODE {
+  CRA_DEFAULT_MODE
+};
+
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
-struct CircadianRhythmAdjustmentInitScenarioArgs {};
+struct CircadianRhythmAdjustmentInitScenarioArgs {
+  CIRCADIAN_RHYTHM_ADJUSTMENT_MODE mode;
+  day_time_instant_t current_crossover;
+  unix_timestamp current_time;     /**< Time atm of the call for instructions */
+  unix_timestamp scheduled_wakeup; /**< Time of sheduled wakeup */
+};
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
