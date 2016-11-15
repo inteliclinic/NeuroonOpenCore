@@ -1,3 +1,3 @@
 [submodule "api/unified_communication"]
 	path = external_modules/unified_communication
-	url = git@github.com:inteliclinic/firmware-neuroon_unified_communication.git
+	url = git@gitlab.local.inteliclinic.pl:firmware/firmware-neuroon_unified_communication.git
