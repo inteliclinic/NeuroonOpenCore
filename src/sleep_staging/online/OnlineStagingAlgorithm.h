@@ -14,7 +14,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 
 /**
  * Represents the results of the sleep staging algorithm. The objects of this

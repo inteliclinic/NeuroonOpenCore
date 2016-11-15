@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "OnlineStagingFeaturePreprocessor.h"
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 #include "BrainWaveLevels.h"
 
 class MlpClassifier;

@@ -7,7 +7,7 @@
 
 #include "BrainWaveLevels.h"
 #include "Features.h"
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 #include <stdexcept>
 #include <utility>
 BrainWaveLevels::BrainWaveLevels()

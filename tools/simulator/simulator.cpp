@@ -1,4 +1,4 @@
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 #include <sstream>
 #include "SignalSimulator.h"
 #include <fstream>
@@ -35,7 +35,7 @@
  *
  * @author Tomasz Grel, t.grel@inteliclinic.com
  * @date October 2016
- */ 
+ */
 
 std::ofstream* log_out;
 
@@ -51,6 +51,18 @@ void staging_callback(const staging_element_t* stages, int size) {
 			<< std::endl;
 	}
 	std::ofstream out("simulator_online_staging.csv", std::ios_base::trunc);
+	out << ss.str();
+	out.flush();
+	out.close();
+}
+
+void signal_quality_callback(SIGNAL_QUALITY sq, unsigned int size) {
+  if(!size) return;
+	std::stringstream ss;
+  for(std::size_t i=0;i<size;i++){
+    ss << sq << std::endl;
+  }
+	std::ofstream out("simulator_online_signal_quality.csv", std::ios_base::trunc);
 	out << ss.str();
 	out.flush();
 	out.close();
@@ -178,12 +190,12 @@ int main(int argc, char** argv) {
 
 	log_out = new std::ofstream("simulator_log.csv", std::ios_base::trunc);
 
-	NeuroonAlgCoreData* neuroon = NULL;
+	NeuroonSignalProcessingState* neuroon = NULL;
 	if (presentation) {
-		neuroon = initialize_neuroon_alg_core(staging_callback, presentation_callback);
+		neuroon = initialize_neuroon_alg_core(staging_callback, NULL, presentation_callback);
 		start_presentation(neuroon);
 	} else {
-		neuroon = initialize_neuroon_alg_core(staging_callback, reinterpret_cast<presentation_callback_t>(0));
+		neuroon = initialize_neuroon_alg_core(staging_callback, NULL, reinterpret_cast<presentation_callback_t>(0));
 	}
 
 	install_log_callback(neuroon, logger_callback);

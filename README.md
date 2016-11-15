@@ -54,7 +54,7 @@ First, we have to link to the library, include the proper header file and provid
 
 ~~~~~~~~~~~~~{.cpp}
 #include <iostream>
-#include <NeuroonAlgCoreApi.h>
+#include <NeuroonSignalStreamApi.h>
 
 /** 
  * The callback for receiving the online staging data.
@@ -97,7 +97,7 @@ void logger_callback(const char* message) {
 The next step is the initialization of the library:
 
 ~~~~~~~~~~~~{.cpp}
-NeuroonAlgCoreData* neuroon = initialize_neuroon_alg_core(staging_callback, presentation_callback);
+NeuroonSignalProcessingState* neuroon = initialize_neuroon_alg_core(staging_callback, presentation_callback);
 install_log_callback(neuroon, logger_callback);
 ~~~~~~~~~~~~
 

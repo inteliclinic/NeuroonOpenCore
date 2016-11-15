@@ -8,7 +8,7 @@
 
 5. Refactoring: Put the loose files from the src/ directory into subdirectories.
 
-6. Important Feature: Catch all the exceptions coming out of the library in the NeuroonAlgCoreApi.cpp file. No exceptions should propagate to the API's client, this may cause the application to crash on the mobile devices.
+6. Important Feature: Catch all the exceptions coming out of the library in the NeuroonSignalStreamApi.cpp file. No exceptions should propagate to the API's client, this may cause the application to crash on the mobile devices.
  
 7. Important Feature: Add some error handling in the API, currently all the functions just return true always, this may prove very difficult to debug to the API client.
 

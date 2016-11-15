@@ -1,4 +1,4 @@
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 
 #include "NeuroonSignalFrames.h"
 #include <fstream>

@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include "BrainWaveLevels.h"
 
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 
 /**
  * The result of the online presentation algorithm

@@ -33,7 +33,7 @@
  * access token to the library that is required to be passed to all the library
  * calls except the one used for initialization.
  */
-struct NeuroonSignalProcessingState;
+typedef struct NeuroonSignalProcessingState NeuroonSignalProcessingState;
 
 // -------------------- Callback types definitions. // ----------------------------- 
 /**
@@ -83,7 +83,7 @@ typedef void (*presentation_callback_t)(const brain_wave_levels_t *bw_array,
  *
  *
  */
-typedef void (*signal_quality_callback_t)(SIGNAL_QUALITY signal_quality);
+typedef void (*signal_quality_callback_t)(const SIGNAL_QUALITY *signal_quality, unsigned int sq_samples);
 
 
 /**

@@ -1,23 +1,23 @@
 /**
  * This file contains the implementation of the public API for the
- * neuroon-alg-core library. The implementation uses C++ constructions
+ * signal streamining part of the library. The implementation uses C++ constructions
  * please make sure this constructions do not 'leak' to the header
  * file containing the API, as the API is supposed to be pure C.
  *
  * @author Tomasz Grel, t.grel@inteliclinic.com
  * @date October 2016
- */ 
+ */
 
 #include <memory>
 #include <sstream>
 
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 #include "AlgCoreDaemon.h"
 #include "OnlineStagingAlgorithm.h"
 #include "OnlinePresentationAlgorithm.h"
 #include "logger.h"
 
-struct NeuroonAlgCoreData {
+struct NeuroonSignalProcessingState {
 	AlgCoreDaemon _daemon;
 	OnlinePresentationAlgorithm* _online_presentation;
 };
@@ -65,9 +65,11 @@ struct callback_presentation_sink : public OnlinePresentationAlgorithm::sink_t {
 	}
 };
 
-NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callback, presentation_callback_t presentation_callback) {
+NeuroonSignalProcessingState* initialize_neuroon_alg_core(staging_callback_t staging_callback,
+                                                          signal_quality_callback_t sq_callback,
+                                                          presentation_callback_t presentation_callback) {
 	LOG(INFO) << "API CALL";
-	NeuroonAlgCoreData* data = new NeuroonAlgCoreData();
+	NeuroonSignalProcessingState* data = new NeuroonSignalProcessingState();
 	data->_online_presentation = nullptr;
 
 	logging_sink* ls = new logging_sink();
@@ -87,28 +89,28 @@ NeuroonAlgCoreData* initialize_neuroon_alg_core(staging_callback_t staging_callb
 	return data;
 }
 
-bool destroy_neuroon_alg_core(NeuroonAlgCoreData* data) {
+bool destroy_neuroon_alg_core(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 	delete data;
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool start_sleep(NeuroonAlgCoreData* data) {
+bool start_sleep(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.start_processing();
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool stop_sleep(NeuroonAlgCoreData* data) {
+bool stop_sleep(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.end_processing();
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool feed_data_stream0(NeuroonAlgCoreData* data, char* bytes, int size) {
+bool feed_data_stream0(NeuroonSignalProcessingState* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
@@ -121,7 +123,7 @@ bool feed_data_stream0(NeuroonAlgCoreData* data, char* bytes, int size) {
     return true;
 }
 
-bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size) {
+bool feed_data_stream1(NeuroonSignalProcessingState* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
@@ -134,19 +136,19 @@ bool feed_data_stream1(NeuroonAlgCoreData* data, char* bytes, int size) {
     return true;
 }
 
-bool feed_data_stream2(NeuroonAlgCoreData* data, char* bytes, int size) {
+bool feed_data_stream2(NeuroonSignalProcessingState* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL -- NOT USED CURRENTLY";
     return true;
 }
- 
-bool install_log_callback(NeuroonAlgCoreData* data, logger_callback_t callback) {
+
+bool install_log_callback(NeuroonSignalProcessingState* data, logger_callback_t callback) {
 	LOG(INFO) << "API CALL";
 	configure_logger(callback);
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool start_presentation(NeuroonAlgCoreData* data) {
+bool start_presentation(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 
 	if (!data->_online_presentation) {
@@ -158,7 +160,7 @@ bool start_presentation(NeuroonAlgCoreData* data) {
     return true;
 }
 
-bool stop_presentation(NeuroonAlgCoreData* data) {
+bool stop_presentation(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 
 	if (!data->_online_presentation) {

@@ -11,7 +11,7 @@
 #include <dlib/matrix.h>
 #include <vector>
 #include "Spectrogram.h"
-#include "NeuroonAlgCoreApi.h"
+#include "NeuroonSignalStreamApi.h"
 #include <vector>
 #include "RollingMean.h"
 #include "BrainWaveLevels.h"
