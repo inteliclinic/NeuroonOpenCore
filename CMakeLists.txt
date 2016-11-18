@@ -42,7 +42,9 @@ endif()
 
 set(CMAKE_BUILD_TYPE Debug)
 
-FILE (GLOB_RECURSE sources src/*.cpp src/utils/*.cpp src/sleep_staging/*.cpp)
+FILE (GLOB_RECURSE sources src/*.cpp src/utils/*.cpp src/sleep_staging/*.cpp
+  external_modules/unified_communication/common/*.c
+  external_modules/unified_communication/encapsulation_module/*.c)
 
 add_library (neuroon-alg-core SHARED ${sources})
 
@@ -56,6 +58,10 @@ target_include_directories (neuroon-alg-core PUBLIC src/sleep_staging/online)
 target_include_directories (neuroon-alg-core PUBLIC api)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/dlib)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/easylogging)
+target_include_directories (neuroon-alg-core PUBLIC external_modules/unified_communication/API)
+target_include_directories (neuroon-alg-core PUBLIC external_modules/unified_communication/common)
+target_include_directories (neuroon-alg-core PUBLIC
+  external_modules/unified_communication/encapsulation_module)
 
 target_link_libraries(neuroon-alg-core
     dlib
