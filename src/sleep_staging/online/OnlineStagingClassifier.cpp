@@ -124,7 +124,7 @@ void OnlineStagingClassifier::compute_quality(const Spectrogram& eeg_spectrogram
 
 void OnlineStagingClassifier::compute_brain_waves(const Spectrogram& eeg_spectrogram) {
 	BrainWaveLevels m_bw;
-	brain_wave_levels_t levels = m_bw.predict(eeg_spectrogram).front();
+	ncBrainWaveLevels levels = m_bw.predict(eeg_spectrogram).front();
 	m_current_brain_waves.push_back(levels);
 }
 
@@ -154,6 +154,6 @@ const std::vector<int>& OnlineStagingClassifier::current_quality() const {
 	return m_current_quality;
 }
 
-const std::vector<brain_wave_levels_t>& OnlineStagingClassifier::current_brain_waves() const {
+const std::vector<ncBrainWaveLevels>& OnlineStagingClassifier::current_brain_waves() const {
 	return m_current_brain_waves;
 }

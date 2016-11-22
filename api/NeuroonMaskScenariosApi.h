@@ -42,11 +42,11 @@ static const int MASK_INSTRUCTION_LENGTH = 20;
  *  @remark For now it can be assumed that instructions are sorted by their
  *          timestamp.
  */
-struct MaskInstructionList {
+typedef struct {
   unsigned int count;
   unsigned int *timestamps;
   char **instructions;
-};
+}ncMaskInstructionList;
 
 // -------------------- LUCID DREAMING SCENARIO  -------------------------------
 
@@ -54,68 +54,68 @@ struct MaskInstructionList {
  *         Do not try directly modifying its content.
  *         Keep it and pass it to its interface functions.
  */
-struct LucidDreamScenario;
+typedef struct LucidDreamScenatio ncLucidDreamScenario;
 
 /** @enum Enumeration of starting level of light pulses intensity during the
  *          LD induction. */
-enum LUCID_PULSES_INTENSITY { LP_DIMMED, LP_REGULAR, LP_BRIGHT };
+typedef enum { LP_DIMMED, LP_REGULAR, LP_BRIGHT } ncLucidPulsesIntensity;
 
 /** @enum Enumeration of tresholds of stability at which LD induction begins.
  */
-enum LUCID_REM_STABILITY_TRESHOLD {
+typedef enum {
   LRS_DEFAULT,
-};
+}ncLucidRemStabilityTreshold;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
-struct LucidDreamScenarioArgs {
-  LUCID_PULSES_INTENSITY starting_intensity;
-  LUCID_REM_STABILITY_TRESHOLD rem_stability_treshold;
-};
+typedef struct {
+  ncLucidPulsesIntensity startingIntensity;
+  ncLucidRemStabilityTreshold remStabilityTreshold;
+}ncLucidDreamScenarioArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
  */
-struct LucidDreamScenarioInput {
+typedef struct {
   /** Time atm of the call for instructions */
   unsigned long timestamp;
 
   /** User's current sleep stage. */
-  SLEEP_STAGE current_sleep_stage;
+  ncSleepStage currentSleep_stage;
 
   /** Average signal quality since the last call */
-  SIGNAL_QUALITY epoch_avg_signal_quality;
+  ncSignalQuality epochAvgSignalQuality;
 
   /** Peak value of accelerometer's vector length since last call of this
    *  function. */
-  float acc_vector_peak;
-};
+  float accVectorPeak;
+}ncLucidDreamScenarioInput;
 
 /** @brief Use this function to create an instance of lucid dreaming scenario.
  *
- *  @param[in] init_args Structure aggregating arguments to initialization call.
+ *  @param[in] initArgs Structure aggregating arguments to initialization call.
  *
  *  @return Pointer to a structure holding internal state of light boost
  *          scenario. Do not try directly modifying its content.
  *          Keep it and pass it to interface functions wrt light boost
  *          scenario.
  */
-LucidDreamScenario *ld_init_scenario(LucidDreamScenarioArgs init_args);
+ncLucidDreamScenario *ld_init_scenario(ncLucidDreamScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
-void ld_destroy_scenario(LucidDreamScenario *);
+void ncLdDestroyScenario(ncLucidDreamScenario *);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  update_args Structure aggregating arguments for algorithm state
+ *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList
-ld_get_mask_instructions(LucidDreamScenario *scenario,
-                         const LucidDreamScenarioInput *update_args);
+ncMaskInstructionList
+ncldGetMaskInstructions(ncLucidDreamScenario *scenario,
+                         const ncLucidDreamScenarioInput *updateArgs);
 
 // -------------------- WAKE-UP SCENARIO --------------------------------------
 
@@ -123,87 +123,87 @@ ld_get_mask_instructions(LucidDreamScenario *scenario,
  *         Do not try directly modifying its content.
  *         Keep it and pass it to its interface functions.
  */
-struct WakeUpScenario;
+typedef struct WakeUpScenario ncWakeUpScenario;
 
 /** @enum Enumeration of modes of sunrise lightning.*/
-enum WU_SUNRISE_INTENSITY {
+typedef enum {
   SUN_OFF,
   SUN_DIMMED,
   SUN_NORMAL,
   SUN_BRIGHT,
-};
+}ncWuSunriseIntensity;
 
 /** @enum Enumeration of modes of work of Neuroon's Smart Wake-up */
-enum WU_SMART_WAKEUP_MODE {
+typedef enum {
   SW_OFF,
   SW_SMART,
   SW_REM,
   SW_LIGHT,
-};
+}ncWuSmartWakeupMode;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
-struct WakeUpScenarioInitArgs {
+typedef struct {
   /** Sunrise light intensity. */
-  WU_SUNRISE_INTENSITY sunrise_intensity;
+  ncWuSunriseIntensity sunriseIntensity;
 
   /** Is smart wake up active and at what level. */
-  WU_SMART_WAKEUP_MODE smart_wake_up_mode;
+  ncWuSmartWakeupMode smartWakeUpMode;
 
   /** Time in minutes before planned wakeup at which smart wake up activates. */
-  unsigned int smart_wakeup_window;
+  unsigned int smartWakeupWindow;
 
   /** Determines whether ringtone will be played at the end
       of scheduled wake-up time */
-  bool is_ringtone_on;
+  bool isRingtoneOn;
 
   /** Determines whether vibrations will be used for waking the user */
-  bool is_vibration_on;
-};
+  bool isVibrationOn;
+}ncWakeUpScenarioInitArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
  */
-struct WakeUpScenarioInput {
+typedef struct {
   /** Time atm of the call for instructions */
   unsigned long timestamp;
 
   /** User's current sleep stage. */
-  SLEEP_STAGE current_sleep_stage;
+  ncSleepStage currentSleepStage;
 
   /** Average signal quality since the last call */
-  SIGNAL_QUALITY epoch_avg_signal_quality;
+  ncSignalQuality epochAvgSignalQuality;
 
   /** Peak value of accelerometer's vector length since last call of this
    *  function. */
-  float acc_vector_peak;
-};
+  float accVectorPeak;
+}ncWakeUpScenarioInput;
 
 /** @brief Use this function to create an instance of wake up scenario.
  *
- *  @param[in] init_args Structure aggregating arguments to initializatoin call.
+ *  @param[in] initArgs Structure aggregating arguments to initializatoin call.
  *
  *  @return Pointer to a structure holding internal state of the wake up
  *          scenario. Do not try directly modifying its content.
  *          Keep it and pass it to interface functions wrt wake up
  *          scenario.
  */
-WakeUpScenario *wu_init_scenario(WakeUpScenarioInitArgs init_args);
+WakeUpScenario *ncWuInitScenario(ncWakeUpScenarioInitArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
-void wu_destroy_scenario(WakeUpScenario *);
+void ncWuDestroyScenario(ncWakeUpScenario *);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  update_args Structure aggregating arguments for algorithm state
+ *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList
-wu_get_mask_instructions(WakeUpScenario *scenario,
-                         const WakeUpScenarioInput *update_args);
+ncMaskInstructionList
+ncWuGetMaskInstructions(ncWakeUpScenario *scenario,
+                         const ncWakeUpScenarioInput *updateArgs);
 
 // -------------------- POWERNAP SCENARIO --------------------------------------
 
@@ -211,73 +211,73 @@ wu_get_mask_instructions(WakeUpScenario *scenario,
  *         Do not try directly modifying its content.
  *         Keep it and pass it to its interface functions.
  */
-struct PowernapScenario;
+typedef struct PowernapScenario ncPowernapScenario;
 
 /** @enum Enumeration of types of naps.*/
-enum NAP_TYPE {
+typedef enum {
   NT_POWERNAP,
   NT_BODY_NAP,
   NT_REM_NAP,
   NT_ULTIMATE_NAP,
-};
+}ncNapType;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
-struct PowernapScenarioInitArgs {
+typedef struct {
   /** Type of the nap. */
-  NAP_TYPE nap_type;
+  ncNapType napType;
 
   /** Sunrise light intensity. */
-  WU_SUNRISE_INTENSITY sunrise_intensity;
+  ncWuSunriseIntensity sunriseIntensity;
 
   /** Type of a nap */
   /** Time in minutes before nap ends at which sunrise activates. */
-  unsigned int sunrise_window;
+  unsigned int sunriseWindow;
 
   /** Determines whether ringtone will be played at the end
       of nap */
-  bool is_ringtone_on;
+  bool isRingtoneOn;
 
   /** Determines whether vibrations will be used for waking the user */
-  bool is_vibration_on;
-};
+  bool isVibrationOn;
+}ncPowernapScenarioInitArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
  */
-struct PowernapScenarioInput {
+typedef struct {
   /** Time atm of the call for instructions */
   unsigned long timestamp;
 
   /** User's current sleep stage. */
-  SLEEP_STAGE current_sleep_stage;
-};
+  ncSleepStage current_sleep_stage;
+}ncPowernapScenarioInput;
 
 /** @brief Use this function to create an instance of powernap scenario.
  *
- *  @param[in] init_args Structure aggregating arguments to initializatoin call.
+ *  @param[in] initArgs Structure aggregating arguments to initializatoin call.
  *
  *  @return Pointer to a structure holding internal state of the powernap
  *          scenario. Do not try directly modifying its content.
  *          Keep it and pass it to interface functions wrt powernap
  *          scenario.
  */
-PowernapScenario *wu_init_scenario(PowernapScenarioInitArgs init_args);
+ncPowernapScenario *ncWuInitScenario(ncPowernapScenarioInitArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
-void wu_destroy_scenario(PowernapScenario *);
+void ncWuDestroyScenario(ncPowernapScenario *);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  update_args Structure aggregating arguments for algorithm state
+ *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList
-wu_get_mask_instructions(PowernapScenario *scenario,
-                         const PowernapScenarioInput *update_args);
+ncMaskInstructionList
+ncWuGetMaskInstructions(ncPowernapScenario *scenario,
+                         const ncPowernapScenarioInput *updateArgs);
 
 // -------------------- CIRCADIAN RHYTHM ADJUSTMENT SCENARIO -------------------
 
@@ -285,57 +285,57 @@ wu_get_mask_instructions(PowernapScenario *scenario,
  *         Do not try directly modifying its content.
  *         Keep it and pass it to its interface functions.
  */
-struct CircadianRhythmAdjustmentScenario;
+typedef struct CircadianRhythmAdjustmentScenario ncCircadianRhythmAdjustmentScenario;
 
-enum CIRCADIAN_RHYTHM_ADJUSTMENT_MODE {
+typedef enum {
   CRA_DEFAULT_MODE
-};
+}ncCircadianRhythmAdjustmentMode;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
-struct CircadianRhythmAdjustmentInitScenarioArgs {
-  CIRCADIAN_RHYTHM_ADJUSTMENT_MODE mode;
-  day_time_instant_t current_crossover;
-  unix_timestamp current_time;     /**< Time atm of the call for instructions */
-  unix_timestamp scheduled_wakeup; /**< Time of sheduled wakeup */
-};
+typedef struct {
+  ncCircadianRhythmAdjustmentMode mode;
+  ncDayTimeInstant currentCrossover;
+  ncUnixTimestamp currentTime;     /**< Time atm of the call for instructions */
+  ncUnixTimestamp scheduledWakeup; /**< Time of sheduled wakeup */
+}ncCircadianRhythmAdjustmentInitScenarioArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
 */
-struct CircadianRhythmAdjustmentScenarioInput {
-  unix_timestamp current_time;   /**< Time atm of the call for instructions */
-  SIGNAL_QUALITY signal_quality; /**< Avg signal quality during last update
+typedef struct {
+  ncUnixTimestamp currentTime;   /**< Time atm of the call for instructions */
+  ncSignalQuality signalQuality; /**< Avg signal quality during last update
                                     period */
-};
+}CircadianRhythmAdjustmentScenarioInput;
 
 /** @brief Use this function to create an instance of circadian adjustment
  *         scenario.
  *
- *  @param[in] init_args Structure aggregating arguments to initializatoin call.
+ *  @param[in] initArgs Structure aggregating arguments to initializatoin call.
  *
  *  @return Pointer to a structure holding internal state of circadian
  *          adjustment scenario. Do not try directly modifying its content.
  *          Keep it and pass it to interface functions wrt light boost
  *          scenario.
  */
-CircadianRhythmAdjustmentScenario *
-    cra_init_scenario(CircadianRhythmAdjustmentInitScenarioArgs);
+ncCircadianRhythmAdjustmentScenario *
+    ncCraInitScenario(ncCircadianRhythmAdjustmentInitScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
-void cra_destroy_scenario(CircadianRhythmAdjustmentScenario *);
+void ncCraDestroyScenario(ncCircadianRhythmAdjustmentScenario *scenario);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  update_args Structure aggregating arguments for algorithm state
+ *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
  *                          update
  */
-MaskInstructionList cra_get_mask_instructions(
-    CircadianRhythmAdjustmentScenario *scenario,
-    const CircadianRhythmAdjustmentScenarioInput *update_args);
+ncMaskInstructionList ncCraGetMaskInstructions(
+    ncCircadianRhythmAdjustmentScenario *scenario,
+    const ncCircadianRhythmAdjustmentScenarioInput *updateArgs);
 
 // -------------------- Light boost scenario  -------------------------
 
@@ -344,18 +344,18 @@ MaskInstructionList cra_get_mask_instructions(
  *         Keep it and pass it to interface functions wrt light boost
  *         scenario.
  */
-struct LightBoostScenario;
+typedef struct LightBoostScenario ncLightBoostScenario;
 
 /** @enum Enumeration of light intensity levels. */
-enum LIGHT_INTENSITY_LEVEL { REGULAR, BRIGHT };
+typedef enum { REGULAR, BRIGHT }ncLightIntensityLevel;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
-struct LightBoostInitScenarioArgs {
-  unsigned int lenth_in_minutes;
-  LIGHT_INTENSITY_LEVEL intensity;
-};
+typedef struct {
+  unsigned int lenthInMinutes;
+  ncLightIntensityLevel intensity;
+}ncLightBoostInitScenarioArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
@@ -363,36 +363,36 @@ struct LightBoostInitScenarioArgs {
  *          react to changes in electrode contact, so keep the update
             interval below 10s.
  */
-struct LightBoostScenarioInput {
-  unix_timestamp current_time;   /**< Time atm of the call for instructions */
-  SIGNAL_QUALITY signal_quality; /**< Avg signal quality during last update
+typedef struct {
+  ncUnixTimestamp currentTime;   /**< Time atm of the call for instructions */
+  ncSignalQuality signalQuality; /**< Avg signal quality during last update
                                     period */
-};
+}ncLightBoostScenarioInput;
 
 /** @brief Use this function to create an instance of light boost scenario.
  *
- *  @param[in] init_args Structure aggregating arguments to initializatoin call.
+ *  @param[in] initArgs Structure aggregating arguments to initializatoin call.
  *
  *  @return Pointer to a structure holding internal state of light boost
  *          scenario. Do not try directly modifying its content.
  *          Keep it and pass it to interface functions wrt light boost
  *          scenario.
  */
-LightBoostScenario *lb_init_scenario(LightBoostInitScenarioArgs init_args);
+ncLightBoostScenario *ncLbInitScenario(ncLightBoostInitScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
-void lb_destroy_scenario(LightBoostScenario *);
+void ncLbDestroyScenario(ncLightBoostScenario *);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  update_args Structure aggregating arguments for algorithm state
+ *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
  *                          update
 */
-MaskInstructionList
-lb_get_mask_instructions(LightBoostScenario *scenario,
-                         const LightBoostScenarioInput *update_args);
+ncMaskInstructionList
+ncLbGetMaskInstructions(ncLightBoostScenario *scenario,
+                         const ncLightBoostScenarioInput *updateArgs);
 
 // -------------------- Scenario frame validation ------------------------------
 
@@ -413,7 +413,7 @@ typedef enum {
   FV_WAIT_MORE = 0x03,
   /** there was something with the structures of call arguments */
   FV_STRUCTURAL_ERROR = 0x04
-} e_frameValidation;
+}ncFrameValidation;
 
 /**
  * @brief After sending an instruction frame from scenario to the Neuroon mask,
@@ -422,16 +422,16 @@ typedef enum {
  *        difficulties and get back decision about further execution of scenario.
  *        Function output is documented in the description of the enum.
  *
- * @param[in] scenario_ptr    Scenario that generated sent frame.
- * @param[in] cmd_frame       The frame sent to the mask. (raw bytes)
- * @param[in] cmd_len         Length of the sent frame.
- * @param[in] response_frame  The frame sent to the mask. (raw bytes)
- * @param[in] response_len    Length of the response frame.
+ * @param[in] scenarioPtr    Scenario that generated sent frame.
+ * @param[in] cmdFrame       The frame sent to the mask. (raw bytes)
+ * @param[in] cmdLen         Length of the sent frame.
+ * @param[in] responseFrame  The frame sent to the mask. (raw bytes)
+ * @param[in] responseLen    Length of the response frame.
  *
  * @return Enum value informing about decision wrt execution of scenario.
  */
-e_frameValidation response_sink(void *scenario_ptr, char *cmd_frame,
-                                size_t cmd_len, char *response_frame,
-                                size_t response_len);
+ncFrameValidation ncResponseSink(void *scenarioPtr, char *cmdFrame,
+                                size_t cmdLen, char *responseFrame,
+                                size_t responseLen);
 
 #endif /* !NEUROONMASKSCENARIOSAPI_H */

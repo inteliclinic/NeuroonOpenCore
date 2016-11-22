@@ -23,7 +23,7 @@
  * screen for the end-user of the application
  */
 struct OnlinePresentationResult {
-	brain_wave_levels_t* brain_waves;
+	ncBrainWaveLevels* brain_waves;
 	int bw_size;
 	double heart_rate;
 	double* pulse_data;
@@ -35,7 +35,7 @@ struct OnlinePresentationResult {
  */
 class OnlinePresentationAlgorithm : public SinkStreamingAlgorithm<OnlinePresentationResult> {
 
-	std::vector<brain_wave_levels_t> m_brain_waves_data;
+	std::vector<ncBrainWaveLevels> m_brain_waves_data;
 	std::vector<double> m_pulse_data;
 	double m_heart_rate;
 

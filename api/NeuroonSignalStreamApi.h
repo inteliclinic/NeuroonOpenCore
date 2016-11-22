@@ -33,9 +33,9 @@
  * access token to the library that is required to be passed to all the library
  * calls except the one used for initialization.
  */
-typedef struct NeuroonSignalProcessingState NeuroonSignalProcessingState;
+typedef struct NeuroonSignalProcessingState ncNeuroonSignalProcessingState;
 
-// -------------------- Callback types definitions. // ----------------------------- 
+// -------------------- Callback types definitions. // -----------------------------
 /**
  * The type of the callback for collecting the data about sleep stages.
  *
@@ -48,8 +48,8 @@ typedef struct NeuroonSignalProcessingState NeuroonSignalProcessingState;
  * every 82 seconds.
  *
  */
-typedef void (*staging_callback_t)(const staging_element_t *staging_data,
-                                   int staging_data_size);
+typedef void (*ncStagingCallback)(const ncStagingElement *stagingData,
+                                   int stagingDataSize);
 
 /**
  * Type of callback for receiving online data about brain waves and heart rate.
@@ -59,20 +59,20 @@ typedef void (*staging_callback_t)(const staging_element_t *staging_data,
  *
  * The callback is supposed to have the following parameters:
  *
- * @param bw_array : the array of brain_wave_levels_t elements, these elements
+ * @param bwArray : the array of brain_wave_levels_t elements, these elements
  * will
  * contain the data about the levels of brain wave types to be presented on the
  * screen of the device.
- * @param bw_array_size : the size of the bw_array
- * @param heart_rate : the heart rate of the sleeping person
+ * @param bwArraySize : the size of the bw_array
+ * @param heartRate : the heart rate of the sleeping person
  * @param pulsoximetry data : an array of double values to be presented as
  * the plot of the pulse of the sleeping person.
- * @param pulsoximetry_data_size : the size of the pulsoximetry_data array
+ * @param pulsoximetryDataSize : the size of the pulsoximetry_data array
  */
-typedef void (*presentation_callback_t)(const brain_wave_levels_t *bw_array,
-                                        int bw_array_size, double heart_rate,
-                                        const double *pulsoximetry_data,
-                                        int pulsoximetry_data_size);
+typedef void (*ncPresentationCallback)(const ncBrainWaveLevels *bwArray,
+                                        int bwArraySize, double heartRate,
+                                        const double *pulsoximetryData,
+                                        int pulsoximetryDataSize);
 
 /**
  * The type of the callback for collecting more frequent updates of signal
@@ -83,7 +83,8 @@ typedef void (*presentation_callback_t)(const brain_wave_levels_t *bw_array,
  *
  *
  */
-typedef void (*signal_quality_callback_t)(const SIGNAL_QUALITY *signal_quality, unsigned int sq_samples);
+typedef void (*ncSignalQualityCallback)(const ncSignalQuality *signalQuality,
+                                        unsigned int sqSamples);
 
 
 /**
@@ -93,7 +94,7 @@ typedef void (*signal_quality_callback_t)(const SIGNAL_QUALITY *signal_quality, 
  * The only parameter is a C-style string containing the log message.
  * The caller may of course ignore the log messages if he so wishes
  */
-typedef void (*logger_callback_t)(const char *log_message);
+typedef void (*ncLoggerCallback)(const char *logMessage);
 
 // -------------------- The interface. -----------------------------------------
 
@@ -113,32 +114,32 @@ typedef void (*logger_callback_t)(const char *log_message);
  * data
  * you can use the destroy_neuroon_alg_core function described below.
  *
- * @param staging_callback : non-NULL pointer to a function called
+ * @param stagingCallback : non-NULL pointer to a function called
  * each time a new online sleep staging is generated
  *
- * @param signal_quality_callback : non-NULL pointer to a function called
+ * @param signalQualityCallback : non-NULL pointer to a function called
  * for real-time presentation of signal quality level.
  *
- * @param presentation_callback : non-NULL pointer to a function called
+ * @param presentationCallback : non-NULL pointer to a function called
  * for real-time presentation of brain waves and heart rate
  *
- * @return a pointer to NeuroonSignalProcessingState structure necessary
+ * @return a pointer to ncNeuroonSignalProcessingState structure necessary
  * for calling other API functions (access token)
  */
-NeuroonSignalProcessingState *
-initialize_neuroon_alg_core(staging_callback_t staging_callback,
-                            signal_quality_callback_t signal_quality_callback,
-                            presentation_callback_t presentation_callback);
+ncNeuroonSignalProcessingState *
+ncInitializeNeuroonAlgCore(ncStagingCallback stagingCallback,
+                            ncSignalQualityCallback signalQualityCallback,
+                            ncPresentationCallback presentationCallback);
 
 /**
- * Destroys the NeuroonSignalProcessingState object and deinitializes the entire
+ * Destroys the ncNeuroonSignalProcessingState object and deinitializes the entire
  * library.
  *
  * @param data : the private data (access token) to the library,
  * the token will be invalid after calling the function,
  * so please do not use it afterwards as it may result in undefined behavior.
  */
-bool destroy_neuroon_alg_core(NeuroonSignalProcessingState *data);
+bool ncDestroyNeuroonAlgCore(ncNeuroonSignalProcessingState *data);
 
 /**
  * Initializes the processing steps before sleep.
@@ -148,7 +149,7 @@ bool destroy_neuroon_alg_core(NeuroonSignalProcessingState *data);
  *
  * @param data : the private data of the library
  */
-bool start_sleep(NeuroonSignalProcessingState *data);
+bool ncStartSleep(ncNeuroonSignalProcessingState *data);
 
 /**
  * Stops the sleep. Afterwards one last staging_callback
@@ -157,7 +158,7 @@ bool start_sleep(NeuroonSignalProcessingState *data);
  *
  * @param data : the private data of the library
  */
-bool stop_sleep(NeuroonSignalProcessingState *data);
+bool ncStopSleep(ncNeuroonSignalProcessingState *data);
 
 /**
  * Start signal grading algorithm. Use this in the need of more frequent
@@ -169,7 +170,7 @@ bool stop_sleep(NeuroonSignalProcessingState *data);
  *
  * @param data : pointer to the private data of the library
  */
-bool start_signal_quality_measurement(NeuroonSignalProcessingState *data);
+bool ncStartSignalQualityMeasurement(ncNeuroonSignalProcessingState *data);
 
 /**
  * Stop computing the data for real-time signal quality grading.
@@ -177,7 +178,7 @@ bool start_signal_quality_measurement(NeuroonSignalProcessingState *data);
  * @param data : pointer to the private data of the library
  *
  */
-bool stop_signal_quality_measurement(NeuroonSignalProcessingState *data);
+bool ncStopSignalQualityMeasurement(ncNeuroonSignalProcessingState *data);
 
 /**
  * Start computing the data for real-time presentation of brain waves and heart
@@ -192,7 +193,7 @@ bool stop_signal_quality_measurement(NeuroonSignalProcessingState *data);
  *
  * @param data : pointer to the private data of the library
  */
-bool start_presentation(NeuroonSignalProcessingState *data);
+bool ncStartPresentation(ncNeuroonSignalProcessingState *data);
 
 /**
   * Stop computing the data for real-time presentation of brain waves and heart
@@ -201,7 +202,7 @@ bool start_presentation(NeuroonSignalProcessingState *data);
   * @param data : pointer to the private data of the library
   *
   */
-bool stop_presentation(NeuroonSignalProcessingState *data);
+bool ncStopPresentation(ncNeuroonSignalProcessingState *data);
 
 /**
  * Feeds BLE EEG frame to the library
@@ -217,7 +218,7 @@ bool stop_presentation(NeuroonSignalProcessingState *data);
  *
  * @param data : pointer to the private data of the library
  */
-bool feed_data_stream0(NeuroonSignalProcessingState *data, char *bytes,
+bool ncFeedDataStream0(ncNeuroonSignalProcessingState *data, char *bytes,
                        int size);
 
 /**
@@ -229,7 +230,7 @@ bool feed_data_stream0(NeuroonSignalProcessingState *data, char *bytes,
  * @param size : size of the array passed; currently only 20 byte frames are
  * supported.
  */
-bool feed_data_stream1(NeuroonSignalProcessingState *data, char *bytes,
+bool ncFeedDataStream1(ncNeuroonSignalProcessingState *data, char *bytes,
                        int size);
 
 /**
@@ -240,7 +241,7 @@ bool feed_data_stream1(NeuroonSignalProcessingState *data, char *bytes,
  * @param size : size of the array passed; currently only 20 bytes frames are
  * supported
  */
-bool feed_data_stream2(NeuroonSignalProcessingState *data, char *bytes,
+bool ncFeedDataStream2(ncNeuroonSignalProcessingState *data, char *bytes,
                        int size);
 
 /**
@@ -257,7 +258,7 @@ bool feed_data_stream2(NeuroonSignalProcessingState *data, char *bytes,
  * this function will be called every time a log message is generated.
  *
  */
-bool install_log_callback(NeuroonSignalProcessingState *data,
-                          logger_callback_t callback);
+bool ncInstallLogCallback(ncNeuroonSignalProcessingState *data,
+                          ncLoggerCallback callback);
 
 #endif

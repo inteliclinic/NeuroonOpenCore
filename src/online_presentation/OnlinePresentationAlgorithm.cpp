@@ -104,7 +104,7 @@ void OnlinePresentationAlgorithm::process_brain_waves(const INeuroonSignals & in
 	dlib::matrix<double> eeg_signal = range_to_dlib_matrix(input.eeg_signal().end() - EEG_WINDOW, input.eeg_signal().end());
 	Spectrogram eeg_spectrogram(eeg_signal, Config::instance().neuroon_eeg_freq(), EEG_WINDOW, OVERLAP);
 
-	brain_wave_levels_t b = m_bw.predict(eeg_spectrogram).front();
+	ncBrainWaveLevels b = m_bw.predict(eeg_spectrogram).front();
 
 	const int ELEMENTS_TO_REMEMBER = 256;
 	m_brain_waves_data.push_back(b);

@@ -39,7 +39,7 @@
 
 std::ofstream* log_out;
 
-void staging_callback(const staging_element_t* stages, int size) {
+void staging_callback(const ncStagingElement* stages, int size) {
 	std::stringstream ss;
 	for (int i = 0; i != size; ++i) {
 		ss << stages[i].timestamp << " " << static_cast<int>(stages[i].stage)
@@ -56,7 +56,7 @@ void staging_callback(const staging_element_t* stages, int size) {
 	out.close();
 }
 
-void signal_quality_callback(SIGNAL_QUALITY sq, unsigned int size) {
+void signal_quality_callback(ncSignalQuality sq, unsigned int size) {
   if(!size) return;
 	std::stringstream ss;
   for(std::size_t i=0;i<size;i++){
@@ -68,7 +68,7 @@ void signal_quality_callback(SIGNAL_QUALITY sq, unsigned int size) {
 	out.close();
 }
 
-void write_brain_waves(const brain_wave_levels_t* brain_waves, int size) {
+void write_brain_waves(const ncBrainWaveLevels* brain_waves, int size) {
 	std::stringstream ss;
 	for (int i = 0; i != size; ++i) {
 		ss 	<< " " << brain_waves[i].delta
@@ -102,7 +102,7 @@ void write_heart_rate(double hr) {
 
 }
 
-void presentation_callback(const brain_wave_levels_t* brain_waves, int bw_size, double hr, const double* pulseoximetry, int po_size) {
+void presentation_callback(const ncBrainWaveLevels* brain_waves, int bw_size, double hr, const double* pulseoximetry, int po_size) {
 	write_brain_waves(brain_waves, bw_size);
 	write_pulseoximetry(pulseoximetry, po_size);
 	write_heart_rate(hr);
@@ -192,14 +192,14 @@ int main(int argc, char** argv) {
 
 	NeuroonSignalProcessingState* neuroon = NULL;
 	if (presentation) {
-		neuroon = initialize_neuroon_alg_core(staging_callback, NULL, presentation_callback);
-		start_presentation(neuroon);
+		neuroon = ncInitializeNeuroonAlgCore(staging_callback, NULL, presentation_callback);
+		ncStartPresentation(neuroon);
 	} else {
-		neuroon = initialize_neuroon_alg_core(staging_callback, NULL, reinterpret_cast<presentation_callback_t>(0));
+		neuroon = ncInitializeNeuroonAlgCore(staging_callback, NULL, reinterpret_cast<ncPresentationCallback>(0));
 	}
 
-	install_log_callback(neuroon, logger_callback);
-	start_sleep(neuroon);
+	ncInstallLogCallback(neuroon, logger_callback);
+	ncStartSleep(neuroon);
 
 	for (int i = 0; sim.pass_time(10, speed); ++i) {
 
@@ -207,17 +207,17 @@ int main(int argc, char** argv) {
 		if (sink_sp_eeg->has_frame) {
 			EegFrame f = sink_sp_eeg->take_frame();
 			f.to_bytes(bytes);
-			feed_data_stream0 (neuroon, bytes, 20);
+			ncFeedDataStream0 (neuroon, bytes, 20);
 		}
 
 		if (sink_sp_ir->has_frame) {
 			AccelLedsTempFrame f = sink_sp_ir->take_frame();
 			f.to_bytes(bytes);
-			feed_data_stream1(neuroon, bytes, 20);
+			ncFeedDataStream1(neuroon, bytes, 20);
 		}
 	}
 
-	stop_sleep(neuroon);
+	ncStartSleep(neuroon);
 
 	log_out->close();
 }

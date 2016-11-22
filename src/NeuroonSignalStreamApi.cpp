@@ -22,10 +22,10 @@ struct NeuroonSignalProcessingState {
 	OnlinePresentationAlgorithm* _online_presentation;
 };
 
-struct logging_sink : public OnlineStagingAlgorithm::sink_t {
+struct LoggingSink : public OnlineStagingAlgorithm::sink_t {
 	SleepStagingResult m_last_staging;
 
-	virtual ~logging_sink() {}
+	virtual ~LoggingSink() {}
 
 	void consume(SleepStagingResult& res) {
 		m_last_staging = res;
@@ -38,11 +38,11 @@ struct logging_sink : public OnlineStagingAlgorithm::sink_t {
 	}
 };
 
-struct callback_staging_sink : public OnlineStagingAlgorithm::sink_t {
-	virtual ~callback_staging_sink() {}
+struct CallbackStagingSink : public OnlineStagingAlgorithm::sink_t {
+	virtual ~CallbackStagingSink() {}
 
-	staging_callback_t _callback;
-	callback_staging_sink(staging_callback_t callback) {
+	ncStagingCallback _callback;
+	CallbackStagingSink(ncStagingCallback callback) {
 		_callback = callback;
 	}
 
@@ -51,11 +51,11 @@ struct callback_staging_sink : public OnlineStagingAlgorithm::sink_t {
 	}
 };
 
-struct callback_presentation_sink : public OnlinePresentationAlgorithm::sink_t {
-	virtual ~callback_presentation_sink() {}
+struct CallbackPresentationSink : public OnlinePresentationAlgorithm::sink_t {
+	virtual ~CallbackPresentationSink() {}
 
-	presentation_callback_t _callback;
-	callback_presentation_sink(presentation_callback_t callback) {
+	ncPresentationCallback _callback;
+	CallbackPresentationSink(ncPresentationCallback callback) {
 		_callback = callback;
 	}
 
@@ -65,20 +65,20 @@ struct callback_presentation_sink : public OnlinePresentationAlgorithm::sink_t {
 	}
 };
 
-NeuroonSignalProcessingState* initialize_neuroon_alg_core(staging_callback_t staging_callback,
-                                                          signal_quality_callback_t sq_callback,
-                                                          presentation_callback_t presentation_callback) {
+NeuroonSignalProcessingState *ncInitializeNeuroonAlgCore(ncStagingCallback staging_callback,
+                                                          ncSignalQualityCallback sq_callback,
+                                                          ncPresentationCallback presentation_callback) {
 	LOG(INFO) << "API CALL";
 	NeuroonSignalProcessingState* data = new NeuroonSignalProcessingState();
 	data->_online_presentation = nullptr;
 
-	logging_sink* ls = new logging_sink();
-	callback_staging_sink* css = new callback_staging_sink(staging_callback);
+	LoggingSink* ls = new LoggingSink();
+	CallbackStagingSink* css = new CallbackStagingSink(staging_callback);
 	auto online_alg = std::unique_ptr<IStreamingAlgorithm>(new OnlineStagingAlgorithm({ls, css}));
 	data->_daemon.add_streaming_algorithms(online_alg);
 
 	if (reinterpret_cast<long> (presentation_callback) != 0) {
-		callback_presentation_sink* ps = new callback_presentation_sink(presentation_callback);
+		CallbackPresentationSink* ps = new CallbackPresentationSink(presentation_callback);
 		auto presentation_alg = new OnlinePresentationAlgorithm({ps});
 		auto alg_ptr = std::unique_ptr<IStreamingAlgorithm>(presentation_alg);
 		data->_daemon.add_streaming_algorithms(alg_ptr);
@@ -89,28 +89,28 @@ NeuroonSignalProcessingState* initialize_neuroon_alg_core(staging_callback_t sta
 	return data;
 }
 
-bool destroy_neuroon_alg_core(NeuroonSignalProcessingState* data) {
+bool ncDestroyNeuroonAlgCore(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 	delete data;
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool start_sleep(NeuroonSignalProcessingState* data) {
+bool ncStartSleep(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.start_processing();
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool stop_sleep(NeuroonSignalProcessingState* data) {
+bool ncStopSleep(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 	data->_daemon.end_processing();
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool feed_data_stream0(NeuroonSignalProcessingState* data, char* bytes, int size) {
+bool ncFeedDataStream0(NeuroonSignalProcessingState* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
@@ -123,7 +123,7 @@ bool feed_data_stream0(NeuroonSignalProcessingState* data, char* bytes, int size
     return true;
 }
 
-bool feed_data_stream1(NeuroonSignalProcessingState* data, char* bytes, int size) {
+bool ncFeedDataStream1(NeuroonSignalProcessingState* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL";
 
 	NeuroonFrameBytes frame;
@@ -136,19 +136,19 @@ bool feed_data_stream1(NeuroonSignalProcessingState* data, char* bytes, int size
     return true;
 }
 
-bool feed_data_stream2(NeuroonSignalProcessingState* data, char* bytes, int size) {
+bool ncFeedDataStream2(NeuroonSignalProcessingState* data, char* bytes, int size) {
 	LOG(DEBUG) << "API CALL -- NOT USED CURRENTLY";
     return true;
 }
 
-bool install_log_callback(NeuroonSignalProcessingState* data, logger_callback_t callback) {
+bool ncInstallLogCallback(NeuroonSignalProcessingState* data, ncLoggerCallback callback) {
 	LOG(INFO) << "API CALL";
 	configure_logger(callback);
 	LOG(INFO) << "API CALL END";
     return true;
 }
 
-bool start_presentation(NeuroonSignalProcessingState* data) {
+bool ncStartPresentation(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 
 	if (!data->_online_presentation) {
@@ -160,7 +160,7 @@ bool start_presentation(NeuroonSignalProcessingState* data) {
     return true;
 }
 
-bool stop_presentation(NeuroonSignalProcessingState* data) {
+bool ncStopPresentation(NeuroonSignalProcessingState* data) {
 	LOG(INFO) << "API CALL";
 
 	if (!data->_online_presentation) {

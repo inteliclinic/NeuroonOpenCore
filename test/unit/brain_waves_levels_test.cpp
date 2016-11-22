@@ -7,7 +7,7 @@ TEST(BrainWaveLevelsTest, basic_case) {
 	BrainWaveLevels bw;
 	dlib::matrix<double> dummy_signal = dlib::zeros_matrix<double>(256, 1);
 	Spectrogram dummy_spectrogram(dummy_signal, 125, 256, 128);
-	brain_wave_levels_t result = bw.predict(dummy_spectrogram).front();
+	ncBrainWaveLevels result = bw.predict(dummy_spectrogram).front();
 	//std::cout << result.delta << "\t"
 	//		  << result.theta << "\t"
 	//		  << result.alpha << "\t"
@@ -18,6 +18,6 @@ TEST(BrainWaveLevelsTest, multiple_windows) {
 	BrainWaveLevels bw;
 	dlib::matrix<double> dummy_signal = dlib::zeros_matrix<double>(1024, 1);
 	Spectrogram dummy_spectrogram(dummy_signal, 125, 256, 128);
-	std::vector<brain_wave_levels_t> result = bw.predict(dummy_spectrogram);
+	std::vector<ncBrainWaveLevels> result = bw.predict(dummy_spectrogram);
 	ASSERT_EQ(result.size(), dummy_spectrogram.size());
 }

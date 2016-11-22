@@ -25,7 +25,7 @@
 typedef enum{
   LEGACY_NEUROON_FIRMWARE = 0x00, /**< firmware 2.0.x.x */
   NEW_NEUROON_FIRMWARE = 0x01     /**< firmware 2.1.x.x */
-}e_firmwareMilestone;
+}ncFirmwareMilestone;
 
 /**
  * @brief Next step order
@@ -37,7 +37,7 @@ typedef enum{
   DFU_RESEND_DATASET,           /**< resend previous data set */
   DFU_TERMINATE,                /**< Mask encoutered critical error in DFU mode */
   DFU_END                       /**< Update finished */
-}e_dfuAction;
+}ncDfuAction;
 
 /**
  * @brief Generate "go to dfu" command
@@ -51,13 +51,13 @@ typedef enum{
  * @return true if function was able to generate frame, false otherwise(ex.
  * wrong frame len or unsupported firmware)
  */
-bool goto_dfu(char *frame, size_t *len, e_firmwareMilestone firmware);
+bool ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
 
 /**
  * @brief Receive data from rdfu response characteristic
  *
- * @param[in]   response_frame  20 byte array with response frame
- * @param[in]   response_len    response array length
+ * @param[in]   responseFrame  20 byte array with response frame
+ * @param[in]   responseLen    response array length
  * @param[out]  frame           pointer to 20 bytes array where binary data will
  * be stored
  * @param[out]  len             pointer to size_t value where function will pit
@@ -65,7 +65,7 @@ bool goto_dfu(char *frame, size_t *len, e_firmwareMilestone firmware);
  *
  * @return returns next step for update
  */
-e_dfuAction dfu_response_sink(char *response_frame, size_t response_len, char* frame, size_t *len);
+ncDfuAction ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len);
 
 /**
  * @brief Generate start update command for dfu
@@ -77,6 +77,6 @@ e_dfuAction dfu_response_sink(char *response_frame, size_t response_len, char* f
  * @return true if function was able to generate frame, false otherwise(ex.
  * wrong frame len)
  */
-bool dfu_start_update(char *frame, size_t *len);
+bool ncDfuStartUpdate(char *frame, size_t *len);
 
 #endif /* !NEUROONMASKCOMMAPI_H */

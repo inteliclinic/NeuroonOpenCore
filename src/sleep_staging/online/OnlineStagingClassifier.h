@@ -39,7 +39,7 @@ class OnlineStagingClassifier {
 
 	std::vector<int> m_current_staging;
 	std::vector<int> m_current_quality;
-	std::vector<brain_wave_levels_t> m_current_brain_waves;
+	std::vector<ncBrainWaveLevels> m_current_brain_waves;
 
 	void compute_quality(const Spectrogram& eeg_spectrogram);
 	void compute_staging(const Spectrogram& eeg_spectrogram, const Spectrogram &ir_spectrogram, double seconds_since_start);
@@ -60,7 +60,7 @@ public:
 
 	const std::vector<int>& current_staging() const;
 	const std::vector<int>& current_quality() const;
-	const std::vector<brain_wave_levels_t>& current_brain_waves() const;
+	const std::vector<ncBrainWaveLevels>& current_brain_waves() const;
 
 };
 

@@ -30,7 +30,7 @@ public:
     /**
      * Computes the brainwave levels based on the spectrogram of the EEG signal;
      */
-	std::vector<brain_wave_levels_t> predict(const Spectrogram &spectrogram);
+	std::vector<ncBrainWaveLevels> predict(const Spectrogram &spectrogram);
 
     /**
      * resets the state of the object to the original values (important 

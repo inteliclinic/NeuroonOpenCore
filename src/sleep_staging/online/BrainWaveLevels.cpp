@@ -16,7 +16,7 @@ BrainWaveLevels::BrainWaveLevels()
 
 BrainWaveLevels::~BrainWaveLevels() {}
 
-std::vector<brain_wave_levels_t> BrainWaveLevels::predict(const Spectrogram &spectrogram) {
+std::vector<ncBrainWaveLevels> BrainWaveLevels::predict(const Spectrogram &spectrogram) {
 
 	bool normalized = true;
 
@@ -35,14 +35,14 @@ std::vector<brain_wave_levels_t> BrainWaveLevels::predict(const Spectrogram &spe
 		dlib::set_colm(sums, i) = dlib::pointwise_multiply(dlib::colm(sums, i), 1 / sum);
 	}
 
-	std::vector<brain_wave_levels_t> result;
+	std::vector<ncBrainWaveLevels> result;
 	for (int i = 0; i != spectrogram.size(); ++i) {
 		dlib::matrix<double> row = dlib::rowm(sums, i);
 		m_smoother.feed(row);
 		row = m_smoother.value();
 		std::cout << "after filter: " << row << std::endl;
 
-		brain_wave_levels_t levels;
+		ncBrainWaveLevels levels;
 		levels.delta = row(0, 0);
 		levels.theta = row(0, 1);
 		levels.alpha = row(0, 2);

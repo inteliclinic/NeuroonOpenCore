@@ -13,11 +13,11 @@ TEST(BrainWaveLevelsFunctional, basic_functional) {
 	Spectrogram eeg_spectrogram(small_eeg, 125, 256, 128);
 	BrainWaveLevels bw;
 
-	std::vector<brain_wave_levels_t> result = bw.predict(eeg_spectrogram);
+	std::vector<ncBrainWaveLevels> result = bw.predict(eeg_spectrogram);
 	ASSERT_TRUE(result.size() == eeg_spectrogram.size());
 
 	for (int i = 0; i != result.size(); ++i) {
-		brain_wave_levels_t l = result[i];
+		ncBrainWaveLevels l = result[i];
 		if (i < 100 && std::isnan(l.alpha)) {
 			continue;
 		}
