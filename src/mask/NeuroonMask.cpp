@@ -13,7 +13,7 @@
 #include "NeuroonMask.h"
 #include "PrivNeuroonMask.h"
 #include "ic_frame_handle.h"
-#include <ic_low_level_control.h>
+#include "ic_low_level_control.h"
 
 /** Device section */
 class PrivNeuroonMaskDevice{

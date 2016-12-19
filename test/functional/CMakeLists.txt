@@ -1,7 +1,7 @@
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-FILE (GLOB_RECURSE sources *.cpp)
+FILE (GLOB_RECURSE sources *.cpp *.c)
 
 
 add_executable(functional_tests ${sources})
