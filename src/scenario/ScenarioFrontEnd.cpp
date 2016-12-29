@@ -99,10 +99,18 @@ struct LucidDreamSequenceInput{
   }
 };
 
-void lucidDreamSequence(ncLucidDreamScenario *scenario, LucidDreamSequenceInput sequence, unsigned long timestamp){
+void lucidDreamSequence(ncLucidDreamScenario *scenario, LucidDreamSequenceInput sequence,
+    unsigned long timestamp){
+  ncAtomicInstruction instruction;
+  uint8_t intensities[7];
+  std::memset(intensities, 63, sizeof(intensities));
+  size_t len;
   for(unsigned long i=0; i<sequence.numberOfActions; ++i){
-    // create command
-      timestamp += sequence.numberOfActions>1 ? sequence.length/(sequence.numberOfActions - 1) : 0;
+    device_set_func(instruction.data, &len, DEV_POWER_LED|DEV_RIGHT_RED_LED|DEV_LEFT_RED_LED,
+        FUN_TYPE_BLINK, intensities, sequence.actionDuration/100, sequence.actionPeriod/100, 0);
+    instruction.time = timestamp;
+    scenario->dataFiFo.push(instruction);
+    timestamp += sequence.numberOfActions>1 ? sequence.length/(sequence.numberOfActions - 1) : 0;
   }
 }
 
@@ -128,6 +136,7 @@ bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInp
       scenario->remDetected = false;
       scenario->remCounted = false;
     }
+    scenario->lucidLoaded = false;
   }
 
   switch(scenario->remCounter){
@@ -138,16 +147,19 @@ bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInp
     case 3:
       if(rem_duration >= 300000){//TODO: 300000 needs to ba a parameter
         if(!scenario->lucidLoaded){
-          lucidDreamSequence(scenario, LucidDreamSequenceInput(240000, 5, 50000, 1000),
+          lucidDreamSequence(scenario, LucidDreamSequenceInput(240000, 5, 5000, 1000),
               updateArgs->timestamp);
-          //load 1st lucid
           scenario->lucidLoaded = true;
         }
       }
       break;
     default:
       if(rem_duration >= 600000){//TODO: 600000 needs to ba a parameter
-        //load 2nd lucid
+        if(!scenario->lucidLoaded){
+          lucidDreamSequence(scenario, LucidDreamSequenceInput(240000, 5, 5000, 1000),
+              updateArgs->timestamp);
+          scenario->lucidLoaded = true;
+        }
       }
       break;
   }
