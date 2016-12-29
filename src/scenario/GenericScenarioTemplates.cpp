@@ -16,15 +16,15 @@ void killAllDevices(std::queue<ncAtomicInstruction> &inQueue){
   size_t _len = sizeof(_instruction.data);
 
   rgb_led_set_func(_instruction.data, &_len, RGB_LED_SIDE_BOTH, FUN_TYPE_OFF, RGB_LED_COLOR_CUSTOM,
-      0, 0, 0);
+      0, 0, 0, 1);
   _instruction.time = 100;
   inQueue.push(_instruction);
 
-  pwr_led_set_func(_instruction.data, &_len, FUN_TYPE_OFF, 0, 0, 0);
+  pwr_led_set_func(_instruction.data, &_len, FUN_TYPE_OFF, 0, 0, 0, 1);
   _instruction.time = 200;
   inQueue.push(_instruction);
 
-  vibrator_set_func(_instruction.data, &_len, FUN_TYPE_OFF, 0, 0, 0);
+  vibrator_set_func(_instruction.data, &_len, FUN_TYPE_OFF, 0, 0, 0, 1);
   _instruction.time = 300;
   inQueue.push(_instruction);
 }

@@ -127,8 +127,10 @@ ncAtomicInstruction ncLucidGetNextMaskInstruction(ncLucidDreamScenario *scenario
  *  @param[in]  scenario    Pointer token to the current scenario.
  *  @param[in]  updateArgs  Structure aggregating arguments for algorithm state
  *                          update
+ *
+ *  @return When true, new mask command has to be probed. Previous command has to be dropped
  */
-void ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInput *updateArgs);
+bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInput *updateArgs);
 
 // -------------------- WAKE-UP SCENARIO --------------------------------------
 
