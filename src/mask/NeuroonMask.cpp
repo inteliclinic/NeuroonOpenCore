@@ -13,13 +13,14 @@
 #include "NeuroonMask.h"
 #include "PrivNeuroonMask.h"
 #include "ic_frame_handle.h"
+#include <ic_low_level_control.h>
 
 /** Device section */
 class PrivNeuroonMaskDevice{
 
   public:
     PrivNeuroonMaskDevice():
-      func(FUNC_TYPE_OFF),
+      func(FUN_TYPE_OFF),
       intensity(0),
       duration(0),
       period(0)
