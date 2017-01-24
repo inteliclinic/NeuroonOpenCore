@@ -21,12 +21,7 @@ option(desktop_build "desktop_build" ON)
 message("-- desktop_build: " ${desktop_build})
 
 add_subdirectory(3rd_party/dlib)
-<<<<<<< HEAD
 add_subdirectory(external_modules/unified_communication/)
-||||||| merged common ancestors
-=======
-add_subdirectory(external_modules/unified_communication)
->>>>>>> Start of lucid devel
 set (MODEL_RES_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}/res/offline_model\")
 set (ONLINE_MODEL_RES_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}/res/online_model\")
 message ("-- model directory: " ${MODEL_RES_DIRECTORY})
