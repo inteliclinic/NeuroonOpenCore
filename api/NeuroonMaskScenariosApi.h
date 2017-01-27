@@ -288,7 +288,8 @@ ncWuGetMaskInstructions(ncPowernapScenario *scenario,
 typedef struct CircadianRhythmAdjustmentScenario ncCircadianRhythmAdjustmentScenario;
 
 typedef enum {
-  CRA_DEFAULT_MODE
+  CRA_ADVANCE_MODE,
+  CRA_DELAY_MODE
 }ncCircadianRhythmAdjustmentMode;
 
 /** @struct Data structure aggregating all paremeters needed for
@@ -305,10 +306,11 @@ typedef struct {
  *          periodical update and progress of the scenario.
 */
 typedef struct {
+  ncSleepStage currentSleepStage; /**< User's current sleep stage. */
   ncUnixTimestamp currentTime;   /**< Time atm of the call for instructions */
   ncSignalQuality signalQuality; /**< Avg signal quality during last update
                                     period */
-}CircadianRhythmAdjustmentScenarioInput;
+}ncCircadianRhythmAdjustmentScenarioInput;
 
 /** @brief Use this function to create an instance of circadian adjustment
  *         scenario.
