@@ -58,9 +58,6 @@ target_include_directories (neuroon-alg-core PUBLIC api)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/dlib)
 target_include_directories (neuroon-alg-core PUBLIC 3rd_party/easylogging)
 target_include_directories (neuroon-alg-core PUBLIC external_modules/unified_communication/API)
-target_include_directories (neuroon-alg-core PUBLIC external_modules/unified_communication/common)
-target_include_directories (neuroon-alg-core PUBLIC
-  external_modules/unified_communication/encapsulation_module)
 
 target_link_libraries(neuroon-alg-core
     nuc
