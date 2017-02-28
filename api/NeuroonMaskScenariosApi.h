@@ -54,7 +54,7 @@ typedef struct {
  *         Do not try directly modifying its content.
  *         Keep it and pass it to its interface functions.
  */
-typedef struct LucidDreamScenatio ncLucidDreamScenario;
+typedef struct LucidDreamScenario ncLucidDreamScenario;
 
 /** @enum Enumeration of starting level of light pulses intensity during the
  *          LD induction. */
