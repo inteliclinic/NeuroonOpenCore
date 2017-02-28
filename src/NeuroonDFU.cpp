@@ -13,7 +13,7 @@
 
 #define PRINT_DBG_INFO std::cout<<"running: "<<__FILE__<<"::"<<__func__<<std::endl
 
-bool ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware){
+int ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware){
   PRINT_DBG_INFO;
   e_firmwareMilestone _firmware = firmware == NEW_NEUROON_FW ? NEW_NEUROON_FIRMWARE :
     LEGACY_NEUROON_FIRMWARE;
@@ -23,21 +23,25 @@ bool ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware){
   return true;
 }
 
-ncDfuAction ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len){
+int ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len,
+    ncDfuAction *action){
   PRINT_DBG_INFO;
-  switch(dfu_response_sink(responseFrame, responseLen, frame, len)){
+  e_dfuAction _action;
+  int retVal = dfu_response_sink(responseFrame, responseLen, frame, len, &_action);
+  switch(_action){
     case DFU_SEND_NEXT_DATASET:
-      return DFU_SEND_NEXT;
+      *action = DFU_SEND_NEXT;
     case DFU_RESEND_DATASET:
-      return DFU_RESEND;
+      *action = DFU_RESEND;
     case DFU_TERMINATE:
-      return DFU_TERM;
+      *action = DFU_TERM;
     case DFU_END:
-      return DFU_FINISHED;
+      *action = DFU_FINISHED;
   }
+  return retVal;
 }
 
-bool ncDfuStartUpdate(char *frame, size_t *len, char *fb, size_t file_len, ncFirmwareType firm,
+int ncDfuStartUpdate(char *frame, size_t *len, char *fb, size_t file_len, ncFirmwareType firm,
     uint32_t version){
   PRINT_DBG_INFO;
   e_firmwareType _firm;
@@ -52,6 +56,5 @@ bool ncDfuStartUpdate(char *frame, size_t *len, char *fb, size_t file_len, ncFir
       _firm = DFU_FIRMWARE;
       break;
   }
-  dfu_start_update(frame, len, fb, file_len, _firm, version);
-  return true;
+  return dfu_start_update(frame, len, fb, file_len, _firm, version);
 }

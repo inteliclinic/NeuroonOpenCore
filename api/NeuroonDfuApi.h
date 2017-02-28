@@ -69,7 +69,7 @@ typedef enum{
  * @return true if function was able to generate frame, false otherwise(ex.
  * wrong frame len or unsupported firmware)
  */
-bool ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
+int ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
 
 /**
  * @brief Receive data from rdfu response characteristic
@@ -83,7 +83,8 @@ bool ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
  *
  * @return returns next step for update
  */
-ncDfuAction ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len);
+int ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len,
+    ncDfuAction *action);
 
 /**
  * @brief Generate start update command for dfu
@@ -98,7 +99,7 @@ ncDfuAction ncDfuResponseSink(char *responseFrame, size_t responseLen, char* fra
  * @return true if function was able to generate frame, false otherwise(ex.
  * wrong frame len)
  */
-bool ncDfuStartUpdate(char *frame, size_t *len, char *fb, size_t file_len, ncFirmwareType firm,
+int ncDfuStartUpdate(char *frame, size_t *len, char *fb, size_t file_len, ncFirmwareType firm,
     uint32_t version);
 
 #ifdef __cplusplus
