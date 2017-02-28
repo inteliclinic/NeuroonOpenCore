@@ -20,7 +20,7 @@ void killAllDevices(std::queue<ncAtomicInstruction> &inQueue){
   _instruction.time = 100;
   inQueue.push(_instruction);
 
-  pwr_led_set_func(_instruction.data, &_len, FUN_TYPE_OFF, 0, 0, 0, 1);
+  pwr_led_set_func(_instruction.data, &_len, FUN_TYPE_OFF, 0, 0, 1);
   _instruction.time = 200;
   inQueue.push(_instruction);
 

@@ -68,19 +68,58 @@ struct CircadianRhythmAdjustmentScenario:BaseScenario{
 };
 
 struct LightBoostScenario:BaseScenario{
+  unsigned int lenthInSeconds;
+  unsigned char intensity;
+  LightBoostScenario() :
+    lenthInSeconds(0),
+    intensity(0) {}
 };
 
 static std::queue<ncAtomicInstruction> loadDefaultScenario(void);
 static ncAtomicInstruction getNextMaskInstruction(BaseScenario *scenario);
 
 ncLucidDreamScenario *ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs){
-  LucidDreamScenario *scenario = new LucidDreamScenario;
+  auto *_scenario = new LucidDreamScenario;
 
-  scenario->remStabilityTreshold = initArgs.remStabilityTreshold;
-  scenario->startingIntensity = initArgs.startingIntensity;
-  scenario->dataFiFo = loadDefaultScenario();
+  _scenario->remStabilityTreshold = initArgs.remStabilityTreshold;
+  _scenario->startingIntensity = initArgs.startingIntensity;
+  _scenario->dataFiFo = loadDefaultScenario();
 
-  return scenario;
+  return _scenario;
+}
+
+ncLightBoostScenario *ncLbInitScenario(ncLightBoostInitScenarioArgs initArgs){
+  auto _scenario = new ncLightBoostScenario;
+  _scenario->lenthInSeconds = initArgs.lenthInMinutes * 60;
+  _scenario->intensity = initArgs.intensity;
+  ncAtomicInstruction _instruction;
+  size_t _len = 20;
+
+  rgb_led_set_func(_instruction.data, &_len, RGB_LED_SIDE_BOTH, FUN_TYPE_ON, RGB_LED_COLOR_WHITE,
+      _scenario->intensity, 0, 0, 1);
+  _instruction.time = 0;
+  _scenario->dataFiFo.push(_instruction);
+
+  rgb_led_set_func(_instruction.data, &_len, RGB_LED_SIDE_BOTH, FUN_TYPE_OFF, RGB_LED_COLOR_WHITE,
+      0, 0, 0, 1);
+  _instruction.time = _scenario->lenthInSeconds*1000;
+  _scenario->dataFiFo.push(_instruction);
+
+  return _scenario;
+}
+
+void ncLbDestroyScenario(ncLightBoostScenario *_scenario){
+  delete _scenario;
+}
+
+ncAtomicInstruction ncLbGetNextMaskInstruction(ncLightBoostScenario *scenario){
+  return getNextMaskInstruction(scenario);
+}
+
+ncMaskInstructionList ncLbGetMaskInstructions(ncLightBoostScenario *scenario,
+                         const ncLightBoostScenarioInput *updateArgs){
+  ncMaskInstructionList retVal = {0, NULL};
+  return retVal;
 }
 
 struct LucidDreamSequenceInput{

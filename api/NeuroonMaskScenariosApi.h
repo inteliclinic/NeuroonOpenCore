@@ -46,16 +46,17 @@
  *  @remark For now it can be assumed that instructions are sorted by their
  *          timestamp.
  */
-typedef struct {
-  unsigned int count;
-  unsigned int *timestamps;
-  char **instructions;
-}ncMaskInstructionList;
 
 typedef struct {
   unsigned int time;
   char data[MASK_INSTRUCTION_LENGTH];
 }ncAtomicInstruction;
+
+typedef struct {
+  unsigned int count;
+  ncAtomicInstruction *instruction;
+}ncMaskInstructionList;
+
 
 // -------------------- LUCID DREAMING SCENARIO  -------------------------------
 
@@ -399,6 +400,13 @@ ncLightBoostScenario *ncLbInitScenario(ncLightBoostInitScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
 void ncLbDestroyScenario(ncLightBoostScenario *);
+
+/** @brief Gets a frame instructions to the Neuroon Mask according scenario stage
+ *
+ *  @param[in]  scenario    Pointer token to the current scenario.
+ *
+ */
+ncAtomicInstruction ncLbGetNextMaskInstruction(ncLightBoostScenario *scenario);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
