@@ -91,7 +91,7 @@ ncLucidDreamScenario *ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs){
 ncLightBoostScenario *ncLbInitScenario(ncLightBoostInitScenarioArgs initArgs){
   auto _scenario = new ncLightBoostScenario;
   _scenario->lenthInSeconds = initArgs.lenthInMinutes * 60;
-  _scenario->intensity = initArgs.intensity;
+  _scenario->intensity = initArgs.intensity == ncLightIntensityLevel::REGULAR ? 45 : 63; // this value has to be updated somehow
   ncAtomicInstruction _instruction;
   size_t _len = 20;
 
