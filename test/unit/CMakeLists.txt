@@ -10,6 +10,5 @@ target_link_libraries(unit_tests
      pthread
      dlib
      )
-     
 target_include_directories (unit_tests PUBLIC 3rd_party/easylogging)
 target_include_directories (unit_tests PUBLIC test)

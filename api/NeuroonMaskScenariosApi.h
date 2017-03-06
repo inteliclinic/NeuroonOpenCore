@@ -22,15 +22,19 @@
 #ifndef NEUROONMASKSCENARIOSAPI_H
 #define NEUROONMASKSCENARIOSAPI_H
 
-#include "NeuroonApiCommons.h"
 #include <stddef.h>
+#include <stdint.h>
+#include "NeuroonApiCommons.h"
 
 // -------------------- COMMON SCENARIO TYPES ----------------------------------
 
 /** Length of a single instruction to the mask.
  *  Enforced by the size of Bluetooth frame.
+ *
+ *  I've made it a macro. Makes more sense since I'm using it in variables declaration
+ *  -Paweł Kaźmierzewski
 */
-static const int MASK_INSTRUCTION_LENGTH = 20;
+#define MASK_INSTRUCTION_LENGTH 20
 
 /** @struct Struct containing byte-encoded instructions for the mask.
  *          Each instruction in the list is a byte-array with
@@ -42,11 +46,17 @@ static const int MASK_INSTRUCTION_LENGTH = 20;
  *  @remark For now it can be assumed that instructions are sorted by their
  *          timestamp.
  */
+
+typedef struct {
+  unsigned int time;
+  char data[MASK_INSTRUCTION_LENGTH];
+}ncAtomicInstruction;
+
 typedef struct {
   unsigned int count;
-  unsigned int *timestamps;
-  char **instructions;
+  ncAtomicInstruction *instruction;
 }ncMaskInstructionList;
+
 
 // -------------------- LUCID DREAMING SCENARIO  -------------------------------
 
@@ -101,21 +111,27 @@ typedef struct {
  *          Keep it and pass it to interface functions wrt light boost
  *          scenario.
  */
-ncLucidDreamScenario *ld_init_scenario(ncLucidDreamScenarioArgs initArgs);
+ncLucidDreamScenario *ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
 void ncLdDestroyScenario(ncLucidDreamScenario *);
 
-/** @brief Gets an array of direct instructions to the Neuroon Mask according
- *         to update parameters
+/** @brief Gets a frame instructions to the Neuroon Mask according scenario stage
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
- *                          update
+ *
  */
-ncMaskInstructionList
-ncldGetMaskInstructions(ncLucidDreamScenario *scenario,
-                         const ncLucidDreamScenarioInput *updateArgs);
+ncAtomicInstruction ncLucidGetNextMaskInstruction(ncLucidDreamScenario *scenario);
+
+/** @brief Update scenario according to latest data
+ *
+ *  @param[in]  scenario    Pointer token to the current scenario.
+ *  @param[in]  updateArgs  Structure aggregating arguments for algorithm state
+ *                          update
+ *
+ *  @return When true, new mask command has to be probed. Previous command has to be dropped
+ */
+bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInput *updateArgs);
 
 // -------------------- WAKE-UP SCENARIO --------------------------------------
 
@@ -189,7 +205,7 @@ typedef struct {
  *          Keep it and pass it to interface functions wrt wake up
  *          scenario.
  */
-WakeUpScenario *ncWuInitScenario(ncWakeUpScenarioInitArgs initArgs);
+ncWakeUpScenario *ncWuInitScenario(ncWakeUpScenarioInitArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
 void ncWuDestroyScenario(ncWakeUpScenario *);
@@ -332,7 +348,7 @@ void ncCraDestroyScenario(ncCircadianRhythmAdjustmentScenario *scenario);
  *         to update parameters
  *
  *  @param[in]  scenario    Pointer token to the current scenario.
- *  @param[in]  updateArgs Structure aggregating arguments for algorithm state
+ *  @param[in]  updateArgs  Structure aggregating arguments for algorithm state
  *                          update
  */
 ncMaskInstructionList ncCraGetMaskInstructions(
@@ -384,6 +400,13 @@ ncLightBoostScenario *ncLbInitScenario(ncLightBoostInitScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
 void ncLbDestroyScenario(ncLightBoostScenario *);
+
+/** @brief Gets a frame instructions to the Neuroon Mask according scenario stage
+ *
+ *  @param[in]  scenario    Pointer token to the current scenario.
+ *
+ */
+ncAtomicInstruction ncLbGetNextMaskInstruction(ncLightBoostScenario *scenario);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
