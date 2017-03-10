@@ -45,7 +45,7 @@ typedef enum{
   DFU_SEND_NEXT = 0x00, /**< send data stored in output frame */
   DFU_RESEND,           /**< resend previous data set */
   DFU_TERM,             /**< Mask encoutered critical error in DFU mode */
-  DFU_FINISHED          /**< Update finished */
+  DFU_FINISHED          /**< Update finished (send last frame)*/
 }ncDfuAction;
 
 /**
