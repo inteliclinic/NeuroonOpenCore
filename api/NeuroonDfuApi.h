@@ -83,7 +83,7 @@ int ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
  *
  * @return returns next step for update
  */
-int ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len,
+int ncDfuResponseSink(char* frame, size_t *len, char *responseFrame, size_t responseLen,
     ncDfuAction *action);
 
 /**

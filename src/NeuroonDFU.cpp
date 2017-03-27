@@ -10,6 +10,7 @@
 #include "NeuroonDfuApi.h"
 #include "../external_modules/unified_communication/API/ic_dfu.h"
 #include <iostream>
+#include <cstdint>
 
 #define PRINT_DBG_INFO std::cout<<"running: "<<__FILE__<<"::"<<__func__<<std::endl
 
@@ -20,7 +21,7 @@ int ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware){
   return goto_dfu(frame, len, _firmware);
 }
 
-int ncDfuResponseSink(char *responseFrame, size_t responseLen, char* frame, size_t *len,
+int ncDfuResponseSink(char* frame, size_t *len, char *responseFrame, size_t responseLen,
     ncDfuAction *action){
   e_dfuAction _action;
   int retVal = dfu_response_sink(responseFrame, responseLen, frame, len, &_action);
