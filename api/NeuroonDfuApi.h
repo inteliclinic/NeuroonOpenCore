@@ -60,28 +60,27 @@ typedef enum{
 /**
  * @brief Generate "go to dfu" command
  *
- * @param[out]  frame     pointer to 20 bytes array where frame will be
- * stored
- * @param[out]  len       pointer to size_t value where function will put length
- * of array
+ * @param[out]  frame     pointer to 20 bytes array where frame will be stored
+ * @param[out]  len       pointer to size_t value where function will put length of array
  * @param[in]   firmware  choose firmware type
  *
- * @return true if function was able to generate frame, false otherwise(ex.
- * wrong frame len or unsupported firmware)
+ * @return characteristic index. Value of 0xFF means an error occurred
+ *
  */
 int ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
 
 /**
  * @brief Receive data from rdfu response characteristic
  *
+ * @param[out]  frame         pointer to 20 bytes array where binary data will be stored
+ * @param[out]  len           pointer to size_t value where function will put length of array
  * @param[in]   responseFrame 20 byte array with response frame
  * @param[in]   responseLen   response array length
- * @param[out]  frame         pointer to 20 bytes array where binary data will
- *                            be stored
- * @param[out]  len           pointer to size_t value where function will pit
- *                            output frame length
+ * @param[out]  action        pointer to a memory where desired action will be storred
+ *                            @ref ncDfuAction
  *
- * @return returns next step for update
+ * @return characteristic index. Value of 0xFF means an error occurred
+ *
  */
 int ncDfuResponseSink(char* frame, size_t *len, char *responseFrame, size_t responseLen,
     ncDfuAction *action);
@@ -96,8 +95,8 @@ int ncDfuResponseSink(char* frame, size_t *len, char *responseFrame, size_t resp
  * @param[in]   firm      type of firmware @ref ncFirmwareType
  * @param[in]   version   binary version build from 4 bytes. Ex 16777985 = 1.0.3.1
  *
- * @return true if function was able to generate frame, false otherwise(ex.
- * wrong frame len)
+ * @return characteristic index. Value of 0xFF means an error occurred
+ *
  */
 int ncDfuStartUpdate(char *frame, size_t *len, char *fb, size_t file_len, ncFirmwareType firm,
     uint32_t version);
