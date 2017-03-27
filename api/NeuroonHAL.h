@@ -21,6 +21,34 @@ typedef char ncCharacteristicsNames[NC_CHARACTERISTICS_NO][NC_CHARACTERISTIC_LEN
 
 void ncNeuroonHalInit(ncCharacteristicsNames chars);
 
+// NEURON CHARACTERISTICS
+/*
+ * Notificable characteristics
+ */
+int ncGetEEGCharacteristicIndex();
+int ncGetPATCharacteristicIndex();
+int ncGetStatusCharacteristicIndex();
+int ncGetResponseCharacteristicIndex();
+
+/*
+ * Non-notificable characteristics
+ */
+int ncGetCMDCharacteristicIndex();
+
+//DFU CHARACTERISTICS
+
+/*
+ * Notificable characteristics
+ */
+int ncGetDFUSettingsTxCharacteristicIndex();
+int ncGetDFUTxCharacteristicIndex();
+
+/*
+ * Non-notificable characteristics
+ */
+int ncGetDFUSettingsRxCharacteristicIndex();
+int ncGetDFURxCharacteristicIndex();
+
 #ifdef __cplusplus
 }
 #endif
