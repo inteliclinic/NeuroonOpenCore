@@ -22,6 +22,10 @@
 #ifndef NEUROONMASKSCENARIOSAPI_H
 #define NEUROONMASKSCENARIOSAPI_H
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 #include "NeuroonApiCommons.h"
@@ -115,6 +119,15 @@ ncLucidDreamScenario *ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
 void ncLdDestroyScenario(ncLucidDreamScenario *);
+
+/** @brief Checks if data in queue is available
+ *
+ *  @param[in]  scenario    Pointer token to the current scenario.
+ *
+ *  @return When true, frame is available
+ *
+ */
+bool ncLucidAvailableMaskInstruction(ncLucidDreamScenario *scenario);
 
 /** @brief Gets a frame instructions to the Neuroon Mask according scenario stage
  *
@@ -279,10 +292,10 @@ typedef struct {
  *          Keep it and pass it to interface functions wrt powernap
  *          scenario.
  */
-ncPowernapScenario *ncWuInitScenario(ncPowernapScenarioInitArgs initArgs);
+ncPowernapScenario *ncPnInitScenario(ncPowernapScenarioInitArgs initArgs);
 
 /** @brief Destroys scenario releasing hold memory. */
-void ncWuDestroyScenario(ncPowernapScenario *);
+void ncPnDestroyScenario(ncPowernapScenario *);
 
 /** @brief Gets an array of direct instructions to the Neuroon Mask according
  *         to update parameters
@@ -292,7 +305,7 @@ void ncWuDestroyScenario(ncPowernapScenario *);
  *                          update
  */
 ncMaskInstructionList
-ncWuGetMaskInstructions(ncPowernapScenario *scenario,
+ncPnGetMaskInstructions(ncPowernapScenario *scenario,
                          const ncPowernapScenarioInput *updateArgs);
 
 // -------------------- CIRCADIAN RHYTHM ADJUSTMENT SCENARIO -------------------
@@ -458,5 +471,7 @@ typedef enum {
 ncFrameValidation ncResponseSink(void *scenarioPtr, char *cmdFrame,
                                 size_t cmdLen, char *responseFrame,
                                 size_t responseLen);
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* !NEUROONMASKSCENARIOSAPI_H */

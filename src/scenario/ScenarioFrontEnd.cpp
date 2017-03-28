@@ -9,6 +9,7 @@
 
 #include <queue>
 #include <cstring>
+#include <iostream>
 #include "NeuroonMaskScenariosApi.h"
 #include "ic_low_level_control.h"
 #include "GenericScenarioTemplates.h"
@@ -77,8 +78,9 @@ struct LightBoostScenario:BaseScenario{
 
 static std::queue<ncAtomicInstruction> loadDefaultScenario(void);
 static ncAtomicInstruction getNextMaskInstruction(BaseScenario *scenario);
+static bool availableMaskInstruction(ncLucidDreamScenario *scenario);
 
-ncLucidDreamScenario *ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs){
+ncLucidDreamScenario * ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs){
   auto *_scenario = new LucidDreamScenario;
 
   _scenario->remStabilityTreshold = initArgs.remStabilityTreshold;
@@ -138,7 +140,7 @@ struct LucidDreamSequenceInput{
   }
 };
 
-void lucidDreamSequence(ncLucidDreamScenario *scenario, LucidDreamSequenceInput sequence,
+static void lucidDreamSequence(ncLucidDreamScenario *scenario, LucidDreamSequenceInput sequence,
     unsigned long timestamp){
   ncAtomicInstruction instruction;
   uint8_t intensities[7];
@@ -156,6 +158,13 @@ void lucidDreamSequence(ncLucidDreamScenario *scenario, LucidDreamSequenceInput 
 bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInput *updateArgs){
   #define rem_duration (updateArgs->timestamp - scenario->remStartTimestamp)
 
+  if(scenario->remDetected)
+    if(rem_duration >= 180000
+        && !scenario->remCounted){//TODO: 180000 needs to be a parameter
+      scenario->remCounter++;
+      scenario->remCounted = true;
+    }
+
   if(updateArgs->currentSleep_stage == REM){
     if(!scenario->remDetected){
       scenario->remStartTimestamp = updateArgs->timestamp;
@@ -163,11 +172,6 @@ bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInp
       scenario->remCounted = false;
     }
     else{
-      if(rem_duration >= 180000
-          && !scenario->remCounted){//TODO: 180000 needs to be a parameter
-        scenario->remCounter++;
-        scenario->remCounted = true;
-      }
     }
   }
   else{
@@ -177,6 +181,7 @@ bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInp
     }
     scenario->lucidLoaded = false;
   }
+
 
   switch(scenario->remCounter){
     case 0:
@@ -189,6 +194,7 @@ bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInp
           lucidDreamSequence(scenario, LucidDreamSequenceInput(240000, 5, 5000, 1000),
               updateArgs->timestamp);
           scenario->lucidLoaded = true;
+          return true;
         }
       }
       break;
@@ -198,16 +204,25 @@ bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInp
           lucidDreamSequence(scenario, LucidDreamSequenceInput(240000, 5, 5000, 1000),
               updateArgs->timestamp);
           scenario->lucidLoaded = true;
+          return true;
         }
       }
       break;
   }
-  return true;
+  return false;
 }
 
 
+bool ncLucidAvailableMaskInstruction(ncLucidDreamScenario *scenario){
+  return availableMaskInstruction(scenario);
+}
+
 ncAtomicInstruction ncLucidGetNextMaskInstruction(ncLucidDreamScenario *scenario){
   return getNextMaskInstruction(scenario);
+}
+
+static bool availableMaskInstruction(ncLucidDreamScenario *scenario){
+  return !scenario->dataFiFo.empty();
 }
 
 static ncAtomicInstruction getNextMaskInstruction(BaseScenario *scenario){
