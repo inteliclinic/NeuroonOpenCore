@@ -60,9 +60,10 @@ typedef enum{
 /**
  * @brief Generate "go to dfu" command
  *
- * @param[out]  frame     pointer to 20 bytes array where frame will be stored
- * @param[out]  len       pointer to size_t value where function will put length of array
- * @param[in]   firmware  choose firmware type
+ * @param[out]    frame     pointer to 20 bytes array where frame will be stored
+ * @param[in,out] len       pointer to size_t value where function will put length of array as
+ *                          output. As input provides function with size of allocated frame
+ * @param[in]     firmware  choose firmware type
  *
  * @return characteristic index. Value of 0xFF means an error occurred
  *
@@ -72,11 +73,12 @@ int ncGotoDfu(char *frame, size_t *len, ncFirmwareMilestone firmware);
 /**
  * @brief Receive data from rdfu response characteristic
  *
- * @param[out]  frame         pointer to 20 bytes array where binary data will be stored
- * @param[out]  len           pointer to size_t value where function will put length of array
- * @param[in]   responseFrame 20 byte array with response frame
- * @param[in]   responseLen   response array length
- * @param[out]  action        pointer to a memory where desired action will be storred
+ * @param[out]    frame         pointer to 20 bytes array where binary data will be stored
+ * @param[in,out] len           pointer to size_t value where function will put length of array as
+ *                              output. As input provides function with size of allocated frame
+ * @param[in]     responseFrame 20 byte array with response frame
+ * @param[in]     responseLen   response array length
+ * @param[out]    action        pointer to a memory where desired action will be storred
  *                            @ref ncDfuAction
  *
  * @return characteristic index. Value of 0xFF means an error occurred
@@ -88,12 +90,13 @@ int ncDfuResponseSink(char* frame, size_t *len, char *responseFrame, size_t resp
 /**
  * @brief Generate start update command for dfu
  *
- * @param[out]  frame     pointer to 20 bytes array where frame will be stored
- * @param[out]  len       pointer to size_t value where function will put lenght of array
- * @param[in]   fb        pointer to buffer with binary file
- * @param[in]   file_len  binary file length
- * @param[in]   firm      type of firmware @ref ncFirmwareType
- * @param[in]   version   binary version build from 4 bytes. Ex 16777985 = 1.0.3.1
+ * @param[out]    frame     pointer to 20 bytes array where frame will be stored
+ * @param[in,out] len       pointer to size_t value where function will put length of array as
+ *                          output. As input provides function with size of allocated frame
+ * @param[in]     fb        pointer to buffer with binary file
+ * @param[in]     file_len  binary file length
+ * @param[in]     firm      type of firmware @ref ncFirmwareType
+ * @param[in]     version   binary version build from 4 bytes. Ex 16777985 = 1.0.3.1
  *
  * @return characteristic index. Value of 0xFF means an error occurred
  *

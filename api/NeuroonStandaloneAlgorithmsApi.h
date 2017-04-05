@@ -182,17 +182,17 @@ JetLagTherapyState *create_jetlag_therapy(unix_timestamp flight_date,
                                           DIRECTION flight_direction,
                                           unsigned char timezone_difference);
 
-/** Generate "go to dfu" command
+/**
  *
- *  @param[out]  frame     pointer to 20 bytes array where frame will be
- *                         stored
- *  @param[out]  len       pointer to size_t value where function will put
- * length
- *                         of array
- *  @param[in]   firmware  choose firmware type
  *
- *  @return true if function was able to generate frame, false otherwise(ex.
- *  wrong frame len or unsupported firmware)
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
 void destroy_jet_lag_therapy(JetLagTherapyState *therapy);
 
