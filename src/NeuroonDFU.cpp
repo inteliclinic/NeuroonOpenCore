@@ -28,12 +28,16 @@ int ncDfuResponseSink(char* frame, size_t *len, char *responseFrame, size_t resp
   switch(_action){
     case DFU_SEND_NEXT_DATASET:
       *action = DFU_SEND_NEXT;
+      break;
     case DFU_RESEND_DATASET:
       *action = DFU_RESEND;
+      break;
     case DFU_TERMINATE:
       *action = DFU_TERM;
+      break;
     case DFU_END:
       *action = DFU_FINISHED;
+      break;
   }
   return retVal;
 }
