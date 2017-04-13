@@ -32,3 +32,5 @@ ncAtomicInstruction BaseScenario::getNextInstruction(){
 void BaseScenario::loadDefaultScenario(){
   killAllDevices(m_dataFiFo);
 }
+
+BaseScenario::~BaseScenario(){}

@@ -11,7 +11,7 @@
 #define GENERICSCENARIOTEMPLATES_H
 
 #include <queue>
-#include "NeuroonMaskScenariosApi.h"
+#include "NeuroonMaskScenariosApiNew.h"
 
 void killAllDevices(std::queue<ncAtomicInstruction> &inQueue);
 

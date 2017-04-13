@@ -11,64 +11,71 @@
 #include "ic_low_level_control.h"
 
 LucidDreamScenario::LucidDreamScenario():
-  remCounter(0),
-  remStartTimestamp(0),
-  remDetected(false),
-  remCounted(false),
-  lucidLoaded(false) {}
+  m_remCounter(0),
+  m_remStartTimestamp(0),
+  m_remDetected(false),
+  m_remCounted(false),
+  m_lucidLoaded(false) {}
 
-bool LucidDreamScenario::update(const ScenarioInput *updateArgs){
-  #define remDuration (updateArgs->lucidDream.timestamp - remStartTimestamp)
+LucidDreamScenario::LucidDreamScenario(const ncScenarioInitArgs *args):
+  m_startingIntensity(args->lucidDream.startingIntensity),
+  m_remStabilityTreshold(args->lucidDream.remStabilityTreshold) {
+  LucidDreamScenario();
+}
 
-  if(remDetected)
+ncUpdateOutput LucidDreamScenario::update(const ncScenarioInput *updateArgs){
+  #define remDuration (updateArgs->lucidDream.timestamp - m_remStartTimestamp)
+
+  if(m_remDetected)
     if(remDuration >= 180000
-        && !remCounted){//TODO: 180000 needs to be a parameter
-      remCounter++;
-      remCounted = true;
+        && !m_remCounted){//TODO: 180000 needs to be a parameter
+      m_remCounter++;
+      m_remCounted = true;
     }
 
   if(updateArgs->lucidDream.currentSleep_stage == REM){
-    if(!remDetected){
-      remStartTimestamp = updateArgs->lucidDream.timestamp;
-      remDetected = true;
-      remCounted = false;
+    if(!m_remDetected){
+      m_remStartTimestamp = updateArgs->lucidDream.timestamp;
+      m_remDetected = true;
+      m_remCounted = false;
     }
     else{
     }
   }
   else{
-    if(remDetected){
-      remDetected = false;
-      remCounted = false;
+    if(m_remDetected){
+      m_remDetected = false;
+      m_remCounted = false;
     }
-    lucidLoaded = false;
+    m_lucidLoaded = false;
   }
 
-  switch(remCounter){
+  switch(m_remCounter){
     case 0:
     case 1:
     case 2:
       break;
     case 3:
       if(remDuration >= 300000){//TODO: 300000 needs to ba a parameter
-        if(!lucidLoaded){
+        if(!m_lucidLoaded){
           lucidDreamSequence(240000, 5, 5000, 1000, updateArgs->lucidDream.timestamp);
-          lucidLoaded = true;
-          return true;
+          m_lucidLoaded = true;
+          return UPDATE_NEW_DATA;
         }
       }
       break;
     default:
       if(remDuration >= 600000){//TODO: 600000 needs to ba a parameter
-        if(!lucidLoaded){
+        if(!m_lucidLoaded){
           lucidDreamSequence(240000, 5, 5000, 1000, updateArgs->lucidDream.timestamp);
-          lucidLoaded = true;
-          return true;
+          m_lucidLoaded = true;
+          return UPDATE_NEW_DATA;
         }
       }
       break;
   }
-  return false;
+
+  return UPDATE_OK;
 }
 
 void LucidDreamScenario::lucidDreamSequence(unsigned long length, unsigned long numberOfActions,

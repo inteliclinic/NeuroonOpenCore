@@ -13,21 +13,22 @@
 #include "BaseScenario.h"
 
 struct LucidDreamScenario:BaseScenario{
-  ncLucidPulsesIntensity startingIntensity;
-  ncLucidRemStabilityTreshold remStabilityTreshold;
+  ncLucidPulsesIntensity m_startingIntensity;
+  ncLucidRemStabilityTreshold m_remStabilityTreshold;
 
-  unsigned long remCounter;
-  unsigned long remStartTimestamp;
-  bool remDetected;
-  bool remCounted;
+  unsigned long m_remCounter;
+  unsigned long m_remStartTimestamp;
+  bool m_remDetected;
+  bool m_remCounted;
 
-  bool lucidLoaded;
+  bool m_lucidLoaded;
 
   LucidDreamScenario();
+  LucidDreamScenario(const ncScenarioInitArgs *args);
+
   void lucidDreamSequence(unsigned long length, unsigned long numberOfActions,
       unsigned long actionDuration, unsigned long actionPeriod, unsigned long timestamp);
-  bool update(const ScenarioInput *updateArgs);
-
+  ncUpdateOutput update(const ncScenarioInput *updateArgs);
 };
 
 #endif /* !LUCIDDREAMSCENARIO_H */

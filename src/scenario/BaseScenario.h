@@ -12,25 +12,19 @@
 
 #include <cstring>
 #include <queue>
-#include "NeuroonMaskScenariosApi.h"
-
-union ScenarioInput{
-  ncLucidDreamScenarioInput lucidDream;
-  ncWakeUpScenarioInput wakeUp;
-  ncPowernapScenarioInput powerNap;
-  ncLightBoostScenarioInput lightBoost;
-  ncCircadianRhythmAdjustmentScenarioInput circadianRyth;
-};
+#include "NeuroonMaskScenariosApiNew.h"
 
 class BaseScenario {
   public:
-  virtual bool update(const ScenarioInput *) = 0;
-  bool availableMaskInstruction();
-  ncAtomicInstruction getNextInstruction();
-  void pushInstruction(ncAtomicInstruction &instruction);
-  void loadDefaultScenario();
+    virtual ncUpdateOutput update(const ncScenarioInput *) = 0;
+    virtual ~BaseScenario() = 0;
+    bool availableMaskInstruction();
+    ncAtomicInstruction getNextInstruction();
+    void pushInstruction(ncAtomicInstruction &instruction);
+    void loadDefaultScenario();
+
   private:
-  std::queue<ncAtomicInstruction> m_dataFiFo;
+    std::queue<ncAtomicInstruction> m_dataFiFo;
 };
 
 #endif /* !BASESCENARIO_H */

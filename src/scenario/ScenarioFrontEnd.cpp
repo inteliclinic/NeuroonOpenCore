@@ -10,8 +10,10 @@
 #include <queue>
 #include <iostream>
 #include <cstdint>
-#include "NeuroonMaskScenariosApi.h"
+//#include "NeuroonMaskScenariosApi.h"
+#include "NeuroonMaskScenariosApiNew.h"
 #include "BaseScenario.h"
+#include "SleepScenario.h"
 #include "GenericScenarioTemplates.h"
 #include "LucidDreamScenario.h"
 
@@ -26,14 +28,14 @@ typedef struct{
 struct LightBoostScenario:BaseScenario{
   unsigned int lenthInSeconds;
   unsigned char intensity;
-  bool update(const ScenarioInput *updateArgs);
+  ncUpdateOutput update(const ncScenarioInput *updateArgs);
   LightBoostScenario() :
     lenthInSeconds(0),
     intensity(0) {}
 };
 
-bool LightBoostScenario::update(const ScenarioInput *updateArgs){
-  return false;
+ncUpdateOutput LightBoostScenario::update(const ncScenarioInput *updateArgs){
+  return UPDATE_OK;
 }
 
 struct WakeUpScenario:BaseScenario{
@@ -49,42 +51,30 @@ static std::queue<ncAtomicInstruction> loadDefaultScenario(void);
 static ncAtomicInstruction getNextMaskInstruction(BaseScenario *scenario);
 static bool availableMaskInstruction(ncLucidDreamScenario *scenario);
 
-ncLucidDreamScenario * ncLucidInitScenario(ncLucidDreamScenarioArgs initArgs){
-  auto *_scenario = new LucidDreamScenario;
-
-  _scenario->remStabilityTreshold = initArgs.remStabilityTreshold;
-  _scenario->startingIntensity = initArgs.startingIntensity;
-  _scenario->loadDefaultScenario();
-
-  return _scenario;
+ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args){
+  switch(scenarioType){
+    case SCENARIO_LUCIDDREAM:
+      return reinterpret_cast<ncScenario>(new LucidDreamScenario(args));
+    case SCENARIO_SLEEP:
+      return reinterpret_cast<ncScenario>(new SleepScenario(args));
+    case SCENARIO_POWERNAP:
+    case SCENARIO_CIRCADIANRHYTHM:
+    case SCENARIO_LIGHTBOOST:
+      return NULL;
+  }
 }
 
-void ncLbDestroyScenario(ncLightBoostScenario *_scenario){
-  delete _scenario;
+ncAtomicInstruction ncGetNextInstruction(ncScenario scenario){
+  return reinterpret_cast<BaseScenario *>(scenario)->getNextInstruction();
 }
 
-ncAtomicInstruction ncLbGetNextMaskInstruction(ncLightBoostScenario *scenario){
-  return getNextMaskInstruction(scenario);
+ncUpdateOutput ncScenarioUpdate(ncScenario scenario, const ncScenarioInput *updateArgs){
+  return reinterpret_cast<BaseScenario *>(scenario)->update(updateArgs);
 }
 
-ncMaskInstructionList ncLbGetMaskInstructions(ncLightBoostScenario *scenario,
-                         const ncLightBoostScenarioInput *updateArgs){
-  ncMaskInstructionList retVal = {0, NULL};
-  return retVal;
+void ncDestroyScenario(ncScenario scenario){
+  delete reinterpret_cast<BaseScenario *>(scenario);
 }
-
-bool ncLucidUpdate(ncLucidDreamScenario *scenario, const ncLucidDreamScenarioInput *updateArgs){
-  return scenario->update(reinterpret_cast<const ScenarioInput *>(updateArgs));
-}
-
-bool ncLucidAvailableMaskInstruction(ncLucidDreamScenario *scenario){
-  return scenario->availableMaskInstruction();
-}
-
-ncAtomicInstruction ncLucidGetNextMaskInstruction(ncLucidDreamScenario *scenario){
-  return getNextMaskInstruction(scenario);
-}
-
-static ncAtomicInstruction getNextMaskInstruction(BaseScenario *scenario){
-  return scenario->getNextInstruction();
+bool ncAvailableMaskInstruction(ncScenario scenario){
+  return reinterpret_cast<BaseScenario *>(scenario)->availableMaskInstruction();
 }
