@@ -10,8 +10,7 @@
 #include <queue>
 #include <iostream>
 #include <cstdint>
-//#include "NeuroonMaskScenariosApi.h"
-#include "NeuroonMaskScenariosApiNew.h"
+#include "NeuroonMaskScenariosApi.h"
 #include "BaseScenario.h"
 #include "SleepScenario.h"
 #include "GenericScenarioTemplates.h"

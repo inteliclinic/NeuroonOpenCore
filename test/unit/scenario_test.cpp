@@ -8,7 +8,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "NeuroonMaskScenariosApiNew.h"
+#include "NeuroonMaskScenariosApi.h"
 #include <stdio.h>
 
 TEST(ScenarioTest, generate_basic_scenario){

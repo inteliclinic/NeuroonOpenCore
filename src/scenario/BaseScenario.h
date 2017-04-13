@@ -12,7 +12,7 @@
 
 #include <cstring>
 #include <queue>
-#include "NeuroonMaskScenariosApiNew.h"
+#include "NeuroonMaskScenariosApi.h"
 
 class BaseScenario {
   public:
