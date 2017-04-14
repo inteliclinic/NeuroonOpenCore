@@ -88,7 +88,7 @@ void LucidDreamScenario::lucidDreamSequence(unsigned long length, unsigned long 
     device_set_func(instruction.data, &len, DEV_POWER_LED|DEV_RIGHT_RED_LED|DEV_LEFT_RED_LED,
         FUN_TYPE_BLINK, intensities, actionDuration/100, actionPeriod/100, 0);
     instruction.time = timestamp;
-    this->pushInstruction(instruction);
+    pushInstruction(instruction);
     timestamp += numberOfActions>1 ? length/(numberOfActions - 1) : 0;
   }
 }
