@@ -17,16 +17,17 @@ typedef enum{
 }WakeUpType;
 
 
-struct SleepScenario:BaseScenario {
-  SleepScenario();
-  SleepScenario(const ncScenarioInitArgs *args);
+class SleepScenario: public BaseScenario {
+  public:
+    SleepScenario();
+    SleepScenario(const ncScenarioInitArgs *args);
 
-  struct {
-    unsigned long wakeUpDownCounter;
-    WakeUpType wakeUp;
-  }wakeUpParameters;
+    struct {
+      unsigned long wakeUpDownCounter;
+      WakeUpType wakeUp;
+    }wakeUpParameters;
 
-  virtual ncUpdateOutput update(const ncScenarioInput *);
+    virtual ncUpdateOutput update(const ncScenarioInput *);
 };
 
 #endif /* !SLEEPSCENARIO_H */
