@@ -24,7 +24,7 @@ LucidDreamScenario::LucidDreamScenario(const ncScenarioInitArgs *args):
 }
 
 ncUpdateOutput LucidDreamScenario::update(const ncScenarioInput *updateArgs){
-  #define remDuration (updateArgs->lucidDream.timestamp - m_remStartTimestamp)
+  unsigned long long remDuration = updateArgs->lucidDream.timestamp - m_remStartTimestamp;
 
   if(m_remDetected)
     if(remDuration >= 180000
@@ -36,6 +36,7 @@ ncUpdateOutput LucidDreamScenario::update(const ncScenarioInput *updateArgs){
   if(updateArgs->lucidDream.currentSleep_stage == REM){
     if(!m_remDetected){
       m_remStartTimestamp = updateArgs->lucidDream.timestamp;
+      remDuration = 0;
       m_remDetected = true;
       m_remCounted = false;
     }

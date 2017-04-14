@@ -14,22 +14,19 @@
 
 class LucidDreamScenario: SleepScenario{
   public:
+    LucidDreamScenario();
+    LucidDreamScenario(const ncScenarioInitArgs *args);
+    ncUpdateOutput update(const ncScenarioInput *updateArgs);
+  private:
     ncLucidPulsesIntensity m_startingIntensity;
     ncLucidRemStabilityTreshold m_remStabilityTreshold;
-
     unsigned long m_remCounter;
     unsigned long m_remStartTimestamp;
     bool m_remDetected;
     bool m_remCounted;
-
     bool m_lucidLoaded;
-
-    LucidDreamScenario();
-    LucidDreamScenario(const ncScenarioInitArgs *args);
-
     void lucidDreamSequence(unsigned long length, unsigned long numberOfActions,
         unsigned long actionDuration, unsigned long actionPeriod, unsigned long timestamp);
-    ncUpdateOutput update(const ncScenarioInput *updateArgs);
 };
 
 #endif /* !LUCIDDREAMSCENARIO_H */
