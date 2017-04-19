@@ -46,10 +46,6 @@ struct PowernapScenario:BaseScenario{
 struct CircadianRhythmAdjustmentScenario:BaseScenario{
 };
 
-static std::queue<ncAtomicInstruction> loadDefaultScenario(void);
-static ncAtomicInstruction getNextMaskInstruction(BaseScenario *scenario);
-static bool availableMaskInstruction(ncLucidDreamScenario *scenario);
-
 ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args){
   switch(scenarioType){
     case SCENARIO_LUCIDDREAM:
@@ -74,6 +70,7 @@ ncUpdateOutput ncScenarioUpdate(ncScenario scenario, const ncScenarioInput *upda
 void ncDestroyScenario(ncScenario scenario){
   delete reinterpret_cast<BaseScenario *>(scenario);
 }
+
 bool ncAvailableMaskInstruction(ncScenario scenario){
   return reinterpret_cast<BaseScenario *>(scenario)->availableMaskInstruction();
 }

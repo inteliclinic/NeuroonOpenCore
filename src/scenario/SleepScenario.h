@@ -11,13 +11,14 @@
 #define SLEEPSCENARIO_H
 
 #include "BaseScenario.h"
+#include "MacroScenario.h"
 
 typedef enum{
 
 }WakeUpType;
 
 
-class SleepScenario: public BaseScenario {
+class SleepScenario: protected MacroScenario {
   public:
     SleepScenario();
     SleepScenario(const ncScenarioInitArgs *args);
