@@ -12,7 +12,7 @@
 
 #include <map>
 #include "MicroScenario.h"
-#include "TriggerScenario.h"
+#include "ScenarioTrigger.h"
 
 class MacroScenario{
   public:
@@ -25,7 +25,6 @@ class MacroScenario{
 
   protected:
     void loadDefaultScenario();
-    std::map<TriggerScenario *, MicroScenario *> m_triggerMap;
 
   private:
     std::queue<ncAtomicInstruction> m_dataFiFo;
