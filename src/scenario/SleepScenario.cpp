@@ -9,10 +9,8 @@
 
 #include "SleepScenario.h"
 
-SleepScenario::SleepScenario(){
-}
 
-SleepScenario::SleepScenario(const ncScenarioInitArgs *args){
+SleepScenario::SleepScenario(const ncScenarioInitArgs *args) : MacroScenario(args) {
 }
 
 ncUpdateOutput SleepScenario::update(const ncScenarioInput *scenarioInput){

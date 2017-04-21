@@ -12,30 +12,23 @@
 
 #include "IScenarioTrigger.h"
 #include "NeuroonMaskScenariosApi.h"
+#include "Scenario.h"
 #include <map>
-#include <set>
 #include <queue>
+#include <set>
 
 typedef int Key;
 
-class MicroScenario {
+class MicroScenario : public Scenario {
 public:
   ncUpdateOutput refresh();
-
-  bool availableMaskInstruction();
-  ncAtomicInstruction getNextInstruction();
-
   void uninstallTrigger(IScenarioTrigger *);
 
 protected:
   void installTriggerForKey(const IScenarioTrigger *, Key);
-  virtual ncUpdateOutput update(const std::set<Key>&) = 0;
-  void clearInstructions();
-  void pushInstruction(ncAtomicInstruction &instruction);
-  void pushInstructions(ncAtomicInstruction *, std::size_t);
+  virtual ncUpdateOutput update(const std::set<Key> &) = 0;
 
 private:
-  std::queue<ncAtomicInstruction> m_dataFiFo;
   std::map<const IScenarioTrigger *, Key> _triggers;
 };
 

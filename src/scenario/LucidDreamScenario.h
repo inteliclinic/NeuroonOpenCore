@@ -14,7 +14,6 @@
 
 class LucidDreamScenario: SleepScenario{
   public:
-    LucidDreamScenario();
     LucidDreamScenario(const ncScenarioInitArgs *args);
     ncUpdateOutput update(const ncScenarioInput *updateArgs);
   private:

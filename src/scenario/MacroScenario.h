@@ -10,24 +10,19 @@
 #ifndef MACROSCENARIO_H
 #define MACROSCENARIO_H
 
-#include <map>
 #include "MicroScenario.h"
+#include "Scenario.h"
 #include "ScenarioTrigger.h"
 
-class MacroScenario{
-  public:
-    MacroScenario();
-    virtual ncUpdateOutput update(const ncScenarioInput *) = 0;
-    virtual ~MacroScenario() = 0;
-    bool availableMaskInstruction();
-    ncAtomicInstruction getNextInstruction();
-    void pushInstruction(ncAtomicInstruction &instruction);
+#include <map>
 
-  protected:
-    void loadDefaultScenario();
+class MacroScenario : public Scenario{
+public:
 
-  private:
-    std::queue<ncAtomicInstruction> m_dataFiFo;
+  MacroScenario(const ncScenarioInitArgs* args) {}
+  virtual ncUpdateOutput update(const ncScenarioInput *) = 0;
+  virtual ~MacroScenario() {}
+
 };
 
 #endif /* !MACROSCENARIO_H */
