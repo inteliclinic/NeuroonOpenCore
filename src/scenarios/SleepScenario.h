@@ -18,6 +18,11 @@ typedef enum {
 } WakeUpType;
 
 class SleepScenario : public MacroScenario {
+protected:
+  ncUnixTimestamp currentMoment() const override{
+    // [TODO]
+    return 0;
+  }
 public:
   SleepScenario(const ncScenarioInitArgs *args);
   virtual ~SleepScenario() {}
@@ -27,7 +32,7 @@ public:
     WakeUpType wakeUp;
   } wakeUpParameters;
 
-  virtual ncUpdateOutput update(const ncScenarioInput *);
+  virtual ncUpdateOutput update(const ncScenarioInput *) override;
 };
 
 #endif /* !SLEEPSCENARIO_H */

@@ -16,6 +16,7 @@ class LucidDreamScenario: SleepScenario{
   public:
     LucidDreamScenario(const ncScenarioInitArgs *args);
     ncUpdateOutput update(const ncScenarioInput *updateArgs);
+protected:
   private:
     ncLucidPulsesIntensity m_startingIntensity;
     ncLucidRemStabilityTreshold m_remStabilityTreshold;
