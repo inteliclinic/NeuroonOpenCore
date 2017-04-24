@@ -21,49 +21,57 @@ void Scenario::clearInstructions() {
   std::swap(this->_data_queue, empty);
 }
 
-void Scenario::pushInstruction(ncAtomicInstruction &instruction,
-                               QueueInsertMode mode) {
+ncAtomicInstruction Scenario::_adaptTimestamp(const ncAtomicInstruction &instr,
+                                              InstructionInsertMode mode) {
+  auto ret = instr;
+  switch (mode) {
+  case InstructionInsertMode::ABSOLUTE:
+    break;
 
-  // [TODO]
-  // switch (mode) {
-  // case QueueInsertMode::Q_INSERT_NOW:
-  //   instruction.time = this->currentMoment();
-  //   break;
-  // case QueueInsertMode::Q_INSERT_ABSOLUTE:{
+  case InstructionInsertMode::NOW:
+    ret.time = this->currentMoment();
+    break;
 
-  //   if(instruction.time >= this->_last_instruction->time){
-  //     // [TODO]
-  //     this->_last_instruction = &instruction;
-  //   }
-  //   break;
-  // }
-  // case QueueInsertMode::Q_INSERT_LAST:
-  //   if(this->_data_queue.empty()){
-  //     this->_data_queue.push(instruction);
-  //     this->_last_instruction = &(this->_data_queue.top());
-      
-  //   }
-  //   break;
-  // }
-
-  // if()
-
-  // this->_data_queue.push(instruction);
+  case InstructionInsertMode::LAST:
+    if (!this->_data_queue.empty()) {
+      ret.time = this->_last_instruction.time + 1;
+    }
+    break;
+  }
+  return ret;
 }
 
-void Scenario::pushInstructions(
-                                const std::vector<ncAtomicInstruction> &instrs,
-                                QueueInsertMode mode) {
-  // TODO
+bool Scenario::_insertInstructionHelper(const ncAtomicInstruction &instr) {
+  bool ret = false;
+  if ((!this->_data_queue.empty() &&
+       this->_last_instruction.time <= instr.time) ||
+      !this->_data_queue.empty()) {
+    this->_last_instruction = instr;
+    ret = true;
+  }
+  this->_data_queue.push(instr);
+  return ret;
+}
+
+void Scenario::pushInstruction(const ncAtomicInstruction &instruction,
+                               InstructionInsertMode mode) {
+  this->_insertInstructionHelper(this->_adaptTimestamp(instruction, mode));
+}
+
+void Scenario::pushInstructions(const std::vector<ncAtomicInstruction> &instrs,
+                                InstructionInsertMode mode) {
+  if (instrs.empty())
+    return;
+  auto ains = this->_adaptTimestamp(instrs[0], mode);
+  auto ts_diff = ains.time - instrs[0].time;
   for (auto ins : instrs) {
-    this->pushInstruction(ins);
+    ains = ins; // copy to leave input args unchanged
+    ains.time += ts_diff;
+    this->pushInstruction(ins, InstructionInsertMode::ABSOLUTE);
   }
 }
 
-void Scenario::pushInstructions(ncAtomicInstruction *instrs, std::size_t cnt,
-                                QueueInsertMode mode) {
-  // TODO
-  for (std::size_t i = 0; i < cnt; i++) {
-    this->pushInstruction(instrs[i]);
-  }
+void Scenario::pushInstructions(const ncAtomicInstruction *instrs,
+                                std::size_t cnt, InstructionInsertMode mode) {
+  return this->pushInstructions({instrs, instrs + cnt}, mode);
 }

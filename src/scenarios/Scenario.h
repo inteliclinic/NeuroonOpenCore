@@ -7,7 +7,7 @@
 #include <set>
 #include <vector>
 
-enum class QueueInsertMode{ Q_INSERT_NOW, Q_INSERT_LAST, Q_INSERT_ABSOLUTE };
+enum class InstructionInsertMode { NOW, LAST, ABSOLUTE };
 
 class Scenario {
 
@@ -18,25 +18,35 @@ public:
   virtual ~Scenario() {}
 
 protected:
-
   virtual ncUnixTimestamp currentMoment() const = 0;
   void clearInstructions();
 
-  void pushInstruction(ncAtomicInstruction &instruction, QueueInsertMode mode=QueueInsertMode::Q_INSERT_LAST);
-  void pushInstructions(const std::vector<ncAtomicInstruction> & instrs,QueueInsertMode mode=QueueInsertMode::Q_INSERT_LAST);
-  void pushInstructions(ncAtomicInstruction * instrs, std::size_t sz,QueueInsertMode mode=QueueInsertMode::Q_INSERT_LAST);
+  void
+  pushInstruction(const ncAtomicInstruction &instruction,
+                  InstructionInsertMode mode = InstructionInsertMode::LAST);
+  void
+  pushInstructions(const std::vector<ncAtomicInstruction> &instrs,
+                   InstructionInsertMode mode = InstructionInsertMode::LAST);
+  void
+  pushInstructions(const ncAtomicInstruction *instrs, std::size_t sz,
+                   InstructionInsertMode mode = InstructionInsertMode::LAST);
 
 private:
-  struct Cmp
-  {
-    bool operator()(const ncAtomicInstruction& lhs, const ncAtomicInstruction& rhs)
-    {
-      return lhs.time>rhs.time;
+  struct Cmp {
+    bool operator()(const ncAtomicInstruction &lhs,
+                    const ncAtomicInstruction &rhs) {
+      return lhs.time > rhs.time;
     }
   };
 
-  std::priority_queue<ncAtomicInstruction, std::vector<ncAtomicInstruction>, Cmp> _data_queue;
-  ncAtomicInstruction* _last_instruction = nullptr;
+  std::priority_queue<ncAtomicInstruction, std::vector<ncAtomicInstruction>,
+                      Cmp>
+      _data_queue;
+
+  bool _insertInstructionHelper(const ncAtomicInstruction &instr);
+  ncAtomicInstruction _adaptTimestamp(const ncAtomicInstruction &instr,
+                                      InstructionInsertMode mode);
+  ncAtomicInstruction _last_instruction;
 };
 
 #endif
