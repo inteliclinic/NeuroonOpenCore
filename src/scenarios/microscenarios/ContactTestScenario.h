@@ -16,7 +16,6 @@
 #include "NeuroonApiCommons.h"
 #include <vector>
 
-
 class ContactTestScenario : public MicroScenario {
 
 private:
@@ -30,17 +29,19 @@ private:
   float _intensity;
 
   std::vector<ncAtomicInstruction> _lights_on_instructions = {};
-  std::vector<ncAtomicInstruction> _lights_off_instructions {};
+  std::vector<ncAtomicInstruction> _lights_off_instructions{};
 
-  const std::vector<ncAtomicInstruction> & _getLightsOnInstructions();
-  const std::vector<ncAtomicInstruction> & _getLightsOffInstructions();
+  const std::vector<ncAtomicInstruction> &_getLightsOnInstructions();
+  const std::vector<ncAtomicInstruction> &_getLightsOffInstructions();
+
+  ncUpdateOutput _turnOffOrCancelLights();
+  ncUpdateOutput _turnOnOrRescheduleLights();
 
 public:
+  ContactTestScenario() : ContactTestScenario(0xff, 0x80, 0x00, 0.9) {}
 
-  ContactTestScenario() : ContactTestScenario(0xff,0x80,0x00, 0.9) {}
-
-  ContactTestScenario(int r, int g, int b, float intensity=1.0) :
-    _r(r), _g(g), _b(b), _intensity(intensity) {}
+  ContactTestScenario(int r, int g, int b, float intensity = 1.0)
+      : _r(r), _g(g), _b(b), _intensity(intensity) {}
 
   ncUpdateOutput go(const std::set<Key> &triggers) override;
   ncUpdateOutput onFinish() override;
