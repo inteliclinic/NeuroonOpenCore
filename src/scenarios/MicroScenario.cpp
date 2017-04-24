@@ -45,7 +45,9 @@ ncUpdateOutput MicroScenario::refresh(ncUnixTimestamp ts,
     return ret;
   }
   case MS_FINISH:
-    return this->onFinish();
+    auto ret = this->onFinish();
+    this->_is_finished = true;
+    return ret;
   }
 }
 
