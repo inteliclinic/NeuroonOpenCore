@@ -42,8 +42,8 @@ private:
 protected:
   void installTriggerForKey(const IScenarioTrigger *, Key);
   virtual ncUpdateOutput go(const std::set<Key> &) = 0;
-  virtual ncUpdateOutput mute() = 0;
-  virtual ncUpdateOutput finish() = 0;
+  virtual ncUpdateOutput onMute() = 0;
+  virtual ncUpdateOutput onFinish() = 0;
   virtual ncUnixTimestamp currentMoment() const override { return _current_moment; }
   void finishScenario() { this->_is_finished = true; }
 

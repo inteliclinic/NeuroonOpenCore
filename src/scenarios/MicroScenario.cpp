@@ -39,13 +39,13 @@ ncUpdateOutput MicroScenario::refresh(ncUnixTimestamp ts,
     return this->_refreshOnActiveTriggers();
   }
   case MS_MUTE: {
-    auto ret = this->mute();
+    auto ret = this->onMute();
     // mute for given number of milis
     this->_muted_till = this->currentMoment() + ms;
     return ret;
   }
   case MS_FINISH:
-    return this->finish();
+    return this->onFinish();
   }
 }
 

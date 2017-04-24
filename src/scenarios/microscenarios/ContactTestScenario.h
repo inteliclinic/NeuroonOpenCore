@@ -43,8 +43,8 @@ public:
     _r(r), _g(g), _b(b), _intensity(intensity) {}
 
   ncUpdateOutput go(const std::set<Key> &triggers) override;
-  ncUpdateOutput finish() override;
-  ncUpdateOutput mute() override;
+  ncUpdateOutput onFinish() override;
+  ncUpdateOutput onMute() override;
 
   void installSignalLostTrigger(const IScenarioTrigger *t) {
     this->installTriggerForKey(t, kSignalLost);

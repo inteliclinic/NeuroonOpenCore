@@ -21,7 +21,7 @@ ncUpdateOutput ContactTestScenario::go(const std::set<Key> &triggers) {
 
   // after timeout scenario is not to be used
   if (triggers.find(kDontWakeTimer) != triggers.end()) {
-    return this->finish();
+    return this->onFinish();
   }
   // if signal is lost
   if (triggers.find(kSignalLost) != triggers.end()) {
@@ -84,7 +84,7 @@ ncUpdateOutput ContactTestScenario::go(const std::set<Key> &triggers) {
   }
 }
 
-ncUpdateOutput ContactTestScenario::finish() {
+ncUpdateOutput ContactTestScenario::onFinish() {
 
   // turn off the lights if they are turned on, or cancel if planned ot be
   // turned on
@@ -92,7 +92,7 @@ ncUpdateOutput ContactTestScenario::finish() {
   return UPDATE_OK;
 }
 
-ncUpdateOutput ContactTestScenario::mute() {
+ncUpdateOutput ContactTestScenario::onMute() {
 
   // turn off the lights if they are turned on, or cancel if planned ot be
   // turned on

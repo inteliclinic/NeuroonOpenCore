@@ -5,6 +5,7 @@
  * @brief   Brief description
  *
  * Simple trigger that will be active when the electrode contact is lost.
+ * [TODO] dokumentacja
  */
 
 #ifndef LOSTCONTACTTRIGGER_H
@@ -14,14 +15,15 @@
 #include "NeuroonApiCommons.h"
 #include "ScenarioTrigger.h"
 
-typedef std::pair<ncUnixTimestamp, ncSignalQuality> lttInput;
+typedef std::pair<ncUnixTimestamp, ncSignalQuality> ltcInput;
 
-class LostContactTrigger : public ScenarioTrigger<lttInput> {
+class LostContactTrigger : public ScenarioTrigger<ltcInput> {
 
   LostContactTrigger(int switch_treshold_ms,
                      ncUnixTimestamp trigger_timeout_timestamp,
                      ncSignalQuality lost_contact_treshold);
-  void update(const lttInput &inp) override;
+
+  void update(const ltcInput &inp) override;
 
   bool isActive() const override;
 
