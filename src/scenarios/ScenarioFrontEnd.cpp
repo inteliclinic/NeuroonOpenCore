@@ -15,6 +15,7 @@
 #include "SleepScenario.h"
 #include "GenericScenarioTemplates.h"
 #include "LucidDreamScenario.h"
+#include "LightBoostScenario.h"
 
 /////////////////////////////////Michaltmp//////////////////////////////////////////////////////////
 typedef struct{
@@ -23,19 +24,6 @@ typedef struct{
 }ncMichalScenarioInput;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-struct LightBoostScenario:BaseScenario{
-  unsigned int lenthInSeconds;
-  unsigned char intensity;
-  ncUpdateOutput update(const ncScenarioInput *updateArgs);
-  LightBoostScenario() :
-    lenthInSeconds(0),
-    intensity(0) {}
-};
-
-ncUpdateOutput LightBoostScenario::update(const ncScenarioInput *updateArgs){
-  return UPDATE_OK;
-}
 
 struct WakeUpScenario:BaseScenario{
 };

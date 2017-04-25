@@ -10,22 +10,36 @@
 #ifndef LIGHTBOOSTSCENARIO_H
 #define LIGHTBOOSTSCENARIO_H
 
-#include "SleepScenario.h"
+#include "MacroScenario.h"
+#include "NeuroonMaskScenariosApi.h"
 
-class LightBoostScenario: SleepScenario{
+#include "LightBoostLightSequenceScenario.h"
+
+class LightBoostScenario : public MacroScenario {
 public:
-  Lightboostscenario(const ncScenarioInitArgs *args);
-  ncUpdateOutput update(const ncScenarioInput *updateArgs);
+  LightBoostScenario(const ncScenarioInitArgs *args);
+  ncUpdateOutput update(ncUnixTimestamp ts, const ncScenarioInput *updateArgs) override;
+  ~LightBoostScenario (){
+    for(auto tr : this->_triggers_to_be_deleted){
+      delete tr;
+    }
+  }
+
 private:
-  ncLucidPulsesIntensity m_startingIntensity;
-  ncLucidRemStabilityTreshold m_remStabilityTreshold;
-  unsigned long m_remCounter;
-  unsigned long m_remStartTimestamp;
-  bool m_remDetected;
-  bool m_remCounted;
-  bool m_lucidLoaded;
-  void lucidDreamSequence(unsigned long length, unsigned long numberOfActions,
-                          unsigned long actionDuration, unsigned long actionPeriod, unsigned long timestamp);
+  const int kContactDetectionTresholdMs = 6000;
+  ncUnixTimestamp _start_ts = 0;
+
+  ncLightIntensityLevel _intensity; /**< Level of intensity of led light */
+  unsigned int _length_in_minutes;  /**< Length of the scenario in minutes. */
+
+  LightBoostLightSequenceScenario _on_contact_light_scenario =
+      LightBoostLightSequenceScenario(5000, 24500, 500, 0);
+  LightBoostLightSequenceScenario _lost_contact_light_scenario =
+      LightBoostLightSequenceScenario(500, 0, 500, 500);
+
+  bool _last_time_lost_contact = false;
+
+  std::vector<IScenarioTrigger*> _triggers_to_be_deleted;
 };
 
 #endif /* !LIGHTBOOSTSCENARIO_H */
