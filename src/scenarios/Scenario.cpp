@@ -33,7 +33,8 @@ ncAtomicInstruction Scenario::_adaptTimestamp(const ncAtomicInstruction &instr,
     break;
 
   case InstructionInsertMode::LAST:
-    if (!this->_data_queue.empty()) {
+    if (!this->_data_queue.empty() &&
+        this->_last_instruction.time > instr.time) {
       ret.time = this->_last_instruction.time + 1;
     }
     break;
