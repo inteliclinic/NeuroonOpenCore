@@ -70,7 +70,6 @@ typedef struct {
   float accVectorPeak;
 } ncLucidDreamScenarioInput;
 
-
 // ==================== WAKE-UP / COMMON SLEEP ============================
 
 /** @brief Structure holding internal state of wake up scenario
@@ -147,7 +146,6 @@ typedef struct {
 
 typedef struct {
   ncSleepStage currentSleepStage; /**< User's current sleep stage. */
-  ncUnixTimestamp currentTime;    /**< Time atm of the call for instructions */
   ncSignalQuality signalQuality;  /**< Avg signal quality during last update
                                      period */
 } ncCircadianRhythmAdjustmentScenarioInput;
@@ -155,29 +153,34 @@ typedef struct {
 // ==================== LIGHTBOOST ============================
 
 typedef struct {
-  ncUnixTimestamp currentTime;   /**< Time atm of the call for instructions */
   ncSignalQuality signalQuality; /**< Avg signal quality during last update
                                     period */
-}ncLightBoostScenarioInput;
+} ncLightBoostScenarioInput;
 
 /** @enum Enumeration of light intensity levels. */
-typedef enum { REGULAR, BRIGHT }ncLightIntensityLevel;
+typedef enum { REGULAR, BRIGHT } ncLightIntensityLevel;
 
 /** @struct Data structure aggregating all paremeters needed for
   *          scenario initialization.
   */
 typedef struct {
-  unsigned int lengthInMinutes; /**< Length of the scenario in minutes. */
+  unsigned int lengthInMinutes;    /**< Length of the scenario in minutes. */
   ncLightIntensityLevel intensity; /**< Level of intensity of led light */
-}ncLightBoostScenarioInitArgs;
+} ncLightBoostScenarioInitArgs;
 
 // =================== UNIONS =================================
-typedef union {
-  ncLucidDreamScenarioInput lucidDream;
-  ncCommonSleepScenarioInput commonSleep;
-  ncPowernapScenarioInput powerNap;
-  ncCircadianRhythmAdjustmentScenarioInput CircadianRhythm;
-  ncLightBoostScenarioInput lightBoost;
+
+typedef struct {
+  union {
+    ncLucidDreamScenarioInput lucidDream;
+    ncCommonSleepScenarioInput commonSleep;
+    ncPowernapScenarioInput powerNap;
+    ncCircadianRhythmAdjustmentScenarioInput CircadianRhythm;
+    ncLightBoostScenarioInput lightBoost;
+  } scenarioSpecific;
+  struct {
+    ncUnixTimestamp currentTime;
+  } commonInput;
 } ncScenarioInput;
 
 typedef union {

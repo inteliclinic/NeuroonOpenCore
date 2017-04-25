@@ -14,8 +14,8 @@ LightBoostScenario::LightBoostScenario(const ncScenarioInitArgs *args)
           std::unique_ptr<LostContactTrigger>(
               new LostContactTrigger(kContactDetectionTresholdMs)),
           [](const ncScenarioInput *inp) {
-            return std::make_pair(inp->lightBoost.currentTime,
-                                  inp->lightBoost.signalQuality);
+            return std::make_pair(inp->commonInput.currentTime,
+                                  inp->scenarioSpecific.lightBoost.signalQuality);
           });
   this->_lost_contact_light_scenario.installActivationTrigger(
       lost_contact_trigger);
@@ -30,9 +30,9 @@ LightBoostScenario::LightBoostScenario(const ncScenarioInitArgs *args)
       new StatefulTrigger<ncUnixTimestamp, const ncScenarioInput *>(
           0, [treshold](ncUnixTimestamp &s, const ncScenarioInput *inp) {
             if (s == 0) {
-              s = inp->lightBoost.currentTime;
+              s = inp->commonInput.currentTime;
             }
-            return inp->lightBoost.currentTime - s >= treshold;
+            return inp->commonInput.currentTime - s >= treshold;
           });
   this->addTriggerToRefreshList(light_sequence_activation_trigger);
   this->_triggers_to_be_deleted.push_back(light_sequence_activation_trigger);
@@ -41,8 +41,9 @@ LightBoostScenario::LightBoostScenario(const ncScenarioInitArgs *args)
   this->addScenarioWithPriority(&this->_on_contact_light_scenario,1);
 }
 
-ncUpdateOutput LightBoostScenario::update(ncUnixTimestamp ts, const ncScenarioInput *update_args) {
+ncUpdateOutput LightBoostScenario::update(const ncScenarioInput *update_args) {
   // manually setup microscenarios finishing and go with update procedure
+  auto ts = update_args->commonInput.currentTime;
   if(this->_start_ts == 0){
     this->_start_ts = ts;
   }
@@ -50,5 +51,5 @@ ncUpdateOutput LightBoostScenario::update(ncUnixTimestamp ts, const ncScenarioIn
     this->_lost_contact_light_scenario.refresh(ts, MicroScenarioControl::FINISH);
     this->_on_contact_light_scenario.refresh(ts, MicroScenarioControl::FINISH);
   }
-  return MacroScenario::update(ts, update_args);
+  return MacroScenario::update(update_args);
 }

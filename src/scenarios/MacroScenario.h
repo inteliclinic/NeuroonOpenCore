@@ -21,7 +21,7 @@ typedef std::pair<MicroScenario *, int> ScePrioPair;
 class MacroScenario : public Scenario {
 public:
   MacroScenario(const ncScenarioInitArgs *) {}
-  virtual ncUpdateOutput update(ncUnixTimestamp ts, const ncScenarioInput *);
+  virtual ncUpdateOutput update(const ncScenarioInput *);
   virtual ~MacroScenario() {}
 
 private:

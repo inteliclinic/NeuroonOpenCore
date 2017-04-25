@@ -11,8 +11,8 @@
 #include <iostream>
 #include <cstdint>
 #include "NeuroonMaskScenariosApi.h"
-#include "BaseScenario.h"
 #include "SleepScenario.h"
+#include "MacroScenario.h"
 #include "GenericScenarioTemplates.h"
 #include "LucidDreamScenario.h"
 #include "LightBoostScenario.h"
@@ -24,15 +24,6 @@ typedef struct{
 }ncMichalScenarioInput;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-struct WakeUpScenario:BaseScenario{
-};
-
-struct PowernapScenario:BaseScenario{
-};
-
-struct CircadianRhythmAdjustmentScenario:BaseScenario{
-};
 
 ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args){
   switch(scenarioType){
@@ -48,17 +39,17 @@ ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArg
 }
 
 ncAtomicInstruction ncGetNextInstruction(ncScenario scenario){
-  return reinterpret_cast<BaseScenario *>(scenario)->getNextInstruction();
+  return reinterpret_cast<MacroScenario *>(scenario)->getNextInstruction();
 }
 
-ncUpdateOutput ncScenarioUpdate(ncScenario scenario, const ncScenarioInput *updateArgs){
-  return reinterpret_cast<BaseScenario *>(scenario)->update(updateArgs);
+ncUpdateOutput ncScenarioUpdate(ncScenario scenario, ncUnixTimestamp ts, const ncScenarioInput *updateArgs){
+  return reinterpret_cast<MacroScenario *>(scenario)->update(updateArgs);
 }
 
 void ncDestroyScenario(ncScenario scenario){
-  delete reinterpret_cast<BaseScenario *>(scenario);
+  delete reinterpret_cast<MacroScenario *>(scenario);
 }
 
 bool ncAvailableMaskInstruction(ncScenario scenario){
-  return reinterpret_cast<BaseScenario *>(scenario)->availableMaskInstruction();
+  return reinterpret_cast<MacroScenario *>(scenario)->availableMaskInstruction();
 }

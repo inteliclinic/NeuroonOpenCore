@@ -27,8 +27,7 @@ public:
     WakeUpType wakeUp;
   } wakeUpParameters;
 
-  virtual ncUpdateOutput update(ncUnixTimestamp ts,
-                                const ncScenarioInput *) override;
+  virtual ncUpdateOutput update(const ncScenarioInput *) override;
 };
 
 #endif /* !SLEEPSCENARIO_H */

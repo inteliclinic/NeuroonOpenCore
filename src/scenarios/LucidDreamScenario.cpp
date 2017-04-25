@@ -18,9 +18,9 @@ LucidDreamScenario::LucidDreamScenario(const ncScenarioInitArgs *args)
       m_remCounter(0), m_remStartTimestamp(0), m_remDetected(false),
       m_remCounted(false), m_lucidLoaded(false) {}
 
-ncUpdateOutput LucidDreamScenario::update(ncUnixTimestamp ts, const ncScenarioInput *updateArgs) {
+ncUpdateOutput LucidDreamScenario::update(const ncScenarioInput *updateArgs) {
   unsigned long long remDuration =
-      updateArgs->lucidDream.timestamp - m_remStartTimestamp;
+      updateArgs->scenarioSpecific.lucidDream.timestamp - m_remStartTimestamp;
 
   if (m_remDetected)
     if (remDuration >= 180000 &&
@@ -29,9 +29,9 @@ ncUpdateOutput LucidDreamScenario::update(ncUnixTimestamp ts, const ncScenarioIn
       m_remCounted = true;
     }
 
-  if (updateArgs->lucidDream.currentSleep_stage == REM) {
+  if (updateArgs->scenarioSpecific.lucidDream.currentSleep_stage == REM) {
     if (!m_remDetected) {
-      m_remStartTimestamp = updateArgs->lucidDream.timestamp;
+      m_remStartTimestamp = updateArgs->scenarioSpecific.lucidDream.timestamp;
       remDuration = 0;
       m_remDetected = true;
       m_remCounted = false;
@@ -54,7 +54,7 @@ ncUpdateOutput LucidDreamScenario::update(ncUnixTimestamp ts, const ncScenarioIn
     if (remDuration >= 300000) { // TODO: 300000 needs to ba a parameter
       if (!m_lucidLoaded) {
         lucidDreamSequence(240000, 5, 5000, 1000,
-                           updateArgs->lucidDream.timestamp);
+                           updateArgs->scenarioSpecific.lucidDream.timestamp);
         m_lucidLoaded = true;
         return UPDATE_NEW_DATA;
       }
@@ -64,7 +64,7 @@ ncUpdateOutput LucidDreamScenario::update(ncUnixTimestamp ts, const ncScenarioIn
     if (remDuration >= 600000) { // TODO: 600000 needs to ba a parameter
       if (!m_lucidLoaded) {
         lucidDreamSequence(240000, 5, 5000, 1000,
-                           updateArgs->lucidDream.timestamp);
+                           updateArgs->scenarioSpecific.lucidDream.timestamp);
         m_lucidLoaded = true;
         return UPDATE_NEW_DATA;
       }

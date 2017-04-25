@@ -18,7 +18,7 @@
 class LightBoostScenario : public MacroScenario {
 public:
   LightBoostScenario(const ncScenarioInitArgs *args);
-  ncUpdateOutput update(ncUnixTimestamp ts, const ncScenarioInput *updateArgs) override;
+  ncUpdateOutput update(const ncScenarioInput *updateArgs) override;
   ~LightBoostScenario (){
     for(auto tr : this->_triggers_to_be_deleted){
       delete tr;

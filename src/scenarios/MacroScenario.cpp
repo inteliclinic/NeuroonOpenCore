@@ -1,7 +1,7 @@
 #include "MacroScenario.h"
 
-ncUpdateOutput MacroScenario::update(ncUnixTimestamp ts,
-                                     const ncScenarioInput *inp) {
+ncUpdateOutput MacroScenario::update(const ncScenarioInput *inp) {
+  auto ts = inp->commonInput.currentTime;
   this->_current_moment = ts;
   for (auto t : this->_triggers_refresh_list) {
     t->update(inp);
