@@ -1,10 +1,9 @@
 /**
  * @file    IScenarioTrigger.h
- * @Author  Paweł Kaźmierzewski <p.kazmierzewski@inteliclinic.com>
+ * @Author  Michał Adamczyk <m.adamczyk@inteliclinic.com>
  * @date    April, 2017
- * @brief   Brief description
+ * @brief   Abstract scenario-facing interface for a scenario trigger.
  *
- * Description
  */
 
 #ifndef ISCENARIOTRIGGER_H
@@ -13,6 +12,7 @@
 class IScenarioTrigger {
 public:
   virtual bool isActive() const = 0;
+  virtual ~IScenarioTrigger() {}
 };
 
 #endif /* !ISCENARIOTRIGGER_H */
