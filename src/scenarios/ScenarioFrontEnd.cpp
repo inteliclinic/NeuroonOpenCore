@@ -17,13 +17,6 @@
 #include "LucidDreamScenario.h"
 #include "LightBoostScenario.h"
 
-/////////////////////////////////Michaltmp//////////////////////////////////////////////////////////
-typedef struct{
-  unsigned long timestamp;
-  bool rem;
-}ncMichalScenarioInput;
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args){
   switch(scenarioType){
@@ -42,7 +35,7 @@ ncAtomicInstruction ncGetNextInstruction(ncScenario scenario){
   return reinterpret_cast<MacroScenario *>(scenario)->getNextInstruction();
 }
 
-ncUpdateOutput ncScenarioUpdate(ncScenario scenario, ncUnixTimestamp ts, const ncScenarioInput *updateArgs){
+ncUpdateOutput ncScenarioUpdate(ncScenario scenario, const ncScenarioInput *updateArgs){
   return reinterpret_cast<MacroScenario *>(scenario)->update(updateArgs);
 }
 
