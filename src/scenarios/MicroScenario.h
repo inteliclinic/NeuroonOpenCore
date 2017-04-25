@@ -19,18 +19,20 @@
 
 typedef int Key;
 
-typedef enum{
-  MS_REFRESH,
-  MS_UNMUTE,
-  MS_MUTE,
-  MS_FINISH,
-}MicroScenarioControl;
+enum class MicroScenarioControl{
+  REFRESH,
+  UNMUTE,
+  MUTE,
+  FINISH,
+};
 
 class MicroScenario : public Scenario {
 public:
-  ncUpdateOutput refresh(ncUnixTimestamp ts, MicroScenarioControl control=MS_REFRESH, int ms=1e8);
+  ncUpdateOutput refresh(ncUnixTimestamp ts, MicroScenarioControl control=MicroScenarioControl::REFRESH, int ms=0);
   void uninstallTrigger(IScenarioTrigger *);
   bool isMuted() const {return this->_muted_till !=0;}
+  bool isFinished() const {return this->_is_finished;}
+  virtual bool isActive() const;
 
 private:
   bool _is_finished = false;

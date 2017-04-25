@@ -12,6 +12,14 @@
 #include <algorithm>
 #include <cstring>
 
+bool MicroScenario::isActive() const {
+  for (const auto &p : this->_triggers) {
+    if (p.first->isActive())
+      return true;
+  }
+  return false;
+}
+
 ncUpdateOutput MicroScenario::refresh(ncUnixTimestamp ts,
                                       MicroScenarioControl control, int ms) {
 
@@ -24,27 +32,36 @@ ncUpdateOutput MicroScenario::refresh(ncUnixTimestamp ts,
   this->_current_moment = ts;
 
   // check if scenario is muted, and should be unmuted already
-  if (this->_muted_till > 0 && this->_muted_till < this->currentMoment()) {
+  if (this->_muted_till > 1 && this->_muted_till < this->currentMoment()) {
     this->_muted_till = 0;
   }
 
   // execute control command
   switch (control) {
-  case MS_REFRESH: {
+  case MicroScenarioControl::REFRESH: {
     return this->isMuted() ? UPDATE_OK : this->_refreshOnActiveTriggers();
   }
-  case MS_UNMUTE: {
+  case MicroScenarioControl::UNMUTE: {
     // unconditionally unmute
     this->_muted_till = 0;
     return this->_refreshOnActiveTriggers();
   }
-  case MS_MUTE: {
+  case MicroScenarioControl::MUTE: {
+    // already muted, skip
+    if (this->_muted_till > 0)
+      return UPDATE_OK;
     auto ret = this->onMute();
-    // mute for given number of milis
-    this->_muted_till = this->currentMoment() + ms;
+    // mute forever
+    if (ms == 0) {
+      this->_muted_till = 1;
+    }
+    // mute for a given numer of millis
+    else {
+      this->_muted_till = this->currentMoment() + ms;
+    }
     return ret;
   }
-  case MS_FINISH:
+  case MicroScenarioControl::FINISH:
     auto ret = this->onFinish();
     this->_is_finished = true;
     return ret;
