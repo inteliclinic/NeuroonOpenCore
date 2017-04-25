@@ -18,7 +18,7 @@ LostContactTrigger::LostContactTrigger(
 
 bool LostContactTrigger::isActive() const { return _active; }
 
-void LostContactTrigger::update(const ltcInput &inp) {
+void LostContactTrigger::update(const lctInput &inp) {
   auto ts = inp.first;
   auto sq = inp.second;
   bool now_below_treshold = sq <= this->_lost_contact_treshold;

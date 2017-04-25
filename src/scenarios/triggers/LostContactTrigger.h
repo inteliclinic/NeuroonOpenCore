@@ -15,15 +15,16 @@
 #include "NeuroonApiCommons.h"
 #include "ScenarioTrigger.h"
 
-typedef std::pair<ncUnixTimestamp, ncSignalQuality> ltcInput;
+typedef std::pair<ncUnixTimestamp, const ncSignalQuality> lctInput;
 
-class LostContactTrigger : public ScenarioTrigger<ltcInput> {
+class LostContactTrigger : public ScenarioTrigger<const lctInput&> {
 
+public:
   LostContactTrigger(int switch_treshold_ms,
-                     ncUnixTimestamp trigger_timeout_timestamp,
-                     ncSignalQuality lost_contact_treshold);
+                     ncUnixTimestamp trigger_timeout_timestamp=0,
+                     ncSignalQuality lost_contact_treshold=NO_SIGNAL);
 
-  void update(const ltcInput &inp) override;
+  void update(const lctInput &inp) override;
 
   bool isActive() const override;
 

@@ -2,8 +2,8 @@
  * @file    ScenarioTrigger.h
  * @author  Michał Adamczyk <m.adamczyk@inteliclinic.com>
  *          Paweł Kaźmierzewski <p.kazmierzewski@inteliclinic.com>
- * @date    April, 2017
- * @brief   Brief description
+ * @date    Apri, 2017
+ * @brief   [TODO]
  *
  * Description
  */
@@ -17,33 +17,36 @@
 #include <memory>
 #include <queue>
 
-#define NEW_UNIQUE(a) std::move(std::unique_ptr<a>(new a()))
-
 template <class T> class ScenarioTrigger : public IScenarioTrigger {
 private:
   template <class K> class Wrapped : public ScenarioTrigger<K> {
   private:
     std::unique_ptr<ScenarioTrigger<T>> _wrapped = nullptr;
-    std::function<T(const K &)> _adapter = nullptr;
+    std::function<T(K)> _adapter = nullptr;
 
   public:
     Wrapped(std::unique_ptr<ScenarioTrigger<T>> wrapped,
-            std::function<T(const K &)> adapter)
+            std::function<T(K)> adapter)
         : _wrapped(std::move(wrapped)), _adapter(adapter) {}
 
-    virtual void update(const K &args) override {
+    virtual void update(K args) override {
       this->_wrapped->update(this->_adapter(args));
     }
 
     bool isActive() const override { return this->_wrapped->isActive(); }
   };
 
+protected:
+  ScenarioTrigger() {}
+
 public:
-  virtual void update(const T &) = 0;
+  virtual ~ScenarioTrigger() {}
+  virtual void update(T) = 0;
 
   template <class K>
-  static ScenarioTrigger<K> *WithAdapter(std::unique_ptr<ScenarioTrigger<T>> trigger,
-                                     std::function<T(const K &)> adapter) {
+  static ScenarioTrigger<K> *
+  WithAdapter(std::unique_ptr<ScenarioTrigger<T>> trigger,
+              std::function<T(K)> adapter) {
     return new Wrapped<K>(std::move(trigger), adapter);
   }
 };
@@ -51,13 +54,31 @@ public:
 template <class T> class StatelessTrigger : public ScenarioTrigger<T> {
 private:
   bool t;
-  std::function<bool(const T &)> _adapter = nullptr;
+  std::function<bool(T)> _adapter = nullptr;
 
 public:
-  StatelessTrigger(std::function<bool(const T &)> input_function) {
+  StatelessTrigger(std::function<bool(T)> input_function) {
     this->_adapter = input_function;
   }
-  void update(const T &i) override { t = this->_adapter(i); }
+  virtual ~StatelessTrigger() {}
+  void update(T i) override { t = this->_adapter(i); }
+  bool isActive() const override { return t; }
+};
+
+template <class S, class T> class StatefulTrigger : public ScenarioTrigger<T> {
+private:
+  bool t;
+  S _state;
+  std::function<bool(S &, T)> _adapter = nullptr;
+
+public:
+  StatefulTrigger(S initial_state,
+                  std::function<bool(S &, T)> input_function) {
+    this->_state = initial_state;
+    this->_adapter = input_function;
+  }
+  virtual ~StatefulTrigger() {}
+  void update(T i) override { t = this->_adapter(this->_state, i); }
   bool isActive() const override { return t; }
 };
 
