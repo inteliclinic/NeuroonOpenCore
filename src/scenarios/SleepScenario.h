@@ -10,7 +10,6 @@
 #ifndef SLEEPSCENARIO_H
 #define SLEEPSCENARIO_H
 
-#include "BaseScenario.h"
 #include "MacroScenario.h"
 
 typedef enum {
@@ -18,11 +17,7 @@ typedef enum {
 } WakeUpType;
 
 class SleepScenario : public MacroScenario {
-protected:
-  ncUnixTimestamp currentMoment() const override{
-    // [TODO]
-    return 0;
-  }
+
 public:
   SleepScenario(const ncScenarioInitArgs *args);
   virtual ~SleepScenario() {}
@@ -32,7 +27,8 @@ public:
     WakeUpType wakeUp;
   } wakeUpParameters;
 
-  virtual ncUpdateOutput update(const ncScenarioInput *) override;
+  virtual ncUpdateOutput update(ncUnixTimestamp ts,
+                                const ncScenarioInput *) override;
 };
 
 #endif /* !SLEEPSCENARIO_H */

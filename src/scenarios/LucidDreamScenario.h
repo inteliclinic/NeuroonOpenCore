@@ -12,21 +12,24 @@
 
 #include "SleepScenario.h"
 
-class LucidDreamScenario: SleepScenario{
-  public:
-    LucidDreamScenario(const ncScenarioInitArgs *args);
-    ncUpdateOutput update(const ncScenarioInput *updateArgs);
+class LucidDreamScenario : SleepScenario {
+public:
+  LucidDreamScenario(const ncScenarioInitArgs *args);
+  ncUpdateOutput update(ncUnixTimestamp ts,
+                        const ncScenarioInput *updateArgs) override;
+
 protected:
-  private:
-    ncLucidPulsesIntensity m_startingIntensity;
-    ncLucidRemStabilityTreshold m_remStabilityTreshold;
-    unsigned long m_remCounter;
-    unsigned long m_remStartTimestamp;
-    bool m_remDetected;
-    bool m_remCounted;
-    bool m_lucidLoaded;
-    void lucidDreamSequence(unsigned long length, unsigned long numberOfActions,
-        unsigned long actionDuration, unsigned long actionPeriod, unsigned long timestamp);
+private:
+  ncLucidPulsesIntensity m_startingIntensity;
+  ncLucidRemStabilityTreshold m_remStabilityTreshold;
+  unsigned long m_remCounter;
+  unsigned long m_remStartTimestamp;
+  bool m_remDetected;
+  bool m_remCounted;
+  bool m_lucidLoaded;
+  void lucidDreamSequence(unsigned long length, unsigned long numberOfActions,
+                          unsigned long actionDuration,
+                          unsigned long actionPeriod, unsigned long timestamp);
 };
 
 #endif /* !LUCIDDREAMSCENARIO_H */

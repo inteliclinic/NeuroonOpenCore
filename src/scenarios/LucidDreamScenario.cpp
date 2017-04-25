@@ -9,6 +9,7 @@
 
 #include "LucidDreamScenario.h"
 #include "ic_low_level_control.h"
+#include <cstring>
 
 LucidDreamScenario::LucidDreamScenario(const ncScenarioInitArgs *args)
     : SleepScenario(args),
@@ -17,7 +18,7 @@ LucidDreamScenario::LucidDreamScenario(const ncScenarioInitArgs *args)
       m_remCounter(0), m_remStartTimestamp(0), m_remDetected(false),
       m_remCounted(false), m_lucidLoaded(false) {}
 
-ncUpdateOutput LucidDreamScenario::update(const ncScenarioInput *updateArgs) {
+ncUpdateOutput LucidDreamScenario::update(ncUnixTimestamp ts, const ncScenarioInput *updateArgs) {
   unsigned long long remDuration =
       updateArgs->lucidDream.timestamp - m_remStartTimestamp;
 

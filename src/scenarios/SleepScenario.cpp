@@ -9,10 +9,10 @@
 
 #include "SleepScenario.h"
 
+SleepScenario::SleepScenario(const ncScenarioInitArgs *args)
+    : MacroScenario(args) {}
 
-SleepScenario::SleepScenario(const ncScenarioInitArgs *args) : MacroScenario(args) {
-}
-
-ncUpdateOutput SleepScenario::update(const ncScenarioInput *scenarioInput){
+ncUpdateOutput SleepScenario::update(ncUnixTimestamp ts,
+                                     const ncScenarioInput *scenarioInput) {
   return UPDATE_OK;
 }
