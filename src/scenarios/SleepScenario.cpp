@@ -12,6 +12,6 @@
 SleepScenario::SleepScenario(const ncScenarioInitArgs *args)
     : MacroScenario(args) {}
 
-ncUpdateOutput SleepScenario::update(const ncScenarioInput *scenarioInput) {
-  return UPDATE_OK;
-}
+// ncUpdateOutput SleepScenario::update(const ncScenarioInput *scenarioInput) {
+//   return UPDATE_OK;
+// }

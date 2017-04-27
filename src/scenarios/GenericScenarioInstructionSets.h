@@ -1,5 +1,5 @@
 /**
- * @file    GenericScenarioTemplates.h
+ * @file    GenericScenarioInstructionSets.h
  * @Author  Paweł Kaźmierzewski <p.kazmierzewski@inteliclinic.com>
  * @date    December, 2016
  * @brief   Brief description
@@ -7,8 +7,8 @@
  * Description
  */
 
-#ifndef GENERICSCENARIOTEMPLATES_H
-#define GENERICSCENARIOTEMPLATES_H
+#ifndef GENERICSCENARIOINSTRUCTIONSETS_H
+#define GENERICSCENARIOINSTRUCTIONSETS_H
 
 #include <queue>
 #include "NeuroonMaskScenariosApi.h"
@@ -16,4 +16,4 @@
 void killAllDevices(std::queue<ncAtomicInstruction> &inQueue);
 
 
-#endif /* !GENERICSCENARIOTEMPLATES_H */
+#endif /* !GENERICSCENARIOINSTRUCTIONSETS_H */

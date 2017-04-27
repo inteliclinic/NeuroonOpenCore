@@ -10,46 +10,60 @@
 #ifndef MACROSCENARIO_H
 #define MACROSCENARIO_H
 
-#include "MicroScenario.h"
+#include "IMicroScenario.h"
 #include "Scenario.h"
 #include "ScenarioTrigger.h"
 
 #include <algorithm>
 
-typedef std::pair<MicroScenario *, int> ScePrioPair;
+using ScePrioPair = std::pair<IMicroScenario *, int>;
+using MacroScenarioTrigger = ScenarioTrigger<const ncScenarioInput *>;
 
 class MacroScenario : public Scenario {
 public:
   MacroScenario(const ncScenarioInitArgs *) {}
-  virtual ncUpdateOutput update(const ncScenarioInput *);
   virtual ~MacroScenario() {}
 
+  virtual ncUpdateOutput update(const ncScenarioInput *inp);
+
 private:
-  struct Cmp {
+  struct Chronological {
     bool operator()(const ScePrioPair &lhs, const ScePrioPair &rhs) {
       return lhs.second > rhs.second;
     }
   };
 
+
   ncUnixTimestamp _current_moment = 0;
-  MicroScenario *_last_active_scenario = nullptr;
+  IMicroScenario *_recently_used_scenario = nullptr;
   std::vector<ScePrioPair> _scenario_queue;
-  std::vector<ScenarioTrigger<const ncScenarioInput *> *>
-      _triggers_refresh_list = {};
+  std::vector<std::shared_ptr<MacroScenarioTrigger>> _triggers_refresh_list = {};
+
+  ScePrioPair
+  getHighestPriorityScenario(std::vector<ScePrioPair> scenarios) const;
 
 protected:
   virtual ncUnixTimestamp currentMoment() const { return _current_moment; }
 
-  void addTriggerToRefreshList(ScenarioTrigger<const ncScenarioInput *> *t) {
-    _triggers_refresh_list.push_back(t);
+  void
+  addTriggersToRefreshList(std::vector<std::shared_ptr<MacroScenarioTrigger>> ts) {
+    for (auto t : ts) {
+      _triggers_refresh_list.push_back(t);
+    }
   }
 
-  void addScenarioWithPriority(MicroScenario *sc, int priority) {
+  void addScenarioWithPriority(IMicroScenario *sc, int priority) {
     _scenario_queue.push_back(std::make_pair(sc, priority));
-    std::make_heap(_scenario_queue.begin(), _scenario_queue.end(), Cmp());
+    std::make_heap(_scenario_queue.begin(), _scenario_queue.end(),
+                   Chronological());
   }
 
-  MicroScenario *lastActiveScenario() const { return _last_active_scenario; }
+  IMicroScenario *lastActiveScenario() const { return _recently_used_scenario; }
+
+  std::shared_ptr<MacroScenarioTrigger>
+  moveToShared(ScenarioTrigger<const ncScenarioInput *> *t) const {
+    return std::shared_ptr<ScenarioTrigger<const ncScenarioInput *>>(std::move(t));
+  }
 };
 
 #endif /* !MACROSCENARIO_H */

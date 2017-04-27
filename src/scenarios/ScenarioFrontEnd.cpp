@@ -13,7 +13,7 @@
 #include "NeuroonMaskScenariosApi.h"
 #include "SleepScenario.h"
 #include "MacroScenario.h"
-#include "GenericScenarioTemplates.h"
+#include "GenericScenarioInstructionSets.h"
 #include "LucidDreamScenario.h"
 #include "LightBoostScenario.h"
 

@@ -19,27 +19,21 @@
 class LightBoostLightSequenceScenario : public MicroScenario {
 private:
   const int kActivationTrigger = 1;
-  bool _is_active = false;
+  std::vector<ncAtomicInstruction> _descendSequence() const;
 
 public:
   LightBoostLightSequenceScenario(unsigned int ascend_time_ms,
                                   unsigned int crest_time_ms,
                                   unsigned int descend_time_ms,
-                                  unsigned int trough_time_ms) {}
+                                  unsigned int trough_time_ms);
 
-  void installActivationTrigger(IScenarioTrigger *t) {
+  void installActivationTrigger(std::shared_ptr<const IScenarioTrigger> t) {
     return this->installTriggerForKey(t, kActivationTrigger);
   }
 
-  bool isActive() const { return _is_active; }
-
 protected:
-  ncUpdateOutput go(const std::set<Key> &triggers) override {
-    return UPDATE_OK;
-  }
-
-  ncUpdateOutput onFinish() override { return UPDATE_OK; }
-  ncUpdateOutput onMute() override { return UPDATE_OK; }
+  MicroScenarioUpdate update(bool did_activate,
+                             bool last_instructions) override;
 };
 
 #endif /* !LIGHTBOOSTLIGHTSEQUENCESCENARIO_H */

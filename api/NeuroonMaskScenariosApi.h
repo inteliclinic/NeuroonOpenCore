@@ -4,7 +4,7 @@
  * @date    April, 2017
  * @brief   Brief description
  *
- * Description
+ * [TODO] Documentation
  */
 
 #ifndef NEUROONMASKSCENARIOSAPINEW_H
@@ -219,6 +219,10 @@ ncScenario ncCreateScenario(ncScenarioType scenarioType,
 ncAtomicInstruction ncGetNextInstruction(ncScenario scenario);
 ncUpdateOutput ncScenarioUpdate(ncScenario scenario,
                                 const ncScenarioInput *updateArgs);
+
+// mutes scenario for given number of seconds
+ncUpdateOutput ncMuteScenario(ncScenario scenario, unsigned int time_s);
+
 void ncDestroyScenario(ncScenario scenario);
 bool ncAvailableMaskInstruction(ncScenario scenario);
 

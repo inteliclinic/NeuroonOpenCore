@@ -17,13 +17,8 @@
 
 class LightBoostScenario : public MacroScenario {
 public:
+
   LightBoostScenario(const ncScenarioInitArgs *args);
-  ncUpdateOutput update(const ncScenarioInput *updateArgs) override;
-  ~LightBoostScenario (){
-    for(auto tr : this->_triggers_to_be_deleted){
-      delete tr;
-    }
-  }
 
 private:
   const int kContactDetectionTresholdMs = 6000;
@@ -39,7 +34,6 @@ private:
 
   bool _last_time_lost_contact = false;
 
-  std::vector<IScenarioTrigger*> _triggers_to_be_deleted;
 };
 
 #endif /* !LIGHTBOOSTSCENARIO_H */

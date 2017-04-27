@@ -1,5 +1,5 @@
 /**
- * @file    GenericScenarioTemplates.cpp
+ * @file    GenericScenarioInstructionSets.cpp
  * @Author  Paweł Kaźmierzewski <p.kazmierzewski@inteliclinic.com>
  * @date    December, 2016
  * @brief   Brief description
@@ -9,7 +9,7 @@
 
 #include <cstring>
 #include "ic_low_level_control.h"
-#include "GenericScenarioTemplates.h"
+#include "GenericScenarioInstructionSets.h"
 
 void killAllDevices(std::queue<ncAtomicInstruction> &inQueue){
   ncAtomicInstruction _instruction;

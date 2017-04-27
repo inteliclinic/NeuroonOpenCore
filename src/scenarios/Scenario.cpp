@@ -16,7 +16,7 @@ ncAtomicInstruction Scenario::getNextInstruction() {
 
 void Scenario::clearInstructions() {
   std::priority_queue<ncAtomicInstruction, std::vector<ncAtomicInstruction>,
-                      Cmp>
+                      Chronological>
       empty;
   std::swap(this->_data_queue, empty);
 }

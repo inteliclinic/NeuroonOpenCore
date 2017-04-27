@@ -32,7 +32,7 @@ protected:
                    InstructionInsertMode mode = InstructionInsertMode::LAST);
 
 private:
-  struct Cmp {
+  struct Chronological {
     bool operator()(const ncAtomicInstruction &lhs,
                     const ncAtomicInstruction &rhs) {
       return lhs.time > rhs.time;
@@ -40,7 +40,7 @@ private:
   };
 
   std::priority_queue<ncAtomicInstruction, std::vector<ncAtomicInstruction>,
-                      Cmp>
+                      Chronological>
       _data_queue;
 
   bool _insertInstructionHelper(const ncAtomicInstruction &instr);

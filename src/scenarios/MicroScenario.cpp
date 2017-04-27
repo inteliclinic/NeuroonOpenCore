@@ -1,87 +1,90 @@
-/**
- * @file    MicroScenario.cpp
- * @Author  Michał Adamczyk <m.adamczyk@inteliclinic.com>
- * @Author  Paweł Kaźmierzewski <p.kazmierzewski@inteliclinic.com>
- * @date    April, 2017
- * @brief   Brief description
- *
- * Description
- */
-
 #include "MicroScenario.h"
 #include <algorithm>
 #include <cstring>
 
-bool MicroScenario::isActive() const {
-  for (const auto &p : this->_triggers) {
-    if (p.first->isActive())
-      return true;
+std::vector<ncAtomicInstruction> MicroScenario::use() {
+  if (_did_activate) {
+    // theres nothing to be done now
+    return {};
   }
-  return false;
+  // we assume that the activation instructions will be used
+  // therefore we need new deactivation instruction set
+  _deactivation = _next_deactivation;
+  _did_activate = true;
+  _did_deactivate = false;
+
+  // if this is the last set of instructions we may
+  // mark scenario as finished
+  if(_will_be_finished){
+    _state = MicroScenarioState::FINISHED;
+  }
+  // return the activation instruction set
+  return _activation;
 }
 
-ncUpdateOutput MicroScenario::refresh(ncUnixTimestamp ts,
-                                      MicroScenarioControl control, int ms) {
-
-  // scenario is finished
-  if (this->_is_finished) {
-    return UPDATE_SCENARIO_FINISHED;
+std::vector<ncAtomicInstruction> MicroScenario::stopUse() {
+  if (_did_deactivate) {
+    // this deactivation instruction set was already used
+    return {};
   }
 
-  // update time
+  // we assume that the deactivation instructions will be used
+  // therefore we need to mark scenario as not activated
+  _did_activate = false;
+  _did_deactivate = true;
+
+  // return the deactivation instruction set
+  return _deactivation;
+}
+
+
+bool MicroScenario::isTriggerActive(Key k) const{
+  return this->_currently_active_triggers.find(k) != this->_currently_active_triggers.end();
+}
+
+bool MicroScenario::wasTriggerJustActivated(Key k) const{
+  return (this->_currently_active_triggers.find(k) != this->_currently_active_triggers.end() &&
+          this->_previously_active_triggers.find(k) == this->_previously_active_triggers.end());
+}
+
+bool MicroScenario::wasTriggerJustDeactivated(Key k) const{
+  return (this->_currently_active_triggers.find(k) == this->_currently_active_triggers.end() &&
+          this->_previously_active_triggers.find(k) != this->_previously_active_triggers.end());
+}
+
+void MicroScenario::refresh(ncUnixTimestamp ts) {
+  // update current moment and currently active triggers
   this->_current_moment = ts;
+  this->_currently_active_triggers = this->_getCurrentlyActiveTriggers();
 
-  // check if scenario is muted, and should be unmuted already
-  if (this->_muted_till > 1 && this->_muted_till < this->currentMoment()) {
-    this->_muted_till = 0;
+  // kill trigger is active
+  if(this->_kill_trigger->isActive()){
+    this->_will_be_finished = true;
   }
 
-  // execute control command
-  switch (control) {
-  case MicroScenarioControl::REFRESH: {
-    return this->isMuted() ? UPDATE_OK : this->_refreshOnActiveTriggers();
+  // get instructions from concrete scenario implementation
+  auto new_state = this->update(this->_did_activate, this->_will_be_finished);
+
+  // update previously active triggers
+  this->_previously_active_triggers = this->_currently_active_triggers;
+
+  // update state
+  this->_state = new_state.state_update;
+  if(!new_state.activation.empty()){
+    // there are new instructions which means that
+    // the scenario did not active them yet.
+    _did_activate = false;
   }
-  case MicroScenarioControl::UNMUTE: {
-    // unconditionally unmute
-    this->_muted_till = 0;
-    return this->_refreshOnActiveTriggers();
-  }
-  case MicroScenarioControl::MUTE: {
-    // already muted, skip
-    if (this->_muted_till > 0)
-      return UPDATE_OK;
-    auto ret = this->onMute();
-    // mute forever
-    if (ms == 0) {
-      this->_muted_till = 1;
-    }
-    // mute for a given numer of millis
-    else {
-      this->_muted_till = this->currentMoment() + ms;
-    }
-    return ret;
-  }
-  case MicroScenarioControl::FINISH:
-    auto ret = this->onFinish();
-    this->_is_finished = true;
-    return ret;
-  }
+  _activation = new_state.activation;
+  _deactivation = new_state.deactivation;
 }
 
-ncUpdateOutput MicroScenario::_refreshOnActiveTriggers() {
-  std::set<int> active_triggers;
-  for (const auto &kp : this->_triggers) {
-    if (kp.first->isActive()) {
-      active_triggers.insert(kp.second);
+std::set<Key> MicroScenario::_getCurrentlyActiveTriggers() const{
+  std::set<Key> ret = {};
+  for(const auto & trikeypair : this->_trigger_to_key){
+    if(trikeypair.first->isActive()){
+      ret.insert(trikeypair.second);
     }
   }
-  return this->go(active_triggers);
-}
-
-void MicroScenario::installTriggerForKey(const IScenarioTrigger *t, Key k) {
-  this->_triggers[t] = k;
-}
-
-void MicroScenario::uninstallTrigger(IScenarioTrigger *t) {
-  this->_triggers.erase(t);
+  return ret;
 }
