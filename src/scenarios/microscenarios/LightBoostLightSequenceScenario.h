@@ -20,6 +20,8 @@ class LightBoostLightSequenceScenario : public MicroScenario {
 private:
   const int kActivationTrigger = 1;
   std::vector<ncAtomicInstruction> _descendSequence() const;
+  std::vector<ncAtomicInstruction> _parametrizedSinusLikeSequence() const;
+  
 
 public:
   LightBoostLightSequenceScenario(unsigned int ascend_time_ms,

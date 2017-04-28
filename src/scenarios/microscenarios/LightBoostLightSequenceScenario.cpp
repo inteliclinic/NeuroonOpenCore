@@ -3,7 +3,39 @@
 MicroScenario::MicroScenarioUpdate
 LightBoostLightSequenceScenario::update(bool did_activate,
                                         bool last_instructions) {
-  return {};
+
+  MicroScenarioState state = this->isTriggerActive(kActivationTrigger)
+                                 ? MicroScenarioState::WANTS_FOCUS
+                                 : MicroScenarioState::IDLE;
+
+  if (last_instructions) {
+    // we must deactivate scenario if active
+    return {state,
+            did_activate ? this->_descendSequence()
+                         : std::vector<ncAtomicInstruction>{},
+            {}};
+  }
+
+  // activation trigger is active and scenarios instruction
+  // hasnt been already activated
+  if (this->isTriggerActive(kActivationTrigger) && !did_activate) {
+    // its time to turn on the lights
+    return {state, this->_parametrizedSinusLikeSequence(),
+            this->_descendSequence()};
+  }
+  // if lights are already on
+  else if (this->isTriggerActive(kActivationTrigger)) {
+    return {state, {}, {}};
+  }
+
+  // trigger has just become inactive and scenarios light did activate
+  if (this->wasTriggerJustDeactivated(kActivationTrigger) && did_activate) {
+    // send turning  off as activation
+    return {state, this->_descendSequence(), {}};
+  }
+
+  // nothing interesting is happening
+  return {state, {}, {}};
 }
 
 LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
@@ -14,6 +46,20 @@ LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
 }
 
 std::vector<ncAtomicInstruction>
+LightBoostLightSequenceScenario::_parametrizedSinusLikeSequence() const {
+  // [TODO]
+  // ma zwracać wektor instrukcji realizujący światła lightboost
+  // zwiększanie intenstywnosci trwa /ascend_time_ms/
+  // maksymalna intensywnosc: /crest_time_ms/
+  // spadek intensywnosci: /descend_time_ms/
+  // wartosc minimalna: /trough_time_ms/
+  //
+  // zalozenie jest za te instrukcje wywoluja sie cyklicznie do odwolania
+  // jezeli tak nie jest to trzeba zmodyfikowac funckje update'u
+  return {};
+}
+
+std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_descendSequence() const {
   // [TODO]
   // ma zwracać wektor instrukcji realizujący sinusoidalny spadek
@@ -21,44 +67,3 @@ LightBoostLightSequenceScenario::_descendSequence() const {
   // /descent_time_ms/ milisekund
   return {};
 }
-
-// ncUpdateOutput LightBoostLightSequenceScenario::onFinish() {
-//   if (this->isFinished()) {
-//     return UPDATE_SCENARIO_FINISHED;
-//   }
-//   // if not already finished we can act as if it was mute command,
-//   auto ret = this->onMute();
-
-//   // but finish the scenario afterwards
-//   this->finishScenario();
-//   return ret;
-// }
-
-// ncUpdateOutput LightBoostLightSequenceScenario::onMute() {
-//   if (this->isMuted()) {
-//     return UPDATE_OK;
-//   }
-//   // if not already muted provide desactivation instructions
-//   this->clearInstructions();
-//   this->pushInstructions(this->_descendSequence(),
-//   InstructionInsertMode::NOW);
-//   return UPDATE_NEW_DATA;
-// }
-
-// ncUpdateOutput
-// LightBoostLightSequenceScenario::go(const std::set<Key> &triggers) {
-//   if (triggers.find(kActivationTrigger) == triggers.end()) {
-//     // scenario is not yet active
-//     return UPDATE_OK;
-//   }
-
-//   // [TODO]
-//   // wlasciwa czesc scenariusza.
-//   // scenariusz ma realizowac sekwencje swiatel pulsujacego "sinusa".
-//   // Kolory i intensywnosc maksymalna i minimalna jest do ustalenia,
-//   // albo do wypchniecia jako parametry konfigurujace.
-//   //
-//   //
-
-//   return UPDATE_OK;
-// }
