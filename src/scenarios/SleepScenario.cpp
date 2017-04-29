@@ -10,8 +10,10 @@
 #include "SleepScenario.h"
 
 SleepScenario::SleepScenario(const ncScenarioInitArgs *args)
-    : MacroScenario(args) {}
+    : MacroScenario(args) {
 
-// ncUpdateOutput SleepScenario::update(const ncScenarioInput *scenarioInput) {
-//   return UPDATE_OK;
-// }
+  // init and register lost contact scenario
+  // init and register hard wakeup
+  // init and register smart wakeup
+  // init and register sunrise
+}

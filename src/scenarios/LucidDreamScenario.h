@@ -15,7 +15,7 @@
 class LucidDreamScenario : SleepScenario {
 public:
   LucidDreamScenario(const ncScenarioInitArgs *args);
-  ncUpdateOutput update(const ncScenarioInput *updateArgs) override;
+  // ncUpdateOutput update(const ncScenarioInput *updateArgs) override;
 
 protected:
 private:

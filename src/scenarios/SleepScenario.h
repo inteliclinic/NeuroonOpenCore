@@ -12,21 +12,12 @@
 
 #include "MacroScenario.h"
 
-typedef enum {
-
-} WakeUpType;
 
 class SleepScenario : public MacroScenario {
 
 public:
   SleepScenario(const ncScenarioInitArgs *args);
   virtual ~SleepScenario() {}
-
-  struct {
-    unsigned long wakeUpDownCounter;
-    WakeUpType wakeUp;
-  } wakeUpParameters;
-
 };
 
 #endif /* !SLEEPSCENARIO_H */
