@@ -19,7 +19,9 @@ LucidDreamScenario::LucidDreamScenario(const ncScenarioInitArgs *args)
       m_remCounted(false), m_lucidLoaded(false) {
 
   // init and register lucid dream sequence microscenario
+  // and its triggers
 }
+
 
 // ncUpdateOutput LucidDreamScenario::update(const ncScenarioInput *updateArgs) {
 //   unsigned long long remDuration =

@@ -12,6 +12,7 @@
 
 #include "SleepScenario.h"
 
+// [TODO] warning: previosly declared as struct
 class LucidDreamScenario : SleepScenario {
 public:
   LucidDreamScenario(const ncScenarioInitArgs *args);
