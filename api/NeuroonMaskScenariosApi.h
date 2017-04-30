@@ -98,6 +98,13 @@ typedef enum {
  *          scenario initialization.
  */
 typedef struct {
+  /** Time of absolute wake-up. */
+  ncUnixTimestamp wakeupTimestamp;
+
+
+  /** Time in minutes before planned wakeup at which sunrise starts */
+  unsigned int artificialSunriseWindow;
+
   /** Sunrise light intensity. */
   ncSunriseIntensity sunriseIntensity;
 
