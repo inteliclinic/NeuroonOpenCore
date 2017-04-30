@@ -2,7 +2,7 @@
  * @file    NeuroonSunriseMicroScenario.h
  * @Author  Michał Adamczyk <m.adamczyk@inteliclinic.com>
  * @date    April, 2017
- * @brief   Micro scenario implementing Neuroon Sunrise (Artifficial Dawn)
+ * @brief   Micro scenario implementing Neuroon Sunrise (Artificial Dawn)
  *
  * Micro scenario implementing hard wakeup algorithm.
  * [TODO]
