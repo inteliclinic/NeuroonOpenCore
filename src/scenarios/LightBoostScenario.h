@@ -27,11 +27,6 @@ private:
   ncLightIntensityLevel _intensity; /**< Level of intensity of led light */
   unsigned int _length_in_minutes;  /**< Length of the scenario in minutes. */
 
-  LightBoostLightSequenceScenario _on_contact_light_scenario =
-      LightBoostLightSequenceScenario(5000, 24500, 500, 0);
-  LightBoostLightSequenceScenario _lost_contact_light_scenario =
-      LightBoostLightSequenceScenario(500, 0, 500, 500);
-
   bool _last_time_lost_contact = false;
 
 };

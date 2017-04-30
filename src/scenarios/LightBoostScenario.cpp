@@ -9,8 +9,9 @@ LightBoostScenario::LightBoostScenario(const ncScenarioInitArgs *args)
   this->_intensity = args->lightBoost.intensity;
   this->_length_in_minutes = args->lightBoost.lengthInMinutes;
 
+  // ========== prepare triggers
   // just a lost contact trigger wrapped to accept ncScenarioInput
-  auto lost_contact_trigger = this->moveToShared(
+  auto lost_contact_trigger = LightBoostScenario::moveToShared(
 
       LostContactTrigger::WithAdapter<const ncScenarioInput *>(
           std::unique_ptr<LostContactTrigger>(
@@ -34,16 +35,25 @@ LightBoostScenario::LightBoostScenario(const ncScenarioInitArgs *args)
             return inp->commonInput.currentTime - s >= treshold;
           }));
 
-  this->_lost_contact_light_scenario.installActivationTrigger(
-      lost_contact_trigger);
-  this->addScenarioWithPriority(&this->_lost_contact_light_scenario, 2);
-
-  // this is trigger that accept ncScenarioInput and will activate after
-  // /treshold/ ms
-  this->_on_contact_light_scenario.installActivationTrigger(
-      light_sequence_activation_trigger);
-  this->addScenarioWithPriority(&this->_on_contact_light_scenario, 1);
-
+  // register triggers
   this->addTriggersToRefreshList(
       {light_sequence_activation_trigger, lost_contact_trigger});
+
+  // ============ scenarios
+
+  // lost contact scenario
+  auto lost_contact_light_scenario =
+      std::shared_ptr<LightBoostLightSequenceScenario>(
+          new LightBoostLightSequenceScenario(500, 9, 500, 500));
+  lost_contact_light_scenario->installActivationTrigger(lost_contact_trigger);
+  this->addScenarioWithPriority(lost_contact_light_scenario, 2);
+
+  // on contact scenario
+  auto on_contact_light_scenario =
+      std::shared_ptr<LightBoostLightSequenceScenario>(
+          new LightBoostLightSequenceScenario(5000, 24500, 500, 0));
+
+  on_contact_light_scenario->installActivationTrigger(
+      light_sequence_activation_trigger);
+  this->addScenarioWithPriority(on_contact_light_scenario, 1);
 }

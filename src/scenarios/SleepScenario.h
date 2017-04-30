@@ -14,6 +14,15 @@
 
 
 class SleepScenario : public MacroScenario {
+private:
+  const int kContactDetectionTresholdMs = 5000;
+
+protected:
+
+  const int kContactTestPriority = 100;
+  const int kHardWakeupPriority = 1000;
+  const int kSmartWakeupPriority = 50;
+  const int kSunrisePriority = 30;
 
 public:
   SleepScenario(const ncScenarioInitArgs *args);
