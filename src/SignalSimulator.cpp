@@ -26,10 +26,10 @@ EegFramesSource::EegFramesSource(SignalSource<std::int16_t> signal_source, std::
   }
 }
 
-////////////////////////////////////////// AccelLedsTempFrame
+////////////////////////////////////////// PatFrame
 
 
-AccelLedsTempFrameSource::AccelLedsTempFrameSource (SignalSource<std::int32_t> ir_led,
+PatFrameSource::PatFrameSource (SignalSource<std::int32_t> ir_led,
                                                     SignalSource<std::int32_t> red_led,
                                                     SignalSource<std::int16_t> accel_x,
                                                     SignalSource<std::int16_t> accel_y,
@@ -154,7 +154,7 @@ AccelLedsTempFrameSource::AccelLedsTempFrameSource (SignalSource<std::int32_t> i
   }
 
   for(int i = 0 ; i < final_source_length ; i++) {
-    AccelLedsTempFrame al;
+    PatFrame al;
     al.timestamp = 0;
     al.ir_led = led_signals[0][i];
     al.red_led = led_signals[1][i];

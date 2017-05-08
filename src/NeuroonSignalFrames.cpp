@@ -60,11 +60,11 @@ EegFrame EegFrame::from_bytes_array(const char* bytes, std::size_t size, Neuroon
   return ef;
 }
 
-AccelLedsTempFrame AccelLedsTempFrame::from_bytes_array(const char* bytes, std::size_t size, NeuroonFrameBytes::ByteOrder bo){
+PatFrame PatFrame::from_bytes_array(const char* bytes, std::size_t size, NeuroonFrameBytes::ByteOrder bo){
   if(size != NeuroonSignalFrame::FrameSizeBytes){
     throw std::length_error("EegFrame construction: Passed size should be equal to the frame size.");
   }
-  AccelLedsTempFrame af;
+  PatFrame af;
   af.timestamp=bytes_to_int<std::uint32_t>(bytes,bo);
   af.ir_led = bytes_to_int<std::int32_t>(bytes+4, bo);
   af.red_led = bytes_to_int<std::int32_t>(bytes+8, bo);
@@ -87,7 +87,7 @@ void EegFrame::to_bytes(char* out, NeuroonFrameBytes::ByteOrder bo) const{
   }
 }
 
-void AccelLedsTempFrame::to_bytes(char* out, NeuroonFrameBytes::ByteOrder bo) const{
+void PatFrame::to_bytes(char* out, NeuroonFrameBytes::ByteOrder bo) const{
   int_to_bytes<std::uint32_t>(out, this->timestamp, bo);
   int_to_bytes<std::int32_t>(out+4, this->ir_led, bo);
   int_to_bytes<std::int32_t>(out+8, this->red_led, bo);

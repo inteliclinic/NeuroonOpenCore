@@ -43,9 +43,9 @@ struct AccelAxes{
   std::int16_t x, y, z;
 };
 
-struct AccelLedsTempFrame : public NeuroonSignalFrame{
+struct PatFrame : public NeuroonSignalFrame{
   static const uint DefaultEmissionInterval_ms = 40;
-  static AccelLedsTempFrame from_bytes_array(const char* bytes, std::size_t, NeuroonFrameBytes::ByteOrder bo=NeuroonFrameBytes::DefaultByteOrder);
+  static PatFrame from_bytes_array(const char* bytes, std::size_t, NeuroonFrameBytes::ByteOrder bo=NeuroonFrameBytes::DefaultByteOrder);
   void to_bytes(char*, NeuroonFrameBytes::ByteOrder=NeuroonFrameBytes::DefaultByteOrder) const override;
   std::int32_t ir_led;
   std::int32_t red_led;

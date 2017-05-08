@@ -10,7 +10,7 @@
 #include "NeuroonSignals.h"
 
 // daemon managing signal processing and algorithm execution
-class AlgCoreDaemon : public IDataSink<NeuroonFrameBytes>, public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
+class AlgCoreDaemon : public IDataSink<NeuroonFrameBytes>, public IDataSink<EegFrame>, public IDataSink<PatFrame>{
 
 private:
 
@@ -47,7 +47,7 @@ public:
   // Receive a frame of signal
   void consume(NeuroonFrameBytes& frame_stream) override;
   void consume(EegFrame& frame) override;
-  void consume(AccelLedsTempFrame& frame) override;
+  void consume(PatFrame& frame) override;
 
   // for now it isnt possible to remove algorithm from daemon
   void add_streaming_algorithms(std::unique_ptr<IStreamingAlgorithm> & saup);

@@ -46,7 +46,7 @@ void AlgCoreDaemon::consume (NeuroonFrameBytes& frame_stream) {
     break;
   }
   case NeuroonFrameBytes::SourceStream::ALT:{
-    auto f = AccelLedsTempFrame::from_bytes_array(frame_stream.bytes, frame_stream.size);
+    auto f = PatFrame::from_bytes_array(frame_stream.bytes, frame_stream.size);
     consume(f);
     break;
   }
@@ -56,7 +56,7 @@ void AlgCoreDaemon::consume (NeuroonFrameBytes& frame_stream) {
 }
 
 
-void AlgCoreDaemon::consume (AccelLedsTempFrame& frame) {
+void AlgCoreDaemon::consume (PatFrame& frame) {
   if (!_processing_in_progress) {
     LOG(WARNING) << "Unintended behaviour: Consuming data when processing flag turned off.";
   }

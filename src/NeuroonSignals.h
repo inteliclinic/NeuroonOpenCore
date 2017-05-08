@@ -32,7 +32,7 @@ public:
   virtual std::size_t total_signal_samples(SignalOrigin ss) const = 0;
 };
 
-class NeuroonSignals : public INeuroonSignals, public IDataSink<EegFrame>, public IDataSink<AccelLedsTempFrame>{
+class NeuroonSignals : public INeuroonSignals, public IDataSink<EegFrame>, public IDataSink<PatFrame>{
 public:
 
 
@@ -44,13 +44,13 @@ public:
     const EegFrame * new_data;
   };
 
-  struct AccelLedsTempHoleFillingArgs{
+  struct PatHoleFillingArgs{
     std::vector<Double3d> & gathered_accel_axes_signal;
     std::vector<double> & gathered_ir_led_signal;
     std::vector<double> & gathered_red_led_signal;
     std::vector<double> & gathered_temperature_signal;
     std::size_t lost_frames_count;
-    const AccelLedsTempFrame * new_data;
+    const PatFrame * new_data;
   };
 
 private:
@@ -69,10 +69,10 @@ private:
   // ----------- lost frame signal hole filling
 
   std::function< void (EegHoleFillingArgs) >  _eeg_lost_frame_hole_filling_function = nullptr;
-  std::function< void (AccelLedsTempHoleFillingArgs) >  _accelledstemp_lost_frame_hole_filling_function = nullptr;
+  std::function< void (PatHoleFillingArgs) >  _accelledstemp_lost_frame_hole_filling_function = nullptr;
 
   void _default_nan_filling_eeg(EegHoleFillingArgs);
-  void _default_nan_filling_accelledstemp(AccelLedsTempHoleFillingArgs);
+  void _default_nan_filling_accelledstemp(PatHoleFillingArgs);
 
 
 public:
@@ -90,13 +90,13 @@ public:
   void set_lost_frame_hole_filling_function(std::function< void (EegHoleFillingArgs)> fun){
     _eeg_lost_frame_hole_filling_function = fun;
   }
-  void set_lost_frame_hole_filling_function(std::function<void (AccelLedsTempHoleFillingArgs)> fun){
+  void set_lost_frame_hole_filling_function(std::function<void (PatHoleFillingArgs)> fun){
     _accelledstemp_lost_frame_hole_filling_function = fun;
   }
 
   // consumes a frame converting it to signal vectors
   void consume(EegFrame& frame) override;
-  void consume(AccelLedsTempFrame& frame) override;
+  void consume(PatFrame& frame) override;
 
   // get vectors of received samples
   const std::vector<double> & eeg_signal() const override;

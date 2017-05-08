@@ -30,7 +30,7 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
 
   std::unique_ptr<EegFramesSource> eeg_source_sample1;
   std::unique_ptr<EegFramesSource> eeg_source_sample2;
-  std::unique_ptr<AccelLedsTempFrameSource> irled_source_sample2;
+  std::unique_ptr<PatFrameSource> irled_source_sample2;
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
@@ -85,9 +85,9 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsSimpleEegConsume) {
 }
 
 
-TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsAccelLedsTempFrameConsume) {
+TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsPatFrameConsume) {
 
-  std::vector<AccelLedsTempFrame> frames = {};
+  std::vector<PatFrame> frames = {};
 
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -97,9 +97,9 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsAccelLedsTempFrameConsume
 
   const int N = 100;
   for(std::int16_t i = 0; i < N; i++){
-    AccelLedsTempFrame ef;
+    PatFrame ef;
 
-    ef.timestamp = i * AccelLedsTempFrame::DefaultEmissionInterval_ms + dis(gen);
+    ef.timestamp = i * PatFrame::DefaultEmissionInterval_ms + dis(gen);
 
     ef.ir_led = i;
     ef.red_led = i+1;

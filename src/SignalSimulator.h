@@ -41,19 +41,19 @@ public:
 };
 
 
-class AccelLedsTempFrameSource : public IPullBasedOfflineSource<AccelLedsTempFrame>{
+class PatFrameSource : public IPullBasedOfflineSource<PatFrame>{
   friend class SignalSource<std::int16_t>;
   friend class SignalSource<std::int32_t>;
   friend class SignalSource<std::int8_t>;
 
 public:
 
-  std::vector<AccelLedsTempFrame> _frames = {};
+  std::vector<PatFrame> _frames = {};
   std::size_t _frame_size;
 
 
   // low level constructor
-  AccelLedsTempFrameSource (SignalSource<std::int32_t> ir_led,
+  PatFrameSource (SignalSource<std::int32_t> ir_led,
                             SignalSource<std::int32_t> red_led,
                             SignalSource<std::int16_t> accel_axes_x,
                             SignalSource<std::int16_t> accel_axes_y,
@@ -62,8 +62,8 @@ public:
                             SignalSource<std::int8_t> temperature_2);
 
   // only ir_led in resulting frames, rest is zeros
-  AccelLedsTempFrameSource(SignalSource<std::int32_t> ir_led) :
-    AccelLedsTempFrameSource(ir_led,
+  PatFrameSource(SignalSource<std::int32_t> ir_led) :
+    PatFrameSource(ir_led,
                              SignalSource<std::int32_t>::zeros(1),
                              SignalSource<std::int16_t>::zeros(1),
                              SignalSource<std::int16_t>::zeros(1),
@@ -73,9 +73,9 @@ public:
 
 
 
-  VectorView<AccelLedsTempFrame> get_values (std::size_t count=0) override {
-    if(count == 0 || count >= _frames.size()) return VectorView<AccelLedsTempFrame>(_frames);
-    return VectorView<AccelLedsTempFrame>(_frames.begin(), _frames.begin()+count);
+  VectorView<PatFrame> get_values (std::size_t count=0) override {
+    if(count == 0 || count >= _frames.size()) return VectorView<PatFrame>(_frames);
+    return VectorView<PatFrame>(_frames.begin(), _frames.begin()+count);
   }
 
 };

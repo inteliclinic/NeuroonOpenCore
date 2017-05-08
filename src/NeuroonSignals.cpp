@@ -85,8 +85,8 @@ void NeuroonSignals::consume(EegFrame & frame){
   LAST_TS(_eeg_signal) = frame.timestamp + std::max(static_cast<std::size_t>(0), frame.Length - 1) * ms_per_sample;
 }
 
-void NeuroonSignals::consume(AccelLedsTempFrame & frame){
-  LOG(DEBUG) << "Received AccelLedsTemp signal frame with timestamp: " << frame.timestamp;
+void NeuroonSignals::consume(PatFrame & frame){
+  LOG(DEBUG) << "Received PAT signal frame with timestamp: " << frame.timestamp;
 
   // ir led
   auto & ir_signal = SIGNAL_VEC(_ir_led_signal);
@@ -105,7 +105,7 @@ void NeuroonSignals::consume(AccelLedsTempFrame & frame){
   auto temperature_old_sz = temperature_signal.size();
   if (false){
     // std::size_t lost_frames_count = 0;
-    // AccelLedsTempHoleFillingArgs args = {signal, lost_frames_count, &frame };
+    // PatHoleFillingArgs args = {signal, lost_frames_count, &frame };
     // if(_eeg_lost_frame_hole_filling_function != nullptr){
     //   _eeg_lost_frame_hole_filling_function(args);
     // }
@@ -158,7 +158,7 @@ void NeuroonSignals::_default_nan_filling_eeg(EegHoleFillingArgs args){
   args.gathered_eeg_signal.resize(new_size, std::nan(NO_DATA_TAG));
 }
 
-void NeuroonSignals::_default_nan_filling_accelledstemp(AccelLedsTempHoleFillingArgs args){
+void NeuroonSignals::_default_nan_filling_accelledstemp(PatHoleFillingArgs args){
   auto l = args.lost_frames_count;
   auto n = std::nan(NO_DATA_TAG);
   LOG(INFO) << "Filling " << l << " lost frames with nans.";

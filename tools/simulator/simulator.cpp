@@ -117,16 +117,16 @@ class DummyDataSink : public IDataSink<T> {
 	virtual void consume(T&) {}
 };
 
-struct IrSink : public IDataSink<AccelLedsTempFrame> {
-	AccelLedsTempFrame m_frame;
+struct IrSink : public IDataSink<PatFrame> {
+	PatFrame m_frame;
 	bool has_frame = false;
 
-	AccelLedsTempFrame take_frame() {
+	PatFrame take_frame() {
 		has_frame = false;
 		return m_frame;
 	}
 
-	virtual void consume(AccelLedsTempFrame &frame) {
+	virtual void consume(PatFrame &frame) {
 		m_frame = frame;
 		has_frame = true;
 	}
@@ -174,19 +174,19 @@ int main(int argc, char** argv) {
 
 	auto eeg_source = new EegFramesSource(eeg_csv, "signal");
     std::shared_ptr<IPullBasedOfflineSource<EegFrame>> eeg_source_sp(eeg_source);
-    std::shared_ptr<IPullBasedOfflineSource<AccelLedsTempFrame>> ir_source_sp(new AccelLedsTempFrameSource(SignalSource<std::int32_t>::csv_column(ir_csv, "signal")));
+    std::shared_ptr<IPullBasedOfflineSource<PatFrame>> ir_source_sp(new PatFrameSource(SignalSource<std::int32_t>::csv_column(ir_csv, "signal")));
 
-    AccelLedsTempFrameSource irled_source_sample2(SignalSource<std::int32_t>::csv_column(ir_csv, "signal"));
+    PatFrameSource irled_source_sample2(SignalSource<std::int32_t>::csv_column(ir_csv, "signal"));
 
     SignalSimulator sim;
     std::shared_ptr<EegSink> sink_sp_eeg(new EegSink());
     auto pipe_up_eeg = std::unique_ptr<IFrameStreamPipe>(new FrameStreamPipe<EegFrame>(eeg_source_sp, sink_sp_eeg));
 
     std::shared_ptr<IrSink> sink_sp_ir(new IrSink());
-    auto pipe_up_ir = std::unique_ptr<IFrameStreamPipe>(new FrameStreamPipe<AccelLedsTempFrame>(ir_source_sp, sink_sp_ir));
+    auto pipe_up_ir = std::unique_ptr<IFrameStreamPipe>(new FrameStreamPipe<PatFrame>(ir_source_sp, sink_sp_ir));
 
     sim.add_streaming_pipe(std::move(pipe_up_eeg), EegFrame::DefaultEmissionInterval_ms);
-    sim.add_streaming_pipe(std::move(pipe_up_ir), AccelLedsTempFrame::DefaultEmissionInterval_ms);
+    sim.add_streaming_pipe(std::move(pipe_up_ir), PatFrame::DefaultEmissionInterval_ms);
 
 	log_out = new std::ofstream("simulator_log.csv", std::ios_base::trunc);
 
@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
 		}
 
 		if (sink_sp_ir->has_frame) {
-			AccelLedsTempFrame f = sink_sp_ir->take_frame();
+			PatFrame f = sink_sp_ir->take_frame();
 			f.to_bytes(bytes);
 			ncFeedDataStream1(neuroon, bytes, 20);
 		}

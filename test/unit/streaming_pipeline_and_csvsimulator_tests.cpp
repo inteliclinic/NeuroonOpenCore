@@ -28,7 +28,7 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
 
   std::shared_ptr<EegFramesSource> eeg_source_sample1;
   std::shared_ptr<EegFramesSource> eeg_source_sample2;
-  std::shared_ptr<AccelLedsTempFrameSource> irled_source_sample2;
+  std::shared_ptr<PatFrameSource> irled_source_sample2;
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
@@ -41,8 +41,8 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   virtual void SetUp(){
     eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1,0));
     eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2,"signal"));
-    irled_source_sample2 = std::unique_ptr<AccelLedsTempFrameSource>(
-                                                                     new AccelLedsTempFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
+    irled_source_sample2 = std::unique_ptr<PatFrameSource>(
+                                                                     new PatFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
 	}
 
 	void TearDown() {
@@ -67,7 +67,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
     EXPECT_EQ(expected_ef_be[i],ef_be.signal[i]);
   }
 
-  auto af_be = AccelLedsTempFrame::from_bytes_array((char*)bytes, L, NeuroonFrameBytes::ByteOrder::BE);
+  auto af_be = PatFrame::from_bytes_array((char*)bytes, L, NeuroonFrameBytes::ByteOrder::BE);
   EXPECT_EQ(19088743,af_be.timestamp);
   EXPECT_EQ(-1985238135, af_be.ir_led);
   EXPECT_EQ(291, af_be.accel_axes.x);
@@ -85,7 +85,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
     EXPECT_EQ(expected_ef_le[i],ef_le.signal[i]);
   }
 
-  auto af_le = AccelLedsTempFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::LE);
+  auto af_le = PatFrame::from_bytes_array((char*)bytes, 20, NeuroonFrameBytes::ByteOrder::LE);
   EXPECT_EQ(1732584193,af_le.timestamp);
   EXPECT_EQ(-1985238135, af_le.ir_led);
   EXPECT_EQ(8961, af_le.accel_axes.x);
@@ -95,7 +95,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
   EXPECT_EQ(-119, af_le.temperature[1]);
 
   // to bytes conversion
-  auto af_def = AccelLedsTempFrame::from_bytes_array((char*)bytes, L);
+  auto af_def = PatFrame::from_bytes_array((char*)bytes, L);
   auto ef_def = EegFrame::from_bytes_array((char*)bytes, L);
 
   unsigned char back[L];
@@ -131,8 +131,8 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleEegFrameSource1) {
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleAccelLedTempFrameSource1) {
 
   for(auto i=0;i<100;i++){
-    irled_source_sample2 = std::unique_ptr<AccelLedsTempFrameSource>(
-                                                                     new AccelLedsTempFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
+    irled_source_sample2 = std::unique_ptr<PatFrameSource>(
+                                                                     new PatFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
 
   }
 
