@@ -16,6 +16,7 @@ class IPullBasedOfflineSource{
 
  public:
   virtual VectorView<T> get_values(std::size_t count = 0) = 0;
+  virtual ~IPullBasedOfflineSource(){}
 
 };
 

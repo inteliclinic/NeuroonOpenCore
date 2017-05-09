@@ -69,6 +69,7 @@ class OnlineStagingFeaturePreprocessor {
 
     public:
     	IrFeatures();
+      virtual ~IrFeatures(){}
     	void reset();
     	dlib::matrix<double> transform(const Spectrogram& ir_spectrogram);
     };
