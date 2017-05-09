@@ -12,6 +12,7 @@ public:
   // this function should be lightweight in order to not cause delays
   // in realtime streaming
   virtual void consume(T&) = 0;
+  virtual ~IDataSink(){}
 };
 
 

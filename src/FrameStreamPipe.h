@@ -11,6 +11,7 @@
 
 class IFrameStreamPipe{
 public:
+  virtual ~IFrameStreamPipe(){}
   virtual void pass_next_frame() = 0;
   virtual void pass_next_frame_with_timestamp(ullong timestamp) = 0;
   virtual bool is_broken() const = 0;

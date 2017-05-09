@@ -15,6 +15,8 @@
 
 class INeuroonSignals {
 public:
+  virtual ~INeuroonSignals(){}
+
   virtual const std::vector<double> & eeg_signal() const = 0;
   virtual const std::vector<double> & ir_led_signal() const = 0;
   virtual const std::vector<double> & red_led_signal() const = 0;

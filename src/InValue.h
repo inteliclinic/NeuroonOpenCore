@@ -38,7 +38,7 @@ public:
       break;
     }
   }
-  ~InValue(){
+  virtual ~InValue(){
     using std::string;
     if(type_tag == STRING){
       this->s.~string();

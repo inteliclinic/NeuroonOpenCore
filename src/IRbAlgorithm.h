@@ -26,6 +26,7 @@ public:
 
 class IRbAlgorithm{
 public:
+  virtual ~IRbAlgorithm(){}
 
   enum class StepType{START,STEP,END};
   virtual void init(size_t n, const RollWindow &window ) = 0;
