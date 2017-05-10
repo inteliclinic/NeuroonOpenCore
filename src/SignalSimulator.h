@@ -41,7 +41,7 @@ public:
 };
 
 
-class PatFrameSource : public IPullBasedOfflineSource<PatFrame>{
+class PatFramesSource : public IPullBasedOfflineSource<PatFrame>{
   friend class SignalSource<std::int16_t>;
   friend class SignalSource<std::int32_t>;
   friend class SignalSource<std::int8_t>;
@@ -53,7 +53,7 @@ public:
 
 
   // low level constructor
-  PatFrameSource (SignalSource<std::int32_t> ir_led,
+  PatFramesSource (SignalSource<std::int32_t> ir_led,
                             SignalSource<std::int32_t> red_led,
                             SignalSource<std::int16_t> accel_axes_x,
                             SignalSource<std::int16_t> accel_axes_y,
@@ -62,8 +62,8 @@ public:
                             SignalSource<std::int8_t> temperature_2);
 
   // only ir_led in resulting frames, rest is zeros
-  PatFrameSource(SignalSource<std::int32_t> ir_led) :
-    PatFrameSource(ir_led,
+  PatFramesSource(SignalSource<std::int32_t> ir_led) :
+    PatFramesSource(ir_led,
                              SignalSource<std::int32_t>::zeros(1),
                              SignalSource<std::int16_t>::zeros(1),
                              SignalSource<std::int16_t>::zeros(1),

@@ -29,7 +29,7 @@ EegFramesSource::EegFramesSource(SignalSource<std::int16_t> signal_source, std::
 ////////////////////////////////////////// PatFrame
 
 
-PatFrameSource::PatFrameSource (SignalSource<std::int32_t> ir_led,
+PatFramesSource::PatFramesSource (SignalSource<std::int32_t> ir_led,
                                                     SignalSource<std::int32_t> red_led,
                                                     SignalSource<std::int16_t> accel_x,
                                                     SignalSource<std::int16_t> accel_y,

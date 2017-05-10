@@ -30,7 +30,7 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
 
   std::unique_ptr<EegFramesSource> eeg_source_sample1;
   std::unique_ptr<EegFramesSource> eeg_source_sample2;
-  std::unique_ptr<PatFrameSource> irled_source_sample2;
+  std::unique_ptr<PatFramesSource> irled_source_sample2;
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){

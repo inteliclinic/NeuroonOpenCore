@@ -19,8 +19,8 @@ public:
                          std::shared_ptr<IDataSink<EegFrame>> eeg_sink,
                          std::shared_ptr<IDataSink<PatFrame>> alt_sink){
 
-    _alt_source_sp = std::shared_ptr<IPullBasedOfflineSource<PatFrameSource>>(
-       new PatFrameSource(SignalSource<std::int32_t>::csv_column(irled_csv_path, "signal")));
+    _alt_source_sp = std::shared_ptr<IPullBasedOfflineSource<PatFramesSource>>(
+       new PatFramesSource(SignalSource<std::int32_t>::csv_column(irled_csv_path, "signal")));
 
     _eeg_source_sp = std::shared_ptr<IPullBasedOfflineSource<EegFrame>>(new EegFramesSource(eeg_csv_path, EegFrame::Length));
 
@@ -39,8 +39,8 @@ public:
                          std::function<void (EegFrame&)> consume_eeg_function,
                          std::function<void (PatFrame&)> consume_accelledstemp_function){
 
-    _alt_source_sp = std::shared_ptr<IPullBasedOfflineSource<PatFrameSource>>(
-       new PatFrameSource(SignalSource<std::int32_t>::csv_column(irled_csv_path, "signal")));
+    _alt_source_sp = std::shared_ptr<IPullBasedOfflineSource<PatFramesSource>>(
+       new PatFramesSource(SignalSource<std::int32_t>::csv_column(irled_csv_path, "signal")));
 
     _eeg_source_sp = std::shared_ptr<IPullBasedOfflineSource<EegFrame>>(new EegFramesSource(eeg_csv_path, EegFrame::Length));
 

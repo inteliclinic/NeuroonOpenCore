@@ -28,7 +28,7 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
 
   std::shared_ptr<EegFramesSource> eeg_source_sample1;
   std::shared_ptr<EegFramesSource> eeg_source_sample2;
-  std::shared_ptr<PatFrameSource> irled_source_sample2;
+  std::shared_ptr<PatFramesSource> irled_source_sample2;
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
@@ -41,8 +41,8 @@ struct StreamingPipelineAndCsvSimulatorTests : public ::testing::Test {
   virtual void SetUp(){
     eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1,0));
     eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2,"signal"));
-    irled_source_sample2 = std::unique_ptr<PatFrameSource>(
-                                                                     new PatFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
+    irled_source_sample2 = std::unique_ptr<PatFramesSource>(
+                                                                     new PatFramesSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
 	}
 
 	void TearDown() {
@@ -131,8 +131,8 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleEegFrameSource1) {
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleAccelLedTempFrameSource1) {
 
   for(auto i=0;i<100;i++){
-    irled_source_sample2 = std::unique_ptr<PatFrameSource>(
-                                                                     new PatFrameSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
+    irled_source_sample2 = std::unique_ptr<PatFramesSource>(
+                                                                     new PatFramesSource(SignalSource<std::int32_t>::csv_column(sample_csv2, "signal")));
 
   }
 

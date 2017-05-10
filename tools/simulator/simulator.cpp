@@ -174,9 +174,9 @@ int main(int argc, char** argv) {
 
 	auto eeg_source = new EegFramesSource(eeg_csv, "signal");
     std::shared_ptr<IPullBasedOfflineSource<EegFrame>> eeg_source_sp(eeg_source);
-    std::shared_ptr<IPullBasedOfflineSource<PatFrame>> ir_source_sp(new PatFrameSource(SignalSource<std::int32_t>::csv_column(ir_csv, "signal")));
+    std::shared_ptr<IPullBasedOfflineSource<PatFrame>> ir_source_sp(new PatFramesSource(SignalSource<std::int32_t>::csv_column(ir_csv, "signal")));
 
-    PatFrameSource irled_source_sample2(SignalSource<std::int32_t>::csv_column(ir_csv, "signal"));
+    PatFramesSource irled_source_sample2(SignalSource<std::int32_t>::csv_column(ir_csv, "signal"));
 
     SignalSimulator sim;
     std::shared_ptr<EegSink> sink_sp_eeg(new EegSink());
