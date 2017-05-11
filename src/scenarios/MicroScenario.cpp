@@ -88,3 +88,11 @@ std::set<Key> MicroScenario::_getCurrentlyActiveTriggers() const{
   }
   return ret;
 }
+
+ncAtomicInstruction MicroScenario::createAtomicInstruction(unsigned int time, char (&data)[MASK_INSTRUCTION_LENGTH]){
+  ncAtomicInstruction atomic_instruction;
+  atomic_instruction.time = time;
+  std::memcpy(atomic_instruction.data, data, sizeof(data));
+  return atomic_instruction;
+}
+

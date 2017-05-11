@@ -17,7 +17,6 @@
 #include "LucidDreamScenario.h"
 #include "LightBoostScenario.h"
 
-
 ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args){
   switch(scenarioType){
     case SCENARIO_LUCIDDREAM:
