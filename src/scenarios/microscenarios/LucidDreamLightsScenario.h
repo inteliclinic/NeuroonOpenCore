@@ -19,25 +19,34 @@
 #include "TimeTrigger.h"
 #include <vector>
 
+
 class LucidDreamLightsScenario : public MicroScenario {
 
 private:
-  const int kSignalLost = 1;
-  const int kRemPhase = 2;
+  bool m_sequenceGenerated;
+  bool m_trigerAcknowledged;
+  enum TriggersIDs{
+    ACTIVATIONTRIGGER, SIGNALLOST, REMPHASE
+  };
 
 public:
-  virtual ~LucidDreamLightsScenario() {}
+  LucidDreamLightsScenario();
+  ~LucidDreamLightsScenario() {}
 
-  virtual MicroScenarioUpdate update(bool did_activate,
-                                     bool last_instructions) override;
+  MicroScenarioUpdate update(bool did_activate, bool last_instructions) override;
 
   void installRemPhaseTrigger(std::shared_ptr<const IScenarioTrigger> t) {
-    this->installTriggerForKey(t, kRemPhase);
+    this->installTriggerForKey(t, TriggersIDs::REMPHASE);
   }
 
-  void installSignalLostTrigger(std::shared_ptr<const IScenarioTrigger> t) {
-    this->installTriggerForKey(t, kSignalLost);
-  }
+  /*
+   *void installSignalLostTrigger(std::shared_ptr<const IScenarioTrigger> t) {
+   *  this->installTriggerForKey(t, kSignalLost);
+   *}
+  */
+
+  std::vector<ncAtomicInstruction> LucidSequence();
+  std::vector<ncAtomicInstruction> _desequence();
 };
 
 #endif /* !LUCIDDREAMLIGHTSSCENARIO_H */

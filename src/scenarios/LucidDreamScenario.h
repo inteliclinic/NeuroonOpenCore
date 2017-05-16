@@ -11,15 +11,20 @@
 #define LUCIDDREAMSCENARIO_H
 
 #include "SleepScenario.h"
+#include "RemDetectedTrigger.h"
 
 // [TODO] warning: previosly declared as struct
-class LucidDreamScenario : SleepScenario {
+class LucidDreamScenario : public SleepScenario {
 public:
   LucidDreamScenario(const ncScenarioInitArgs *args);
   // ncUpdateOutput update(const ncScenarioInput *updateArgs) override;
 
 protected:
 private:
+  const ncUnixTimestamp m_kRemTresholdMs = 180000;
+  const ncUnixTimestamp m_kRemFirstOffset = 300000;
+  const ncUnixTimestamp m_kRemSecondOffset = 600000;
+
   ncLucidPulsesIntensity m_startingIntensity;
   ncLucidRemStabilityTreshold m_remStabilityTreshold;
   unsigned long m_remCounter;
