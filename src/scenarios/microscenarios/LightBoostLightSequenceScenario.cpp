@@ -1,5 +1,5 @@
 #include "LightBoostLightSequenceScenario.h"
-#include "ic_low_level_control.h"
+#include "MicroScenarioSequenceLibrary.h"
 
 MicroScenario::MicroScenarioUpdate
 LightBoostLightSequenceScenario::update(bool did_activate,
@@ -53,49 +53,13 @@ LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_parametrizedSinusLikeSequence() const {
   // [TODO]
-  // ma zwracać wektor instrukcji realizujący światła lightboost
-  // zwiększanie intenstywnosci trwa /ascend_time_ms/
-  // maksymalna intensywnosc: /crest_time_ms/
-  // spadek intensywnosci: /descend_time_ms/
-  // wartosc minimalna: /trough_time_ms/
-  //
-  // zalozenie jest za te instrukcje wywoluja sie cyklicznie do odwolania
-  // jezeli tak nie jest to trzeba zmodyfikowac funckje update'u
-  // WOJTEK: póki co realizuję tutaj pojedynczą sekwencję "zbocze, wypłaszczenie, zbocze,
-  // wypłaszczenie" - trzeba ogarnąć mechanizm, który będzie wywoływał cyklicznie tę funkcję z
-  // poziomu mikroscenariusza
-  char ble_ramp_up_frame[MASK_INSTRUCTION_LENGTH];
-  char ble_ramp_down_frame[MASK_INSTRUCTION_LENGTH];
-  size_t len = MASK_INSTRUCTION_LENGTH;
-  rgb_led_set_func(ble_ramp_up_frame, &len,
-      RGB_LED_SIDE_BOTH,
-      FUN_TYPE_RAMP,
-      RGB_LED_COLOR_WHITE,
-      DEV_MAX_INTENSITY,
-      _ascend_time_ms + _crest_time_ms,
-      DEV_MIN_PERIOD,
-      0); //TODO: potrzebny mechanizm do inkrementowania ID
-  rgb_led_set_func(ble_ramp_down_frame, &len,
-      RGB_LED_SIDE_BOTH,
-      FUN_TYPE_RAMP,
-      RGB_LED_COLOR_WHITE,
-      0,
-      _descend_time_ms + _trough_time_ms,
-      DEV_MIN_PERIOD,
-      0); //TODO: potrzebny mechanizm do inkrementowania ID
-
-  std::vector<ncAtomicInstruction> instructions;
-  instructions.push_back(createAtomicInstruction(0, ble_ramp_up_frame));
-  instructions.push_back(createAtomicInstruction(_ascend_time_ms + _crest_time_ms, ble_ramp_down_frame));
-  return instructions;
+  // umieścić uchwyt do odpowiedniej sekwencji
+  return {};
 }
 
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_descendSequence() const {
   // [TODO]
-  // ma zwracać wektor instrukcji realizujący sinusoidalny spadek
-  // od wartosci maksymalnej do minimalnej który trwa
-  // /descent_time_ms/ milisekund
-  // WOJTEK: nie ma takiej opcji póki co - trzeba to obgadać
+  // umieścić uchwyt do odpowiedniej sekwencji
   return {};
 }

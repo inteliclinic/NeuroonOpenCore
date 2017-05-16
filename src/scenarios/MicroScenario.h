@@ -82,8 +82,6 @@ protected:
          ) = 0;
 
   ncUnixTimestamp currentMoment() const { return this->_current_moment; }
-
-  ncAtomicInstruction createAtomicInstruction(unsigned int, char (&)[MASK_INSTRUCTION_LENGTH]);
 };
 
 #endif /* !MICROSCENARIO_H */
