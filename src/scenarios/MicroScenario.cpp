@@ -88,3 +88,4 @@ std::set<Key> MicroScenario::_getCurrentlyActiveTriggers() const{
   }
   return ret;
 }
+

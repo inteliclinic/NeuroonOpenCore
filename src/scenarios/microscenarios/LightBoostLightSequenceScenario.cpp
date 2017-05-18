@@ -1,4 +1,5 @@
 #include "LightBoostLightSequenceScenario.h"
+#include "MicroScenarioSequenceLibrary.h"
 
 MicroScenario::MicroScenarioUpdate
 LightBoostLightSequenceScenario::update(bool did_activate,
@@ -48,22 +49,13 @@ LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_parametrizedSinusLikeSequence() const {
   // [TODO]
-  // ma zwracać wektor instrukcji realizujący światła lightboost
-  // zwiększanie intenstywnosci trwa /ascend_time_ms/
-  // maksymalna intensywnosc: /crest_time_ms/
-  // spadek intensywnosci: /descend_time_ms/
-  // wartosc minimalna: /trough_time_ms/
-  //
-  // zalozenie jest za te instrukcje wywoluja sie cyklicznie do odwolania
-  // jezeli tak nie jest to trzeba zmodyfikowac funckje update'u
+  // umieścić uchwyt do odpowiedniej sekwencji
   return {};
 }
 
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_descendSequence() const {
   // [TODO]
-  // ma zwracać wektor instrukcji realizujący sinusoidalny spadek
-  // od wartosci maksymalnej do minimalnej który trwa
-  // /descent_time_ms/ milisekund
+  // umieścić uchwyt do odpowiedniej sekwencji
   return {};
 }
