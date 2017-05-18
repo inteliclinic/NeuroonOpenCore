@@ -43,10 +43,6 @@ LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
     unsigned int ascend_time_ms, unsigned int crest_time_ms,
     unsigned int descend_time_ms, unsigned int trough_time_ms) {
 
-  this->_ascend_time_ms = ascend_time_ms;
-  this->_crest_time_ms = crest_time_ms;
-  this->_descend_time_ms = descend_time_ms;
-  this->_trough_time_ms = trough_time_ms;
   // [TODO] zwykle inicjalizacja zmiennych konfigurujacych sekwencje
 }
 
