@@ -4,7 +4,7 @@
  * @date    April, 2017
  * @brief   Brief description
  *
- * Description
+ * [TODO] Documentation
  */
 
 #ifndef NEUROONMASKSCENARIOSAPINEW_H
@@ -18,12 +18,15 @@ extern "C" {
 /** Length of a single instruction to the mask.
  *  Enforced by the size of Bluetooth frame.
  *
- *  I've made it a macro. Makes more sense since I'm using it in variables declaration
+ *  I've made it a macro. Makes more sense since I'm using it in variables
+ * declaration
  *  -Paweł Kaźmierzewski
 */
 #define MASK_INSTRUCTION_LENGTH 20
 
-typedef void* ncScenario;
+typedef void *ncScenario;
+
+// ==================== LUCID DREAMING ============================
 
 /** @brief Structure holding internal state of lucid dreaming scenario
  *         Do not try directly modifying its content.
@@ -39,7 +42,7 @@ typedef enum { LP_DIMMED, LP_REGULAR, LP_BRIGHT } ncLucidPulsesIntensity;
  */
 typedef enum {
   LRS_DEFAULT,
-}ncLucidRemStabilityTreshold;
+} ncLucidRemStabilityTreshold;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
@@ -47,7 +50,7 @@ typedef enum {
 typedef struct {
   ncLucidPulsesIntensity startingIntensity;
   ncLucidRemStabilityTreshold remStabilityTreshold;
-}ncLucidDreamScenarioInitArgs;
+} ncLucidDreamScenarioInitArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
@@ -65,7 +68,9 @@ typedef struct {
   /** Peak value of accelerometer's vector length since last call of this
    *  function. */
   float accVectorPeak;
-}ncLucidDreamScenarioInput;
+} ncLucidDreamScenarioInput;
+
+// ==================== WAKE-UP / COMMON SLEEP ============================
 
 /** @brief Structure holding internal state of wake up scenario
  *         Do not try directly modifying its content.
@@ -79,7 +84,7 @@ typedef enum {
   SUN_DIMMED,
   SUN_NORMAL,
   SUN_BRIGHT,
-}ncSunriseIntensity;
+} ncSunriseIntensity;
 
 /** @enum Enumeration of modes of work of Neuroon's Smart Wake-up */
 typedef enum {
@@ -87,12 +92,19 @@ typedef enum {
   SW_SMART,
   SW_REM,
   SW_LIGHT,
-}ncSmartWakeupMode;
+} ncSmartWakeupMode;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          scenario initialization.
  */
 typedef struct {
+  /** Time of absolute wake-up. */
+  ncUnixTimestamp wakeupTimestamp;
+
+
+  /** Time in minutes before planned wakeup at which sunrise starts */
+  unsigned int artificialSunriseWindow;
+
   /** Sunrise light intensity. */
   ncSunriseIntensity sunriseIntensity;
 
@@ -108,7 +120,7 @@ typedef struct {
 
   /** Determines whether vibrations will be used for waking the user */
   bool isVibrationOn;
-}ncCommonSleepScenarioInitArgs;
+} ncCommonSleepScenarioInitArgs;
 
 /** @struct Data structure aggregating all paremeters needed for
  *          periodical update and progress of the scenario.
@@ -126,7 +138,7 @@ typedef struct {
   /** Peak value of accelerometer's vector length since last call of this
    *  function. */
   float accVectorPeak;
-}ncCommonSleepScenarioInput;
+} ncCommonSleepScenarioInput;
 
 /** @brief Destroys scenario releasing hold memory. */
 void ncWuDestroyScenario(ncWakeUpScenario *);
@@ -137,38 +149,57 @@ typedef struct {
 
   /** User's current sleep stage. */
   ncSleepStage current_sleep_stage;
-}ncPowernapScenarioInput;
+} ncPowernapScenarioInput;
 
 typedef struct {
   ncSleepStage currentSleepStage; /**< User's current sleep stage. */
-  ncUnixTimestamp currentTime;   /**< Time atm of the call for instructions */
-  ncSignalQuality signalQuality; /**< Avg signal quality during last update
-                                    period */
-}ncCircadianRhythmAdjustmentScenarioInput;
+  ncSignalQuality signalQuality;  /**< Avg signal quality during last update
+                                     period */
+} ncCircadianRhythmAdjustmentScenarioInput;
+
+// ==================== LIGHTBOOST ============================
 
 typedef struct {
-  ncUnixTimestamp currentTime;   /**< Time atm of the call for instructions */
   ncSignalQuality signalQuality; /**< Avg signal quality during last update
                                     period */
-}ncLightBoostScenarioInput;
+} ncLightBoostScenarioInput;
 
-typedef union{
-  ncLucidDreamScenarioInput lucidDream;
-  ncCommonSleepScenarioInput commonSleep;
-  ncPowernapScenarioInput powerNap;
-  ncCircadianRhythmAdjustmentScenarioInput CircadianRhythm;
-  ncLightBoostScenarioInput lightBoost;
-}ncScenarioInput;
+/** @enum Enumeration of light intensity levels. */
+typedef enum { REGULAR, BRIGHT } ncLightIntensityLevel;
 
-typedef union{
+/** @struct Data structure aggregating all paremeters needed for
+  *          scenario initialization.
+  */
+typedef struct {
+  unsigned int lengthInMinutes;    /**< Length of the scenario in minutes. */
+  ncLightIntensityLevel intensity; /**< Level of intensity of led light */
+} ncLightBoostScenarioInitArgs;
+
+// =================== UNIONS =================================
+
+typedef struct {
+  union {
+    ncLucidDreamScenarioInput lucidDream;
+    ncCommonSleepScenarioInput commonSleep;
+    ncPowernapScenarioInput powerNap;
+    ncCircadianRhythmAdjustmentScenarioInput CircadianRhythm;
+    ncLightBoostScenarioInput lightBoost;
+  } scenarioSpecific;
+  struct {
+    ncUnixTimestamp currentTime;
+  } commonInput;
+} ncScenarioInput;
+
+typedef union {
   ncLucidDreamScenarioInitArgs lucidDream;
   ncCommonSleepScenarioInitArgs commonSleep;
+  ncLightBoostScenarioInitArgs lightBoost;
   /*
    *ncPowernapScenarioInput powerNap;
    *ncCircadianRhythmAdjustmentScenarioInput CircadianRhythm;
    *ncLightBoostScenarioInput lightBoost;
    */
-}ncScenarioInitArgs;
+} ncScenarioInitArgs;
 
 typedef enum {
   SCENARIO_LUCIDDREAM,
@@ -176,23 +207,29 @@ typedef enum {
   SCENARIO_SLEEP,
   SCENARIO_POWERNAP,
   SCENARIO_CIRCADIANRHYTHM
-}ncScenarioType;
+} ncScenarioType;
 
 typedef enum {
   UPDATE_OK,
   UPDATE_NEW_DATA,
   UPDATE_SCENARIO_FINISHED,
   UPDATE_ERROR
-}ncUpdateOutput;
+} ncUpdateOutput;
 
 typedef struct {
   unsigned int time;
   char data[MASK_INSTRUCTION_LENGTH];
-}ncAtomicInstruction;
+} ncAtomicInstruction;
 
-ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args);
+ncScenario ncCreateScenario(ncScenarioType scenarioType,
+                            const ncScenarioInitArgs *args);
 ncAtomicInstruction ncGetNextInstruction(ncScenario scenario);
-ncUpdateOutput ncScenarioUpdate(ncScenario scenario, const ncScenarioInput *updateArgs);
+ncUpdateOutput ncScenarioUpdate(ncScenario scenario,
+                                const ncScenarioInput *updateArgs);
+
+// mutes scenario for given number of seconds
+ncUpdateOutput ncMuteScenario(ncScenario scenario, unsigned int time_s);
+
 void ncDestroyScenario(ncScenario scenario);
 bool ncAvailableMaskInstruction(ncScenario scenario);
 

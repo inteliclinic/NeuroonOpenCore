@@ -1,0 +1,5 @@
+((nil . ((cmake-ide-build-dir . "./build")))
+ (c++-mode . ((eval . (progn (setq flycheck-clang-include-path (mapcar (lambda (p) (concat (projectile-project-root) p)) '("api" "src" "src/scenarios/microscenarios" "src/scenarios" "src/scenarios/triggers")))
+                             (setq flycheck-gcc-include-path (mapcar (lambda (p) (concat (projectile-project-root) p)) '("api" "src" "src/scenarios/microscenarios" "src/scenarios" "src/scenarios/triggers")))
+                             (setq flycheck-clang-language-standard "c++11")
+                             (setq flycheck-gcc-language-standard "c++11"))))))
