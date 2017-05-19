@@ -44,14 +44,14 @@ LightBoostScenario::LightBoostScenario(const ncScenarioInitArgs *args)
   // lost contact scenario
   auto lost_contact_light_scenario =
       std::shared_ptr<LightBoostLightSequenceScenario>(
-          new LightBoostLightSequenceScenario(500, 9, 500, 500));
+          new LightBoostLightSequenceScenario(500, 9, 500, 500, _length_in_minutes*6000));
   lost_contact_light_scenario->installActivationTrigger(lost_contact_trigger);
   this->addScenarioWithPriority(lost_contact_light_scenario, 2);
 
   // on contact scenario
   auto on_contact_light_scenario =
       std::shared_ptr<LightBoostLightSequenceScenario>(
-          new LightBoostLightSequenceScenario(5000, 24500, 500, 0));
+          new LightBoostLightSequenceScenario(5000, 24500, 500, 0, _length_in_minutes*6000));
 
   on_contact_light_scenario->installActivationTrigger(
       light_sequence_activation_trigger);

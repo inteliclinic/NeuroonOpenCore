@@ -1,4 +1,5 @@
 #include "LucidDreamLightsScenario.h"
+#include "MicroScenarioSequenceLibrary.h"
 
 LucidDreamLightsScenario::LucidDreamLightsScenario() :
   m_sequenceGenerated(false),
@@ -27,11 +28,11 @@ LucidDreamLightsScenario::update(bool did_activate, bool last_instructions) {
 
 
 std::vector<ncAtomicInstruction> LucidDreamLightsScenario::LucidSequence(){
-  return {};
+  return {sequence::lucidDreamSequence()};
 }
 
 
 std::vector<ncAtomicInstruction> LucidDreamLightsScenario::_desequence(){
-  return {};
+  return {sequence::killSequence()};
 }
 

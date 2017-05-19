@@ -41,21 +41,21 @@ LightBoostLightSequenceScenario::update(bool did_activate,
 
 LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
     unsigned int ascend_time_ms, unsigned int crest_time_ms,
-    unsigned int descend_time_ms, unsigned int trough_time_ms) {
-
-  // [TODO] zwykle inicjalizacja zmiennych konfigurujacych sekwencje
-}
+    unsigned int descend_time_ms, unsigned int trough_time_ms,
+    unsigned int duration_ms):
+  m_ascendTimeMs(ascend_time_ms),
+  m_crestTimeMs(crest_time_ms),
+  m_descendTimeMs(descend_time_ms),
+  m_troughTimeMs(trough_time_ms),
+  m_durationMs(duration_ms)
+{}
 
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_parametrizedSinusLikeSequence() const {
-  // [TODO]
-  // umieścić uchwyt do odpowiedniej sekwencji
-  return {};
+  return {sequence::parametrizedSinusLikeSequence(m_ascendTimeMs, m_crestTimeMs, m_descendTimeMs, m_troughTimeMs, m_durationMs)};
 }
 
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_descendSequence() const {
-  // [TODO]
-  // umieścić uchwyt do odpowiedniej sekwencji
-  return {};
+  return {sequence::killSequence()};
 }
