@@ -346,6 +346,7 @@ namespace sequence{
 
   std::vector<ncAtomicInstruction> killSequence(){
     char ble_ramp_down_frame[MASK_INSTRUCTION_LENGTH];
+    char ble_turn_off_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
 
     uint8_t device;
@@ -358,9 +359,17 @@ namespace sequence{
         DEV_INF_DURATION,
         DEV_MIN_PERIOD,
         0); //TODO: potrzebny mechanizm do inkrementowania ID
+    device_set_func(ble_turn_off_frame, &len,
+        device,
+        FUN_TYPE_OFF,
+        0,
+        0,
+        0,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_ramp_down_frame)); //Hardcoded sequence!!!
+    instructions.push_back(createAtomicInstruction(0, ble_ramp_down_frame));
+    instructions.push_back(createAtomicInstruction(2000, ble_turn_off_frame));
 
     return instructions;
   }
