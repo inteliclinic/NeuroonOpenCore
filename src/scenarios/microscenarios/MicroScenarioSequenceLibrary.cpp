@@ -9,6 +9,8 @@
 
 #include "MicroScenarioSequenceLibrary.h"
 #include <cstring>
+#include <string>
+#include "ic_low_level_control.h"
 
 namespace sequence{
 
@@ -21,47 +23,49 @@ namespace sequence{
 
   const unsigned int NUM_OF_ART_DAWN_STEPS = 40;
 
-  const uint8_t artificial_dawn[NUM_OF_ART_DAWN_STEPS][NUM_OF_LEDS] = {
-    0, 0, 0,
-    1, 0, 0,
-    4, 1, 0,
-    8, 1, 0,
-    13, 2, 0,
-    19, 3, 0,
-    19, 3, 0,
-    18, 3, 0,
-    18, 4, 0,
-    18, 4, 0,
-    17, 4, 0,
-    17, 5, 0,
-    17, 5, 0,
-    16, 5, 0,
-    19, 10, 1,
-    19, 11, 1,
-    18, 11, 1,
-    18, 12, 1,
-    17, 12, 1,
-    17, 13, 1,
-    16, 13, 1,
-    16, 20, 2,
-    15, 21, 2,
-    14, 22, 2,
-    13, 23, 2,
-    13, 38, 3,
-    12, 39, 3,
-    11, 40, 3,
-    11, 55, 4,
-    11, 62, 5,
-    11, 62, 10,
-    11, 62, 15,
-    11, 62, 20,
-    11, 62, 25,
-    11, 62, 30,
-    11, 62, 35,
-    11, 62, 40,
-    11, 62, 47,
-    11, 62, 55,
-    11, 62, 62};
+  const uint8_t artificial_dawn[NUM_OF_ART_DAWN_STEPS][NUM_OF_LEDS] =
+  {
+    {0, 0, 0},
+    {1, 0, 0},
+    {4, 1, 0},
+    {8, 1, 0},
+    {13, 2, 0},
+    {19, 3, 0},
+    {19, 3, 0},
+    {18, 3, 0},
+    {18, 4, 0},
+    {18, 4, 0},
+    {17, 4, 0},
+    {17, 5, 0},
+    {17, 5, 0},
+    {16, 5, 0},
+    {19, 10, 1},
+    {19, 11, 1},
+    {18, 11, 1},
+    {18, 12, 1},
+    {17, 12, 1},
+    {17, 13, 1},
+    {16, 13, 1},
+    {16, 20, 2},
+    {15, 21, 2},
+    {14, 22, 2},
+    {13, 23, 2},
+    {13, 38, 3},
+    {12, 39, 3},
+    {11, 40, 3},
+    {11, 55, 4},
+    {11, 62, 5},
+    {11, 62, 10},
+    {11, 62, 15},
+    {11, 62, 20},
+    {11, 62, 25},
+    {11, 62, 30},
+    {11, 62, 35},
+    {11, 62, 40},
+    {11, 62, 47},
+    {11, 62, 55},
+    {11, 62, 62}
+  };
 
   static ncAtomicInstruction createAtomicInstruction(unsigned int time, char (&data)[MASK_INSTRUCTION_LENGTH]){
     ncAtomicInstruction atomic_instruction;
@@ -248,11 +252,11 @@ namespace sequence{
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> wakeUpSequence(e_alarmType mode){
+  std::vector<ncAtomicInstruction> wakeUpSequence(ncWakeUpSequenceIntensity mode){
     switch(mode){
-      case ALARM_SOFT:    return getSoftAlarm();
-      case ALARM_MEDIUM:  return getMediumAlarm();
-      case ALARM_HARD:    return getHardAlarm();
+      case WU_ALARM_SOFT:    return getSoftAlarm();
+      case WU_ALARM_MEDIUM:  return getMediumAlarm();
+      case WU_ALARM_HARD:    return getHardAlarm();
       default:            return getSoftAlarm();
     }
   }
