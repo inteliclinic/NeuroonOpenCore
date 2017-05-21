@@ -18,7 +18,7 @@ typedef enum{
   WU_ALARM_MEDIUM,
   WU_ALARM_HARD,
   WU_ALARM_OFF
-}ncWakeUpSequenceIntensity;
+}wakeUpSequenceIntensity;
 
 namespace sequence{
 
@@ -26,7 +26,7 @@ namespace sequence{
   std::vector<ncAtomicInstruction> parametrizedSinusLikeSequence(unsigned int, unsigned int,
       unsigned int, unsigned int, unsigned int);
   std::vector<ncAtomicInstruction> artificialDawnSequence(unsigned int);
-  std::vector<ncAtomicInstruction> wakeUpSequence(ncWakeUpSequenceIntensity);
+  std::vector<ncAtomicInstruction> wakeUpSequence(wakeUpSequenceIntensity);
   std::vector<ncAtomicInstruction> lucidDreamSequence();
   std::vector<ncAtomicInstruction> circadianShiftSequence();
   std::vector<ncAtomicInstruction> noContactSequence();

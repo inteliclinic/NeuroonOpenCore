@@ -63,8 +63,9 @@ SleepScenario::SleepScenario(const ncScenarioInitArgs *args)
 
   // init and register hard wakeup
   auto hard_wakeup_scenario =
-      std::shared_ptr<HardWakeupMicroScenario>(new HardWakeupMicroScenario());
-  // [TODO] install triggers
+    std::shared_ptr<HardWakeupMicroScenario>(
+        new HardWakeupMicroScenario(ncWakeUpSequenceIntensity::WAKEUP_ALARM_MEDIUM));
+  hard_wakeup_scenario->installActivationTrigger(absolute_wake_trigger);
   this->addScenarioWithPriority(hard_wakeup_scenario, kHardWakeupPriority);
 
   // init and register smart wakeup

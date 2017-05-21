@@ -252,7 +252,7 @@ namespace sequence{
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> wakeUpSequence(ncWakeUpSequenceIntensity mode){
+  std::vector<ncAtomicInstruction> wakeUpSequence(wakeUpSequenceIntensity mode){
     switch(mode){
       case WU_ALARM_SOFT:    return getSoftAlarm();
       case WU_ALARM_MEDIUM:  return getMediumAlarm();
