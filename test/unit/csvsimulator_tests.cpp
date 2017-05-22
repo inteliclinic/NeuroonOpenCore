@@ -30,10 +30,10 @@ struct CsvSimulatorTests : public ::testing::Test {
   // ------------ CSV FRAMES SOURCES -------------------
 
   // this file should contain values from 0 to 249
-  const std::string sample_csv1 = "../test/test_data/sample1.csv";
+  const std::string sample_csv1 = "../../../test/test_data/sample1.csv";
 
   // this file should contain values from 0 to 499 as column under header signal
-  const std::string sample_csv2 = "../test/test_data/sample2.csv";
+  const std::string sample_csv2 = "../../../test/test_data/sample2.csv";
 
   std::unique_ptr<EegFramesSource> eeg_source_sample1;
   std::unique_ptr<EegFramesSource> eeg_source_sample2;
