@@ -35,4 +35,7 @@ public:
 
 };
 
+template<class T>
+using SinkStreamingAlgorithmSp = SinkStreamingAlgorithm<std::shared_ptr<T>>;
+
 #endif

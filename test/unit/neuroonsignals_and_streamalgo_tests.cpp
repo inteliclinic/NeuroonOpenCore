@@ -23,10 +23,10 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
   // ------------ CSV FRAMES SOURCES -------------------
 
   // this file should contain values from 0 to 249
-  const std::string sample_csv1 = "../test/test_data/sample1.csv";
+  const std::string sample_csv1 = "../../../test/test_data/sample1.csv";
 
   // this file should contain values from 0 to 499 as column under header signal
-  const std::string sample_csv2 = "../test/test_data/sample2.csv";
+  const std::string sample_csv2 = "../../../test/test_data/sample2.csv";
 
   std::unique_ptr<EegFramesSource> eeg_source_sample1;
   std::unique_ptr<EegFramesSource> eeg_source_sample2;
@@ -34,7 +34,7 @@ struct NeuroonSignalsAndStreamAlgoTests: public ::testing::Test {
 
   template<class T>
   LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
-    return LambdaSignalFrameDataSink<T>([&out] (T & data) { out.push_back(data); });
+    return LambdaSignalFrameDataSink<T>([&out] (T data) { out.push_back(data); });
   }
 
 
@@ -71,7 +71,7 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsSimpleEegConsume) {
     }
 
     auto ts = ef.timestamp + std::max(static_cast<std::size_t>(0), ef.Length - 1) * ns.specs(SignalOrigin::EEG).ms_per_sample();
-    ns.consume(ef);
+    ns.consume(std::make_shared<EegFrame>(ef));
 
     EXPECT_EQ(ts, ns.last_timestamp(SignalOrigin::EEG));
   }
@@ -110,7 +110,7 @@ TEST_F(NeuroonSignalsAndStreamAlgoTests, NeuroonSignalsPatFrameConsume) {
     ef.temperature[1] = 12;
 
     auto ts = ef.timestamp;
-    ns.consume(ef);
+    ns.consume(std::make_shared<PatFrame>(ef));
 
     EXPECT_EQ(ts, ns.last_timestamp(SignalOrigin::IR_LED));
     EXPECT_EQ(ts, ns.last_timestamp(SignalOrigin::RED_LED));

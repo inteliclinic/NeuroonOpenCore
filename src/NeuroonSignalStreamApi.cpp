@@ -23,16 +23,18 @@ struct NeuroonSignalProcessingState {
 };
 
 struct LoggingSink : public OnlineStagingAlgorithm::sink_t {
-	SleepStagingResult m_last_staging;
+  std::shared_ptr<SleepStagingResult> m_last_staging;
 
 	virtual ~LoggingSink() {}
 
-	void consume(SleepStagingResult& res) {
+  void setDataSourceDelegate(SinkSetDelegateKey, std::weak_ptr<IDataSourceDelegate>) override {}
+
+	void consume(std::shared_ptr<SleepStagingResult> res) {
 		m_last_staging = res;
 
 		std::stringstream ss;
-		for (int i = 0; i != res.m_stages.size(); ++i) {
-			ss << res.m_stages[i].stage << " ";
+		for (int i = 0; i != res->m_stages.size(); ++i) {
+			ss << res->m_stages[i].stage << " ";
 		}
 		LOG(INFO) << "online staging: " << ss.str();
 	}
@@ -41,13 +43,15 @@ struct LoggingSink : public OnlineStagingAlgorithm::sink_t {
 struct CallbackStagingSink : public OnlineStagingAlgorithm::sink_t {
 	virtual ~CallbackStagingSink() {}
 
-	ncStagingCallback _callback;
+  ncStagingCallback _callback;
 	CallbackStagingSink(ncStagingCallback callback) {
 		_callback = callback;
 	}
 
-	void consume(SleepStagingResult& res) {
-		(*_callback)(res.m_stages.data(), res.m_stages.size());
+  void setDataSourceDelegate(SinkSetDelegateKey, std::weak_ptr<IDataSourceDelegate>) override {}
+
+	void consume(std::shared_ptr<SleepStagingResult> res) {
+		(*_callback)(res->m_stages.data(), res->m_stages.size());
 	}
 };
 
@@ -59,9 +63,11 @@ struct CallbackPresentationSink : public OnlinePresentationAlgorithm::sink_t {
 		_callback = callback;
 	}
 
-	void consume(OnlinePresentationResult& res) {
-		(*_callback)(res.brain_waves, res.bw_size,
-				     res.heart_rate, res.pulse_data, res.pd_size);
+  void setDataSourceDelegate(SinkSetDelegateKey, std::weak_ptr<IDataSourceDelegate>) override {}
+
+	void consume(std::shared_ptr<OnlinePresentationResult> res) {
+		(*_callback)(res->brain_waves, res->bw_size,
+				     res->heart_rate, res->pulse_data, res->pd_size);
 	}
 };
 
@@ -117,7 +123,7 @@ bool ncFeedDataStream0(NeuroonSignalProcessingState* data, char* bytes, int size
 	frame.bytes = bytes;
 	frame.size = size;
 	frame.source_stream = NeuroonFrameBytes::SourceStream::EEG;
-	data->_daemon.consume(frame);
+	data->_daemon.consume(std::make_shared<NeuroonFrameBytes>(frame));
 
 	LOG(DEBUG) << "API CALL END";
     return true;
@@ -130,7 +136,7 @@ bool ncFeedDataStream1(NeuroonSignalProcessingState* data, char* bytes, int size
 	frame.bytes = bytes;
 	frame.size = size;
 	frame.source_stream = NeuroonFrameBytes::SourceStream::ALT;
-	data->_daemon.consume(frame);
+	data->_daemon.consume(std::make_shared<NeuroonFrameBytes>(frame));
 
 	LOG(DEBUG) << "API CALL END";
     return true;

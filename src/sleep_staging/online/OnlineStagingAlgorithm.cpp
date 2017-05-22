@@ -15,7 +15,7 @@
 #include <iostream>
 
 OnlineStagingAlgorithm::OnlineStagingAlgorithm(const std::vector<OnlineStagingAlgorithm::sink_t*> & sinks)
-: SinkStreamingAlgorithm<SleepStagingResult>(sinks)
+: SinkStreamingAlgorithmSp<SleepStagingResult>(sinks)
 {
 	m_last_eeg_index = 0;
 	m_last_ir_index = 0;
@@ -72,7 +72,7 @@ void OnlineStagingAlgorithm::process_input(const INeuroonSignals & input) {
 	SleepStagingResult result(staging_from_model, m_model.current_quality(), m_model.current_brain_waves() ,m_timestamps);
 
 	LOG(INFO) << "computed! feeding the sinks...";
-	feed_all_sinks(result);
+	feed_all_sinks(std::make_shared<SleepStagingResult>(result));
 }
 
 void OnlineStagingAlgorithm::end_streaming(const INeuroonSignals & input) {
@@ -80,6 +80,5 @@ void OnlineStagingAlgorithm::end_streaming(const INeuroonSignals & input) {
 	std::vector<int> staging_from_model = m_model.current_staging();
 	SleepStagingResult result(staging_from_model, m_model.current_quality(),
 			m_model.current_brain_waves(), m_timestamps);
-
-	feed_all_sinks(result);
+	feed_all_sinks(std::make_shared<SleepStagingResult>(result));
 }

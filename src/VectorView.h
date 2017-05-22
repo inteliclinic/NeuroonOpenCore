@@ -1,4 +1,5 @@
-#ifdef DESKTOP_BUILD
+// [TODO] disabled for flycheck
+// #ifdef DESKTOP_BUILD
 
 #ifndef __VECTOR_VIEW__
 #define __VECTOR_VIEW__
@@ -48,4 +49,4 @@ public:
 
 #endif
 
-#endif
+// #endif

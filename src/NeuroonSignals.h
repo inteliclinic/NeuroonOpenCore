@@ -32,7 +32,7 @@ public:
   virtual std::size_t total_signal_samples(SignalOrigin ss) const = 0;
 };
 
-class NeuroonSignals : public INeuroonSignals, public IDataSink<EegFrame>, public IDataSink<PatFrame>{
+class NeuroonSignals : public INeuroonSignals, public IDataSinkSp<EegFrame>, public IDataSinkSp<PatFrame>{
 public:
 
 
@@ -41,7 +41,7 @@ public:
   struct EegHoleFillingArgs{
     std::vector<double> & gathered_eeg_signal;
     std::size_t lost_frames_count;
-    const EegFrame * new_data;
+    const std::shared_ptr<const EegFrame> new_data;
   };
 
   struct PatHoleFillingArgs{
@@ -50,7 +50,7 @@ public:
     std::vector<double> & gathered_red_led_signal;
     std::vector<double> & gathered_temperature_signal;
     std::size_t lost_frames_count;
-    const PatFrame * new_data;
+    const std::shared_ptr<const PatFrame> new_data;
   };
 
 private:
@@ -95,8 +95,12 @@ public:
   }
 
   // consumes a frame converting it to signal vectors
-  void consume(EegFrame& frame) override;
-  void consume(PatFrame& frame) override;
+  void consume(std::shared_ptr<EegFrame> frame) override;
+  void consume(std::shared_ptr<PatFrame> frame) override;
+
+
+  virtual void setDataSourceDelegate(SinkSetDelegateKey, std::weak_ptr<IDataSourceDelegate>) override {}
+
 
   // get vectors of received samples
   const std::vector<double> & eeg_signal() const override;
