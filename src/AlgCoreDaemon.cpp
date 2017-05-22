@@ -34,19 +34,18 @@ void AlgCoreDaemon::start_processing(){
   _processing_in_progress = true;
 }
 
-
-void AlgCoreDaemon::consume (NeuroonFrameBytes& frame_stream) {
+void AlgCoreDaemon::consume(std::shared_ptr<NeuroonFrameBytes> frame_stream) {
   if (!_processing_in_progress) {
     LOG(WARNING) << "Unintended behaviour: Consuming data when processing flag turned off.";
   }
-  switch(frame_stream.source_stream){
+  switch(frame_stream->source_stream){
   case NeuroonFrameBytes::SourceStream::EEG:{
-    auto f = EegFrame::from_bytes_array(frame_stream.bytes, frame_stream.size);
+    auto f = std::make_shared<EegFrame>(EegFrame::from_bytes_array(frame_stream->bytes, frame_stream->size));
     consume(f);
     break;
   }
   case NeuroonFrameBytes::SourceStream::ALT:{
-    auto f = PatFrame::from_bytes_array(frame_stream.bytes, frame_stream.size);
+    auto f = std::make_shared<PatFrame>(PatFrame::from_bytes_array(frame_stream->bytes, frame_stream->size));
     consume(f);
     break;
   }
@@ -56,7 +55,7 @@ void AlgCoreDaemon::consume (NeuroonFrameBytes& frame_stream) {
 }
 
 
-void AlgCoreDaemon::consume (PatFrame& frame) {
+void AlgCoreDaemon::consume (std::shared_ptr<PatFrame> frame) {
   if (!_processing_in_progress) {
     LOG(WARNING) << "Unintended behaviour: Consuming data when processing flag turned off.";
   }
@@ -64,7 +63,7 @@ void AlgCoreDaemon::consume (PatFrame& frame) {
   _neuroon_signals.consume(frame);
 }
 
-void AlgCoreDaemon::consume (EegFrame& frame) {
+void AlgCoreDaemon::consume (std::shared_ptr<EegFrame> frame) {
   if (!_processing_in_progress) {
     LOG(WARNING) << "Unintended behaviour: Consuming data when processing flag turned off.";
   }

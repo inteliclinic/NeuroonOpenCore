@@ -2,74 +2,86 @@
 #define __FRAME_STREAM_PIPE__
 
 #include "CommonTypes.h"
-#include "DataSource.h"
-#include "NeuroonSignalFrames.h"
 #include "DataSink.h"
-#include "logger.h"
+#include "DataSource.h"
+#include "IStreamPipe.h"
+#include "NeuroonSignalFrames.h"
 
+#include <iostream>
 #include <memory>
 
-class IFrameStreamPipe{
+class IFrameStreamPipe : public IStreamPipe {
 public:
-  virtual ~IFrameStreamPipe(){}
-  virtual void pass_next_frame() = 0;
-  virtual void pass_next_frame_with_timestamp(ullong timestamp) = 0;
-  virtual bool is_broken() const = 0;
-  virtual bool is_exhausted() const = 0;
+  virtual ~IFrameStreamPipe() {}
+  virtual bool passNextFrameWithTimestamp(ullong timestamp) = 0;
 };
 
-template<class T>
-class FrameStreamPipe : public IFrameStreamPipe{
+// [TODO] what about removing restrinction on shared_ptr in piping data
+template <class T> class FrameStreamPipe : public IFrameStreamPipe {
 
   ullong _frame_transmitted = 0;
-  std::weak_ptr<IPullBasedOfflineSource<T>> _source;
-  std::weak_ptr<IDataSink<T>> _sink;
+  std::weak_ptr<IPullingDataSourceSp<T>> _source;
+  std::weak_ptr<IDataSinkSp<T>> _sink;
 
-  bool _exhausted = false;
+  bool _depleted = false;
 
-  void _pass_next_frame(bool change_timestamp, ullong timestamp=0) {
-    bool just_exhausted = false;
-    if(!is_exhausted() && !is_broken()){
+  bool _passNextFrame(bool change_timestamp, ullong timestamp = 0) {
+    bool just_depleted = false;
+    bool success = false;
+    if (!this->isDepleted() && !this->isBroken()) {
       if (auto ssource = _source.lock()) {
         if (auto ssink = _sink.lock()) {
-          auto frame = ssource->get_values()[_frame_transmitted];
-          if(change_timestamp){
-            ((NeuroonSignalFrame*)&frame)->timestamp = timestamp;
+          if (auto frame = ssource->getNextValue()) {
+            if (change_timestamp) {
+              std::static_pointer_cast<NeuroonSignalFrame>(frame)->timestamp =
+                  timestamp;
+            }
+            ssink->consume(frame);
+            success = true;
+            _frame_transmitted++;
+            if (ssource->isDepleted()) {
+              _depleted = true;
+              just_depleted = true;
+            }
           }
-          ssink->consume(frame);
-          _frame_transmitted++;
-          if (_frame_transmitted >= ssource->get_values().size()) {
-            _exhausted = true;
-            just_exhausted = true;
-          }
+        } else {
+          std::cerr << "\nelse sink lock";
+          std::fflush(stdout);
         }
+      } else {
+        std::cerr << "\nelse source lock";
+        std::fflush(stdout);
       }
+    } else {
+      std::cerr << "\ndepleted or broken";
+      std::fflush(stdout);
     }
-    _log_warnings(just_exhausted);
+    _log_warnings(just_depleted);
+    return success;
   }
 
-  void _log_warnings(bool just_exhausted=false){
-    if(_sink.expired()){
-      LOG(WARNING) << "Pipe broken. Sink pointer is expired.";
+  void _log_warnings(bool just_depleted = false) {
+    if (_sink.expired()) {
+      // LOG(WARNING) << "Pipe broken. Sink pointer is expired.";
     }
-    if(_source.expired()){
-      LOG(WARNING) << "Pipe broken. Source pointer is expired.";
+    if (_source.expired()) {
+      // LOG(WARNING) << "Pipe broken. Source pointer is expired.";
     }
-    if (!just_exhausted && _exhausted) {
-      LOG(INFO) << "Pipe exhausted. Nothing is transmitted.";
+    if (!just_depleted && _depleted) {
+      // LOG(INFO) << "Pipe depleted. Nothing is transmitted.";
     }
   }
 
- public:
-
- FrameStreamPipe(std::weak_ptr<IPullBasedOfflineSource<T>> source,
-                 std::weak_ptr<IDataSink<T>> sink) :
-   _source(source), _sink(sink), _frame_transmitted(0) {
-    static_assert(std::is_base_of<NeuroonSignalFrame, T>::value, "T must inherit from NeuroonSignalFrame");
+public:
+  FrameStreamPipe(std::weak_ptr<IPullingDataSourceSp<T>> source,
+                  std::weak_ptr<IDataSinkSp<T>> sink)
+      : _source(source), _sink(sink), _frame_transmitted(0) {
+    static_assert(std::is_base_of<NeuroonSignalFrame, T>::value,
+                  "T must inherit from NeuroonSignalFrame");
     if (auto ssource = _source.lock()) {
       if (auto ssink = _sink.lock()) {
-        if (_frame_transmitted >= ssource->get_values().size()) {
-          _exhausted = true;
+        if (ssource->isDepleted()) {
+          _depleted = true;
         }
       }
     }
@@ -77,19 +89,17 @@ class FrameStreamPipe : public IFrameStreamPipe{
   }
 
   // passes ith frame between source and sink
-  void pass_next_frame() override {
-    _pass_next_frame(false);
-  }
+  bool passNextFrame() override { _passNextFrame(false); }
 
   // passes ith frame between source and sink and sets its timestamp
-  void pass_next_frame_with_timestamp(ullong timestamp) override {
-    _pass_next_frame(true, timestamp);
+  bool passNextFrameWithTimestamp(ullong timestamp) override {
+    return _passNextFrame(true, timestamp);
   }
 
-  bool is_broken() const override { return _sink.expired() || _source.expired(); }
-  bool is_exhausted() const override { return _exhausted; }
-
+  bool isBroken() const override {
+    return _sink.expired() || _source.expired();
+  }
+  bool isDepleted() const { return _depleted; }
 };
-
 
 #endif

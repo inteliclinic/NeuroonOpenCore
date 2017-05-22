@@ -1,6 +1,5 @@
 #include "NeuroonSignalFrames.h"
-#include "Exceptions.h"
-#include "logger.h"
+#include <string.h>
 
 int is_big_endian(void)
 {
@@ -49,7 +48,6 @@ void int_to_bytes(char* out, T num, NeuroonFrameBytes::ByteOrder bo) {
 
 EegFrame EegFrame::from_bytes_array(const char* bytes, std::size_t size, NeuroonFrameBytes::ByteOrder bo){
   if(size != NeuroonSignalFrame::FrameSizeBytes){
-    LOG(ERROR) << "Passed size should be equal to the frame size.";
     throw std::length_error("EegFrame construction: Passed size should be equal to the frame size.");
   }
   EegFrame ef;

@@ -44,7 +44,7 @@ public:
  * Implementation of a SinkStreamingAlgorithm for the problem of online staging.
  * The algorithm
  */
-class OnlineStagingAlgorithm : public SinkStreamingAlgorithm<SleepStagingResult> {
+class OnlineStagingAlgorithm : public SinkStreamingAlgorithmSp<SleepStagingResult> {
 
 	const int EEG_WINDOW = 2048 * 5;
 	const int IR_WINDOW = EEG_WINDOW / 5;
@@ -53,7 +53,7 @@ class OnlineStagingAlgorithm : public SinkStreamingAlgorithm<SleepStagingResult>
 	const int IR_INTERVAL = IR_WINDOW / 4;
 public:
 
-	typedef IDataSink<SleepStagingResult> sink_t;
+  using sink_t = IDataSinkSp<SleepStagingResult>;
 
 	OnlineStagingAlgorithm(const std::vector<sink_t*> & sinks);
 	virtual ~OnlineStagingAlgorithm();

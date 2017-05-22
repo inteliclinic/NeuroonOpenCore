@@ -1,3 +1,6 @@
+#ifndef __NC_EXCEPTIONS__
+#define __NC_EXCEPTIONS__
+
 #include <stdexcept>
 #include <string>
 
@@ -6,3 +9,5 @@ public:
   NotImplemented() : std::logic_error("Not yet implemented.") {}
   NotImplemented(std::string what) : std::logic_error(what) {}
 };
+
+#endif

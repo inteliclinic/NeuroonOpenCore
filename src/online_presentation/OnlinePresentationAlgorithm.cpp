@@ -19,7 +19,7 @@
 #include <algorithm>
 
 OnlinePresentationAlgorithm::OnlinePresentationAlgorithm(const std::vector<OnlinePresentationAlgorithm::sink_t*> & sinks)
-: SinkStreamingAlgorithm<OnlinePresentationResult>(sinks)
+: SinkStreamingAlgorithmSp<OnlinePresentationResult>(sinks)
 {
 	m_last_eeg_index = 0;
 	m_last_ir_index = 0;
@@ -132,5 +132,5 @@ void OnlinePresentationAlgorithm::update_results() {
 	result.heart_rate = m_heart_rate;
 	result.pulse_data = m_pulse_data.data();// + m_pulse_data.size()/2;
 	result.pd_size = m_pulse_data.size();// - m_pulse_data.size()/2;
-	feed_all_sinks(result);
+	feed_all_sinks(std::make_shared<OnlinePresentationResult>(result));
 }

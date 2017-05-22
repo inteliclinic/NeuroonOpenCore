@@ -33,7 +33,7 @@ struct OnlinePresentationResult {
 /**
  * An implementation of a SinkStreamingAlgorithm for the online presentation mode 
  */
-class OnlinePresentationAlgorithm : public SinkStreamingAlgorithm<OnlinePresentationResult> {
+class OnlinePresentationAlgorithm : public SinkStreamingAlgorithmSp<OnlinePresentationResult> {
 
 	std::vector<ncBrainWaveLevels> m_brain_waves_data;
 	std::vector<double> m_pulse_data;
@@ -53,7 +53,7 @@ class OnlinePresentationAlgorithm : public SinkStreamingAlgorithm<OnlinePresenta
 
 public:
 
-	typedef IDataSink<OnlinePresentationResult> sink_t;
+	using sink_t = IDataSinkSp<OnlinePresentationResult>;
 
 	OnlinePresentationAlgorithm(const std::vector<sink_t*> & sinks);
 	virtual ~OnlinePresentationAlgorithm();

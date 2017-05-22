@@ -1,6 +1,6 @@
+#include "../src/DataSink.h"
 #include "../src/SignalSimulator.h"
 #include "test_utils.h"
-#include "../src/DataSink.h"
 
 #include <gtest/gtest.h>
 /* #include <vector> */
@@ -8,11 +8,11 @@
 /* #include <functional> */
 /* #include <numeric> */
 /* #include <algorithm> */
-#include <chrono>
-#include "../src/SignalSimulator.h"
-#include "test_utils.h"
 #include "../src/DataSink.h"
 #include "../src/NeuroonSignals.h"
+#include "../src/SignalSimulator.h"
+#include "test_utils.h"
+#include <chrono>
 
 #include <gtest/gtest.h>
 /* #include <vector> */
@@ -21,9 +21,9 @@
 /* #include <numeric> */
 /* #include <algorithm> */
 #include <chrono>
-#include <thread>
 #include <sstream>
 #include <stdio.h>
+#include <thread>
 
 struct CsvSimulatorTests : public ::testing::Test {
 
@@ -39,54 +39,51 @@ struct CsvSimulatorTests : public ::testing::Test {
   std::unique_ptr<EegFramesSource> eeg_source_sample2;
   std::unique_ptr<PatFramesSource> irled_source_sample2;
 
-  template<class T>
-  LambdaSignalFrameDataSink<T> accumulate_to_vector_sink(std::vector<T> & out){
-    return LambdaSignalFrameDataSink<T>([&out] (T & data) { out.push_back(data); });
+  template <class T>
+  LambdaSignalFrameDataSinkSp<T>
+  accumulate_to_vector_sink(std::vector<T> &out) {
+    return LambdaSignalFrameDataSinkSp<T>(
+        [&out](std::shared_ptr<T> data) { out.push_back(*(data.get())); });
   }
-
 
   // ------------ GOOGLE TEST'S ------------------------
 
-  virtual void SetUp(){
-    eeg_source_sample1 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1,0));
-    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv2,"signal"));
+  virtual void SetUp() {
+    eeg_source_sample1 =
+        std::unique_ptr<EegFramesSource>(new EegFramesSource(sample_csv1, 0));
+    eeg_source_sample2 = std::unique_ptr<EegFramesSource>(
+        new EegFramesSource(sample_csv2, "signal"));
+  }
 
-	}
-
-
-	void TearDown() {
-	}
-
+  void TearDown() {}
 };
-
 
 TEST_F(CsvSimulatorTests, SimpleCsvEegFrameSource1) {
 
-  auto frames = eeg_source_sample1->get_values();
+  auto frames = eeg_source_sample1->getValues();
   auto frame_length = EegFrame::Length;
 
   EXPECT_TRUE(frames.size() > 0);
 
-  for(uint16_t i=0; i<250; i+= frame_length){
-    auto & f = frames[i/frame_length];
-    if(250 - i >= frame_length)
-      for(uint16_t j=0; j<frame_length;j++){
-        EXPECT_EQ(i+j, f.signal[j]);
+  for (uint16_t i = 0; i < 250; i += frame_length) {
+    auto &f = frames[i / frame_length];
+    if (250 - i >= frame_length)
+      for (uint16_t j = 0; j < frame_length; j++) {
+        EXPECT_EQ(i + j, f->signal[j]);
       }
   }
-
 }
 
 TEST_F(CsvSimulatorTests, TrivialSinkTest) {
 
   std::vector<int> v = {};
   auto sink = accumulate_to_vector_sink(v);
-  for(int i=0; i< 5 ; i++){
-    sink.consume(i);
+  for (int i = 0; i < 5; i++) {
+    sink.consume(std::make_shared<int>(i));
   }
-  std::vector<int> expected = {0,1,2,3,4};
+  std::vector<int> expected = {0, 1, 2, 3, 4};
 
-  EXPECT_EQ_VECTORS(expected,v);
+  EXPECT_EQ_VECTORS(expected, v);
 }
 // TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_1020ms_normal_time) {
 
@@ -120,7 +117,8 @@ TEST_F(CsvSimulatorTests, TrivialSinkTest) {
 //   EXPECT_EQ_VECTORS(_sink_vector,expected);
 // }
 
-// TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_entire_double_source_instant) {
+// TEST_F(CsvSourceAndSimulatorTests,
+// csv_simulator_pass_entire_double_source_instant) {
 
 //   auto sim = SignalSimulator();
 //   sim.sources.push_back(eeg_source_sample2.get());
@@ -130,12 +128,14 @@ TEST_F(CsvSimulatorTests, TrivialSinkTest) {
 
 //   std::vector<int> expected = {};
 //   for(int i=0;i<500;i++){ expected.push_back(i);}
-//   // printf("eegsize: %zu irled_size %zu", _eeg_sink_vector.size(), _irled_sink_vector.size());
+//   // printf("eegsize: %zu irled_size %zu", _eeg_sink_vector.size(),
+//   _irled_sink_vector.size());
 //   EXPECT_EQ_VECTORS(expected,_eeg_sink_vector);
 //   EXPECT_EQ_VECTORS(expected,_irled_sink_vector);
 // }
 
-// TEST_F(CsvSourceAndSimulatorTests, csv_simulator_pass_1001ms_and_then_500_ms_double_source_instant) {
+// TEST_F(CsvSourceAndSimulatorTests,
+// csv_simulator_pass_1001ms_and_then_500_ms_double_source_instant) {
 
 //   auto sim = SignalSimulator();
 //   sim.sources.push_back(eeg_source_sample2.get());

@@ -58,9 +58,10 @@ std::size_t NeuroonSignals::total_signal_samples(SignalOrigin so) const {
 
 
 // receive frame of data
-void NeuroonSignals::consume(EegFrame & frame){
 
-  LOG(DEBUG) << "Received eeg signal frame with timestamp: " << frame.timestamp;
+void NeuroonSignals::consume(std::shared_ptr<EegFrame> frame){
+
+  LOG(DEBUG) << "Received eeg signal frame with timestamp: " << frame->timestamp;
 
   auto & signal = SIGNAL_VEC(_eeg_signal);
   auto ms_per_sample = _signal_specs.at(SignalOrigin::EEG).ms_per_sample();
@@ -70,7 +71,7 @@ void NeuroonSignals::consume(EegFrame & frame){
   auto old_sz = signal.size();
   if (false){
     std::size_t lost_frames_count = 0;
-    EegHoleFillingArgs args = {signal, lost_frames_count, &frame };
+    EegHoleFillingArgs args = {signal, lost_frames_count, frame };
     if(_eeg_lost_frame_hole_filling_function != nullptr){
       _eeg_lost_frame_hole_filling_function(args);
     }
@@ -80,13 +81,13 @@ void NeuroonSignals::consume(EegFrame & frame){
   }
 
   // insert new data
-  signal.insert(signal.end(),frame.signal, frame.signal + frame.Length);
+  signal.insert(signal.end(),frame->signal, frame->signal + frame->Length);
   TOTAL_COUNT(_eeg_signal) += signal.size() - old_sz;
-  LAST_TS(_eeg_signal) = frame.timestamp + std::max(static_cast<std::size_t>(0), frame.Length - 1) * ms_per_sample;
+  LAST_TS(_eeg_signal) = frame->timestamp + std::max(static_cast<std::size_t>(0), frame->Length - 1) * ms_per_sample;
 }
 
-void NeuroonSignals::consume(PatFrame & frame){
-  LOG(DEBUG) << "Received PAT signal frame with timestamp: " << frame.timestamp;
+void NeuroonSignals::consume(std::shared_ptr<PatFrame> frame){
+  LOG(DEBUG) << "Received PAT signal frame with timestamp: " << frame->timestamp;
 
   // ir led
   auto & ir_signal = SIGNAL_VEC(_ir_led_signal);
@@ -95,7 +96,7 @@ void NeuroonSignals::consume(PatFrame & frame){
   auto & temperature_signal = SIGNAL_VEC(_temperature_signal);
 
   // given present situation all signals from this frame has same signal sampling frequency
-  auto ms_per_sample = _signal_specs.at(SignalOrigin::IR_LED).ms_per_sample();
+  // auto ms_per_sample = _signal_specs.at(SignalOrigin::IR_LED).ms_per_sample();
 
   //if lost
   // TODO
@@ -115,27 +116,27 @@ void NeuroonSignals::consume(PatFrame & frame){
   }
 
   // insert new data
-  ir_signal.push_back((double)frame.ir_led);
-  redled_signal.push_back((double)frame.red_led);
+  ir_signal.push_back((double)frame->ir_led);
+  redled_signal.push_back((double)frame->red_led);
 
   accel_axes_signal.push_back({
-      (double)frame.accel_axes.x,
-      (double)frame.accel_axes.y,
-      (double)frame.accel_axes.z});
-  temperature_signal.push_back((double) std::max(frame.temperature[0],frame.temperature[1]));
+      (double)frame->accel_axes.x,
+      (double)frame->accel_axes.y,
+      (double)frame->accel_axes.z});
+  temperature_signal.push_back((double) std::max(frame->temperature[0],frame->temperature[1]));
 
 
   TOTAL_COUNT(_ir_led_signal) += ir_signal.size() - ir_old_sz;
-  LAST_TS(_ir_led_signal) = frame.timestamp;
+  LAST_TS(_ir_led_signal) = frame->timestamp;
 
   TOTAL_COUNT(_red_led_signal) += redled_signal.size() - redled_old_sz;
-  LAST_TS(_red_led_signal) = frame.timestamp;
+  LAST_TS(_red_led_signal) = frame->timestamp;
 
   TOTAL_COUNT(_accel_axes_signal) += accel_axes_signal.size() - accelaxes_old_sz;
-  LAST_TS(_accel_axes_signal) = frame.timestamp;
+  LAST_TS(_accel_axes_signal) = frame->timestamp;
 
   TOTAL_COUNT(_temperature_signal) += temperature_signal.size() - temperature_old_sz;
-  LAST_TS(_temperature_signal) = frame.timestamp;
+  LAST_TS(_temperature_signal) = frame->timestamp;
 }
 
 // -------------- STATIC DATA ----------------------
