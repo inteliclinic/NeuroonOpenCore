@@ -11,7 +11,7 @@
 #include "MicroScenarioSequenceLibrary.h"
 
 MocScenario::MocScenario(const ncScenarioInitArgs *args, ncScenarioType scenario):
-  m_scenario(scenario){
+  MacroScenario(args), m_scenario(scenario){
   switch (m_scenario){
     case SCENARIO_LUCIDDREAM:
       m_deltaTime = kLucidDelta;
@@ -40,24 +40,19 @@ ncUpdateOutput MocScenario::update(const ncScenarioInput *inp){
     if(_retVal == UPDATE_NEW_DATA)
       switch(m_scenario){
         case SCENARIO_LUCIDDREAM:
-          /* [TODO] insert lucid MOC sequence */
-          // this->pushInstructions(/* [TODO] */);
+          this->pushInstructions(msequence::lucidDreamMocSequence());
           break;
         case SCENARIO_LIGHTBOOST:
-          /* [TODO] insert LB MOC sequence */
-          // this->pushInstructions(/* [TODO] */);
+          this->pushInstructions(msequence::lightBoostMocSequence());
           break;
         case SCENARIO_SLEEP:
-          /* [TODO] insert lucid MOC sequence */
-          // this->pushInstructions(/* [TODO] */);
+          this->pushInstructions(msequence::sleepMocSequence());
           break;
         case SCENARIO_POWERNAP:
-          /* [TODO] insert lucid MOC sequence */
-          // this->pushInstructions(/* [TODO] */);
+          this->pushInstructions(msequence::powerNapMocSequence());
           break;
         case SCENARIO_CIRCADIANRHYTHM:
-          /* [TODO] insert lucid MOC sequence */
-          // this->pushInstructions(/* [TODO] */);
+          this->pushInstructions(msequence::circadianRythmMocSequence());
           break;
       }
     return _retVal;

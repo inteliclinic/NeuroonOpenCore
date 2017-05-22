@@ -33,4 +33,12 @@ namespace sequence{
   std::vector<ncAtomicInstruction> killSequence();
 }
 
+namespace msequence{
+  std::vector<ncAtomicInstruction> lucidDreamMocSequence();
+  std::vector<ncAtomicInstruction> lightBoostMocSequence();
+  std::vector<ncAtomicInstruction> sleepMocSequence();
+  std::vector<ncAtomicInstruction> powerNapMocSequence();
+  std::vector<ncAtomicInstruction> circadianRythmMocSequence();
+}
+
 #endif /* !MICROSCENARIOSEQUENCELIBRARY_H */

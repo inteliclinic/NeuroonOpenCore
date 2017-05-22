@@ -365,3 +365,156 @@ namespace sequence{
     return instructions;
   }
 }
+
+namespace msequence{
+
+  std::vector<ncAtomicInstruction> lucidDreamMocSequence(){
+    char ble_frame_1[MASK_INSTRUCTION_LENGTH];
+    char ble_frame_2[MASK_INSTRUCTION_LENGTH];
+    size_t len = MASK_INSTRUCTION_LENGTH;
+    rgb_led_set_func(ble_frame_1, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_GREEN,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+    rgb_led_set_func(ble_frame_2, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_OFF,
+        RGB_LED_COLOR_GREEN,
+        0,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+
+    std::vector<ncAtomicInstruction> instructions;
+    for(unsigned int i = 0; i < 300000/2000; i++){
+      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+    }
+
+    return instructions;
+  }
+
+  std::vector<ncAtomicInstruction> lightBoostMocSequence(){
+    char ble_frame_1[MASK_INSTRUCTION_LENGTH];
+    char ble_frame_2[MASK_INSTRUCTION_LENGTH];
+    size_t len = MASK_INSTRUCTION_LENGTH;
+    rgb_led_set_func(ble_frame_1, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_BLUE,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+    rgb_led_set_func(ble_frame_2, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_OFF,
+        RGB_LED_COLOR_BLUE,
+        0,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+
+    std::vector<ncAtomicInstruction> instructions;
+    for(unsigned int i = 0; i < 300000/2000; i++){
+      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+    }
+
+    return instructions;
+  }
+
+  std::vector<ncAtomicInstruction> sleepMocSequence(){
+    char ble_frame_1[MASK_INSTRUCTION_LENGTH];
+    char ble_frame_2[MASK_INSTRUCTION_LENGTH];
+    size_t len = MASK_INSTRUCTION_LENGTH;
+    rgb_led_set_func(ble_frame_1, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_WHITE,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+    rgb_led_set_func(ble_frame_2, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_OFF,
+        RGB_LED_COLOR_WHITE,
+        0,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+
+    std::vector<ncAtomicInstruction> instructions;
+    for(unsigned int i = 0; i < 300000/2000; i++){
+      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+    }
+
+    return instructions;
+  }
+
+  std::vector<ncAtomicInstruction> powerNapMocSequence(){
+    char ble_frame_1[MASK_INSTRUCTION_LENGTH];
+    char ble_frame_2[MASK_INSTRUCTION_LENGTH];
+    size_t len = MASK_INSTRUCTION_LENGTH;
+    rgb_led_set_func(ble_frame_1, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_RED,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+    rgb_led_set_func(ble_frame_2, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_GREEN,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+
+    std::vector<ncAtomicInstruction> instructions;
+    for(unsigned int i = 0; i < 300000/2000; i++){
+      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+    }
+
+    return instructions;
+  }
+
+  std::vector<ncAtomicInstruction> circadianRythmMocSequence(){
+    char ble_frame_1[MASK_INSTRUCTION_LENGTH];
+    char ble_frame_2[MASK_INSTRUCTION_LENGTH];
+    size_t len = MASK_INSTRUCTION_LENGTH;
+    rgb_led_set_func(ble_frame_1, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_RED,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+    rgb_led_set_func(ble_frame_2, &len,
+        RGB_LED_SIDE_BOTH,
+        FUN_TYPE_ON,
+        RGB_LED_COLOR_BLUE,
+        DEV_MAX_INTENSITY,
+        DEV_INF_DURATION,
+        DEV_MIN_PERIOD,
+        0); //TODO: potrzebny mechanizm do inkrementowania ID
+
+    std::vector<ncAtomicInstruction> instructions;
+    for(unsigned int i = 0; i < 300000/2000; i++){
+      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+    }
+
+    return instructions;
+  }
+}
