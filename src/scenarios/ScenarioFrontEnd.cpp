@@ -16,18 +16,23 @@
 #include "GenericScenarioInstructionSets.h"
 #include "LucidDreamScenario.h"
 #include "LightBoostScenario.h"
+#include "MocScenario.h"
+#include "MicroScenarioSequenceLibrary.h"
 
 ncScenario ncCreateScenario(ncScenarioType scenarioType, const ncScenarioInitArgs *args){
-  switch(scenarioType){
-    case SCENARIO_LUCIDDREAM:
-      return reinterpret_cast<ncScenario>(new LucidDreamScenario(args));
-    case SCENARIO_SLEEP:
-      return reinterpret_cast<ncScenario>(new SleepScenario(args));
-    case SCENARIO_POWERNAP:
-    case SCENARIO_CIRCADIANRHYTHM:
-    case SCENARIO_LIGHTBOOST:
-      return NULL;
-  }
+  return reinterpret_cast<ncScenario>(new MocScenario(args, scenarioType));
+  /*
+   *switch(scenarioType){
+   *  case SCENARIO_LUCIDDREAM:
+   *    return reinterpret_cast<ncScenario>(new LucidDreamScenario(args));
+   *  case SCENARIO_SLEEP:
+   *    return reinterpret_cast<ncScenario>(new SleepScenario(args));
+   *  case SCENARIO_POWERNAP:
+   *  case SCENARIO_CIRCADIANRHYTHM:
+   *  case SCENARIO_LIGHTBOOST:
+   *    return NULL;
+   *}
+   */
 }
 
 ncAtomicInstruction ncGetNextInstruction(ncScenario scenario){
@@ -38,8 +43,9 @@ ncUpdateOutput ncScenarioUpdate(ncScenario scenario, const ncScenarioInput *upda
   return reinterpret_cast<MacroScenario *>(scenario)->update(updateArgs);
 }
 
-void ncDestroyScenario(ncScenario scenario){
+ncAtomicInstruction ncDestroyScenario(ncScenario scenario){
   delete reinterpret_cast<MacroScenario *>(scenario);
+  return {};
 }
 
 bool ncAvailableMaskInstruction(ncScenario scenario){

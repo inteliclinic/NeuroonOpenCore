@@ -56,9 +56,6 @@ typedef struct {
  *          periodical update and progress of the scenario.
  */
 typedef struct {
-  /** Time atm of the call for instructions */
-  unsigned long timestamp;
-
   /** User's current sleep stage. */
   ncSleepStage currentSleep_stage;
 
@@ -126,9 +123,6 @@ typedef struct {
  *          periodical update and progress of the scenario.
  */
 typedef struct {
-  /** Time atm of the call for instructions */
-  unsigned long timestamp;
-
   /** User's current sleep stage. */
   ncSleepStage currentSleepStage;
 
@@ -144,9 +138,6 @@ typedef struct {
 void ncWuDestroyScenario(ncWakeUpScenario *);
 
 typedef struct {
-  /** Time atm of the call for instructions */
-  unsigned long timestamp;
-
   /** User's current sleep stage. */
   ncSleepStage current_sleep_stage;
 } ncPowernapScenarioInput;
@@ -175,6 +166,17 @@ typedef struct {
   ncLightIntensityLevel intensity; /**< Level of intensity of led light */
 } ncLightBoostScenarioInitArgs;
 
+// TODO: they are just copied!
+typedef struct {
+  unsigned int lengthInMinutes;    /**< Length of the scenario in minutes. */
+  ncLightIntensityLevel intensity; /**< Level of intensity of led light */
+} ncPowernapScenarioInitArgs;
+
+typedef struct {
+  unsigned int lengthInMinutes;    /**< Length of the scenario in minutes. */
+  ncLightIntensityLevel intensity; /**< Level of intensity of led light */
+} ncCircadianRhythmAdjustmentScenarioInitArgs;
+
 // =================== UNIONS =================================
 
 typedef struct {
@@ -194,11 +196,8 @@ typedef union {
   ncLucidDreamScenarioInitArgs lucidDream;
   ncCommonSleepScenarioInitArgs commonSleep;
   ncLightBoostScenarioInitArgs lightBoost;
-  /*
-   *ncPowernapScenarioInput powerNap;
-   *ncCircadianRhythmAdjustmentScenarioInput CircadianRhythm;
-   *ncLightBoostScenarioInput lightBoost;
-   */
+  ncPowernapScenarioInitArgs powerNap;
+  ncCircadianRhythmAdjustmentScenarioInitArgs CircadianRhythm;
 } ncScenarioInitArgs;
 
 typedef enum {
@@ -216,21 +215,72 @@ typedef enum {
   UPDATE_ERROR
 } ncUpdateOutput;
 
+/**
+ * @struct binnary data for BLE interface with timestamp
+ */
 typedef struct {
-  unsigned int time;
-  char data[MASK_INSTRUCTION_LENGTH];
+  unsigned int time;                  /*!<  */
+  char data[MASK_INSTRUCTION_LENGTH]; /*!<  */
 } ncAtomicInstruction;
 
+/**
+ * @brief Create desired scenario
+ *
+ * @param[in] scenarioType  Desired scenario input(@ref ncScenarioType)
+ * @param[in] args          Scenarioa initial arguments(@ref ncScenarioInitArgs)
+ *
+ * @return Scenario handle (@ref ncScenario)
+ */
 ncScenario ncCreateScenario(ncScenarioType scenarioType,
                             const ncScenarioInitArgs *args);
+
+/**
+ * @brief Function to unload queue of scenarios instruction sets
+ *
+ * @param[in] scenario  Scenario handle input(@ref ncScenario)
+ *
+ * @return Single instruction(@ref ncAtomicInstruction)
+ */
 ncAtomicInstruction ncGetNextInstruction(ncScenario scenario);
+
+/**
+ * @brief Periodic scenario update
+ *
+ * @param[in] scenario    Scenario handle input(@ref ncScenario)
+ * @param[in] updateArgs  Update information input(@ref ncScenarioInput)
+ *
+ * @return Information regarding scenario state(@ref ncUpdateOutput)
+ */
 ncUpdateOutput ncScenarioUpdate(ncScenario scenario,
                                 const ncScenarioInput *updateArgs);
 
 // mutes scenario for given number of seconds
+/**
+ * @brief Mute function.
+ *
+ * @param scenario
+ * @param time_s
+ *
+ * @return Information regarding scenario state(@ref ncUpdateOutput)
+ */
 ncUpdateOutput ncMuteScenario(ncScenario scenario, unsigned int time_s);
 
-void ncDestroyScenario(ncScenario scenario);
+/**
+ * @brief Scenario destroyer
+ *
+ * @param[in] scenario  Scenario handle input(@ref ncScenario)
+ *
+ * @return Single instruction(@ref ncAtomicInstruction)
+ */
+ncAtomicInstruction ncDestroyScenario(ncScenario scenario);
+
+/**
+ * @brief Function checks if there are available mask instructions
+ *
+ * @param[in] scenario  Scenario handle input(@ref ncScenario)
+ *
+ * @return true if queue has pending instruction, false otherwise
+ */
 bool ncAvailableMaskInstruction(ncScenario scenario);
 
 #ifdef __cplusplus
