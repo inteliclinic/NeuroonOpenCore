@@ -11,7 +11,7 @@
 #include "MicroScenarioSequenceLibrary.h"
 
 MocScenario::MocScenario(const ncScenarioInitArgs *args, ncScenarioType scenario):
-  MacroScenario(args), m_scenario(scenario){
+  MacroScenario(args), m_scenario(scenario), m_prevTime(0){
   switch (m_scenario){
     case SCENARIO_LUCIDDREAM:
       m_deltaTime = kLucidDelta;
@@ -32,12 +32,12 @@ MocScenario::MocScenario(const ncScenarioInitArgs *args, ncScenarioType scenario
 }
 
 ncUpdateOutput MocScenario::update(const ncScenarioInput *inp){
-  auto _timestamp = inp->commonInput.currentTime;
-  auto _loadNextSeq = (_timestamp - m_prevTime)>=m_deltaTime;
+  auto _loadNextSeq = (inp->commonInput.currentTime - m_prevTime)>=m_deltaTime;
 
   if (_loadNextSeq){
-    auto _retVal = ++m_seqCounter == kNumberOfSeq ? UPDATE_SCENARIO_FINISHED : UPDATE_NEW_DATA;
-    if(_retVal == UPDATE_NEW_DATA)
+    m_prevTime = inp->commonInput.currentTime;
+    auto _retVal = ++m_seqCounter == kNumberOfSeq ? ncUpdateOutput::UPDATE_SCENARIO_FINISHED : ncUpdateOutput::UPDATE_NEW_DATA;
+    if(_retVal == ncUpdateOutput::UPDATE_NEW_DATA)
       switch(m_scenario){
         case SCENARIO_LUCIDDREAM:
           this->pushInstructions(msequence::lucidDreamMocSequence());
@@ -57,6 +57,6 @@ ncUpdateOutput MocScenario::update(const ncScenarioInput *inp){
       }
     return _retVal;
   }
-  return UPDATE_OK;
+  return ncUpdateOutput::UPDATE_OK;
 }
 
