@@ -114,6 +114,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, frame_from_bytes_tests) {
 
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleEegFrameSource1) {
 
+  eeg_source_sample1->reset();
   auto frames = eeg_source_sample1->getValues();
   auto frame_length = EegFrame::Length;
 
@@ -181,8 +182,6 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, TrivialSinkTest) {
 TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleFrameStreamPipe) {
 
   auto frames = eeg_source_sample1->getValues();
-  // auto source = std::make_shared<IPullingDataSourceSp<EegFrame>>(
-  //     eeg_source_sample1->getPullingDataSource());
   auto frame_length = EegFrame::Length;
 
   std::vector<std::shared_ptr<EegFrame>> v = {};
@@ -190,6 +189,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests, SimpleFrameStreamPipe) {
       std::make_shared<LambdaSignalFrameDataSink<std::shared_ptr<EegFrame>>>(
           accumulate_to_vector_sink(v));
 
+  eeg_source_sample1->reset();
   auto pipe = FrameStreamPipe<EegFrame>(eeg_source_sample1, sink_sp);
 
   for (uint16_t i = 0; i < 250 / frame_length; i++) {
@@ -218,10 +218,13 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
 
   std::vector<std::shared_ptr<EegFrame>> v = {};
 
-  auto sink = accumulate_to_vector_sink(v);
   auto sink_sp =
       std::make_shared<LambdaSignalFrameDataSink<std::shared_ptr<EegFrame>>>(
-          sink);
+          accumulate_to_vector_sink(v));
+
+  eeg_source_sample1->reset();
+  auto frames = eeg_source_sample1->getValues();
+  eeg_source_sample1->reset();
 
   auto pipe_up = std::unique_ptr<IFrameStreamPipe>(
       new FrameStreamPipe<EegFrame>(eeg_source_sample1, sink_sp));
@@ -246,7 +249,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
   for (uint16_t i = 0; i < 120 / frame_length; i++) {
     // only full frames are created
     if (120 - i * frame_length >= frame_length) {
-      auto passed = eeg_source_sample1->getValues()[i];
+      auto &passed = frames[i];
       auto received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for (uint16_t j = 0; j < frame_length; j++) {
@@ -260,7 +263,7 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
   for (uint16_t i = 120 / frame_length; i < 250 / frame_length; i++) {
     // only full frames are created
     if (250 - i * frame_length >= frame_length) {
-      auto passed = eeg_source_sample1->getValues()[i];
+      auto &passed = frames[i];
       auto &received = v[i];
       // EXPECT_EQ(i, passed.timestamp);
       for (uint16_t j = 0; j < frame_length; j++) {
@@ -279,10 +282,9 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
        CsvSimTwoEegPipeSingleSink_instant) {
 
   std::vector<std::shared_ptr<EegFrame>> v = {};
-  auto sink = accumulate_to_vector_sink(v);
   auto sink_sp =
       std::make_shared<LambdaSignalFrameDataSink<std::shared_ptr<EegFrame>>>(
-          sink);
+          accumulate_to_vector_sink(v));
 
   auto pipe_up = std::unique_ptr<IFrameStreamPipe>(
       new FrameStreamPipe<EegFrame>(eeg_source_sample1, sink_sp));
@@ -318,7 +320,9 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
   auto counting_sink_sp =
       std::make_shared<LambdaSignalFrameDataSinkSp<EegFrame>>(
           LambdaSignalFrameDataSinkSp<EegFrame>(
-              [&frame_count](std::shared_ptr<EegFrame>) { frame_count += 1; }));
+              [&frame_count](std::shared_ptr<EegFrame>) {
+                frame_count += 1;
+              }));
 
   auto suming_sink_sp = std::make_shared<LambdaSignalFrameDataSinkSp<EegFrame>>(
       LambdaSignalFrameDataSinkSp<EegFrame>(
@@ -327,6 +331,8 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
               frame_sum += v;
             }
           }));
+
+  eeg_source_sample1->reset();
   auto pipe_up = std::unique_ptr<IFrameStreamPipe>(
       new FrameStreamPipe<EegFrame>(eeg_source_sample1, counting_sink_sp));
   auto pipe2_up = std::unique_ptr<IFrameStreamPipe>(
@@ -337,20 +343,14 @@ TEST_F(StreamingPipelineAndCsvSimulatorTests,
 
   auto sim = SignalSimulator();
   sim.add_streaming_pipe(std::move(pipe_up),
-                         EegFrame::DefaultEmissionInterval_ms);
+                         EegFrame::DefaultEmissionInterval_ms / 2);
   sim.add_streaming_pipe(std::move(pipe2_up),
                          EegFrame::DefaultEmissionInterval_ms);
 
   sim.pass_time(0, 0);
 
-  EXPECT_EQ(250 / EegFrame::Length, frame_count);
-
-  llong expected_sum = 0;
-  for (ullong i = 0; i < EegFrame::Length * (250 / EegFrame::Length); i++) {
-    expected_sum += i;
-  }
-  EXPECT_EQ(expected_sum, frame_sum);
-
+  EXPECT_EQ(21, frame_count);
+  EXPECT_EQ(10200, frame_sum);
   EXPECT_EQ(true, pipe_cheat_rp->isDepleted());
   EXPECT_EQ(true, pipe2_cheat_rp->isDepleted());
 }

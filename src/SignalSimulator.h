@@ -44,13 +44,17 @@ public:
   // ~EegFramesSource () {}
 
   VectorView<std::shared_ptr<EegFrame>> getValues(std::size_t count = 0) override {
-    if (count == 0 || count >= _frames.size())
-      return VectorView<std::shared_ptr<EegFrame>>(_frames);
-    return VectorView<std::shared_ptr<EegFrame>>(_frames.begin(), _frames.begin() + count);
+    if(count == 0){
+      count = count = _frames.size();
+    }
+    count = std::min(count,_frames.size()-_current);
+    auto ret = VectorView<std::shared_ptr<EegFrame>>(_frames.begin()+_current, _frames.begin() + _current + count);
+    _current = _frames.size();
+    return ret;
   }
 
   void reset() override { _current = 0; }
-  bool isDepleted() const override { return _current < _frames.size(); }
+  bool isDepleted() const override { return _current >= _frames.size(); }
 
   std::shared_ptr<EegFrame> getNextValue() override {
     return !this->isDepleted() ? _frames[_current++] : nullptr;

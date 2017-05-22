@@ -6,6 +6,7 @@
 #include "DataSource.h"
 #include "IStreamPipe.h"
 #include "NeuroonSignalFrames.h"
+#include "logger.h"
 
 #include <iostream>
 #include <memory>
@@ -39,22 +40,23 @@ template <class T> class FrameStreamPipe : public IFrameStreamPipe {
             ssink->consume(frame);
             success = true;
             _frame_transmitted++;
-            if (ssource->isDepleted()) {
-              _depleted = true;
-              just_depleted = true;
-            }
+          }
+          if (ssource->isDepleted()) {
+            _depleted = true;
+            just_depleted = true;
           }
         } else {
-          std::cerr << "\nelse sink lock";
-          std::fflush(stdout);
+          LOG(WARNING) << "Pipe passing frame: sink shared pointer empty";
         }
       } else {
-        std::cerr << "\nelse source lock";
-        std::fflush(stdout);
+        LOG(WARNING) << "Pipe passing frame: source shared pointer empty";
       }
     } else {
-      std::cerr << "\ndepleted or broken";
-      std::fflush(stdout);
+      if (this->isDepleted()) {
+        LOG(DEBUG) << "Source depleted";
+      } else {
+        LOG(WARNING) << "Pipe broken: shared pointer expired";
+      }
     }
     _log_warnings(just_depleted);
     return success;
@@ -81,6 +83,7 @@ public:
     if (auto ssource = _source.lock()) {
       if (auto ssink = _sink.lock()) {
         if (ssource->isDepleted()) {
+          LOG(WARNING) << "Creating pipe with depleted source.";
           _depleted = true;
         }
       }

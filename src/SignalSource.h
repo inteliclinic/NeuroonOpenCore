@@ -187,7 +187,8 @@ public:
 
   VectorView<T> getValuesInternal(std::size_t count = 0, bool clear = false) {
     if (!clear && _data.size()) {
-      return VectorView<T>(_data.begin(), _data.end());
+      auto b = std::min(_data.begin()+_current, _data.end());
+      return VectorView<T>(b, _data.end());
     }
     _data.clear();
     typedef typename invalue_dispatch_type_tag<T>::type tag;

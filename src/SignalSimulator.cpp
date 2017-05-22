@@ -206,14 +206,14 @@ bool SignalSimulator::pass_time(ullong ms_to_simulate,
                                         (ullong)max_time_to_wait);
   }
 
-  bool all_exhausted = false;
+  bool all_exhausted = true;
   while (ms_left > 0 || ms_to_simulate == 0) {
-    all_exhausted = false;
+    all_exhausted = true;
     for (const auto &t : _pipes) {
       if (!PIPE_UP(t)->isDepleted())
-        all_exhausted = true;
+        all_exhausted = false;
     }
-    if (!all_exhausted && !force_wait) {
+    if (all_exhausted && !force_wait) {
       break;
     }
 
