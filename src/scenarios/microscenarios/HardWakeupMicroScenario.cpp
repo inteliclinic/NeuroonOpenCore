@@ -12,13 +12,13 @@ HardWakeupMicroScenario::update(bool did_activate, bool last_instructions) {
   if(did_activate && !m_activationRegistered){
     m_activationRegistered = true;
     return {MicroScenarioState::WANTS_FOCUS, {
-      sequence::wakeUpSequence(static_cast<wakeUpSequenceIntensity>(m_intensity))}, {}};
+      sequence::wakeUpSequence(static_cast<wakeUpSequenceIntensity>(m_intensity), this->currentMoment())}, {}};
   }
 
   /* clean sequnce */
   if(last_instructions){
     if(m_activationRegistered){
-      return {MicroScenarioState::WANTS_FOCUS, {sequence::killSequence()}, {}};
+      return {MicroScenarioState::WANTS_FOCUS, {sequence::killSequence(this->currentMoment())}, {}};
     }
     else{
       return {MicroScenarioState::FINISHED, {}, {}};
@@ -28,7 +28,7 @@ HardWakeupMicroScenario::update(bool did_activate, bool last_instructions) {
   if(m_activationRegistered && !did_activate){
     m_activationRegistered = false;
     return {MicroScenarioState::WANTS_FOCUS, {
-      sequence::wakeUpSequence(wakeUpSequenceIntensity::WU_ALARM_OFF)}, {}};
+      sequence::wakeUpSequence(wakeUpSequenceIntensity::WU_ALARM_OFF, this->currentMoment())}, {}};
   }
 
   return {MicroScenarioState::IDLE, {}, {}};

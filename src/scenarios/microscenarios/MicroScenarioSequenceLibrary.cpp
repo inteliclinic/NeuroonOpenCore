@@ -74,12 +74,13 @@ namespace sequence{
     return atomic_instruction;
   }
 
-  std::vector<ncAtomicInstruction> descendSequence(unsigned int descend_time_ms){
+  std::vector<ncAtomicInstruction> descendSequence(unsigned int descend_time_ms, ncUnixTimestamp start_time){
     // [TODO]
     // ma zwracać wektor instrukcji realizujący sinusoidalny spadek
     // od wartosci maksymalnej do minimalnej który trwa
     // /descent_time_ms/ milisekund
     // WOJTEK: nie ma takiej opcji póki co - trzeba to obgadać
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_ramp_down_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
     rgb_led_set_func(ble_ramp_down_frame, &len,
@@ -91,11 +92,11 @@ namespace sequence{
         DEV_MIN_PERIOD,
         0); //TODO: potrzebny mechanizm do inkrementowania ID
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_ramp_down_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_ramp_down_frame));
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> parametrizedSinusLikeSequence(unsigned int ascend_time_ms, unsigned int crest_time_ms, unsigned int descend_time_ms, unsigned int trough_time_ms, unsigned int duration_ms){
+  std::vector<ncAtomicInstruction> parametrizedSinusLikeSequence(unsigned int ascend_time_ms, unsigned int crest_time_ms, unsigned int descend_time_ms, unsigned int trough_time_ms, unsigned int duration_ms, ncUnixTimestamp start_time){
     // [TODO]
     // ma zwracać wektor instrukcji realizujący światła lightboost
     // zwiększanie intenstywnosci trwa /ascend_time_ms/
@@ -108,6 +109,7 @@ namespace sequence{
     // WOJTEK: póki co realizuję tutaj pojedynczą sekwencję "zbocze, wypłaszczenie, zbocze,
     // wypłaszczenie" - trzeba ogarnąć mechanizm, który będzie wywoływał cyklicznie tę funkcję z
     // poziomu mikroscenariusza
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_ramp_up_frame[MASK_INSTRUCTION_LENGTH];
     char ble_ramp_down_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -130,8 +132,8 @@ namespace sequence{
 
     std::vector<ncAtomicInstruction> instructions;
     for(unsigned int i = 0, atom_seq_time_ms = ascend_time_ms + crest_time_ms + descend_time_ms + trough_time_ms, end = duration_ms/atom_seq_time_ms; i < end; i++){
-      instructions.push_back(createAtomicInstruction(i*atom_seq_time_ms, ble_ramp_up_frame));
-      instructions.push_back(createAtomicInstruction(i*atom_seq_time_ms + ascend_time_ms + crest_time_ms, ble_ramp_down_frame));
+      instructions.push_back(createAtomicInstruction(_start_time + i*atom_seq_time_ms, ble_ramp_up_frame));
+      instructions.push_back(createAtomicInstruction(_start_time + i*atom_seq_time_ms + ascend_time_ms + crest_time_ms, ble_ramp_down_frame));
     }
 
     return instructions;
@@ -152,7 +154,8 @@ namespace sequence{
     }
   }
 
-  std::vector<ncAtomicInstruction> artificialDawnSequence(unsigned int duration_ms){
+  std::vector<ncAtomicInstruction> artificialDawnSequence(unsigned int duration_ms, ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     unsigned int time_step = duration_ms/NUM_OF_ART_DAWN_STEPS;
 
     uint8_t device;
@@ -173,12 +176,13 @@ namespace sequence{
           DEV_INF_DURATION,
           DEV_MIN_PERIOD,
           0); //TODO: potrzebny mechanizm do inkrementowania ID
-      instructions.push_back(createAtomicInstruction(i*time_step, ble_ramp_up_frame));
+      instructions.push_back(createAtomicInstruction(_start_time + i*time_step, ble_ramp_up_frame));
     }
     return instructions;
   }
 
-  static inline std::vector<ncAtomicInstruction> getSoftAlarm(){
+  static inline std::vector<ncAtomicInstruction> getSoftAlarm(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_rgb_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
     rgb_led_set_func(ble_rgb_frame, &len,
@@ -191,11 +195,12 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_rgb_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_rgb_frame));
     return instructions;
   }
 
-  static inline std::vector<ncAtomicInstruction> getMediumAlarm(){
+  static inline std::vector<ncAtomicInstruction> getMediumAlarm(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_rgb_frame[MASK_INSTRUCTION_LENGTH];
     char ble_vib_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -215,12 +220,13 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_rgb_frame));
-    instructions.push_back(createAtomicInstruction(0, ble_vib_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_rgb_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_vib_frame));
     return instructions;
   }
 
-  static inline std::vector<ncAtomicInstruction> getHardAlarm(){
+  static inline std::vector<ncAtomicInstruction> getHardAlarm(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_rgb_frame[MASK_INSTRUCTION_LENGTH];
     char ble_vib_frame[MASK_INSTRUCTION_LENGTH];
     char ble_pwr_frame[MASK_INSTRUCTION_LENGTH];
@@ -246,22 +252,23 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_rgb_frame));
-    instructions.push_back(createAtomicInstruction(0, ble_vib_frame));
-    instructions.push_back(createAtomicInstruction(0, ble_pwr_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_rgb_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_vib_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_pwr_frame));
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> wakeUpSequence(wakeUpSequenceIntensity mode){
+  std::vector<ncAtomicInstruction> wakeUpSequence(wakeUpSequenceIntensity mode, ncUnixTimestamp start_time){
     switch(mode){
-      case WU_ALARM_SOFT:    return getSoftAlarm();
-      case WU_ALARM_MEDIUM:  return getMediumAlarm();
-      case WU_ALARM_HARD:    return getHardAlarm();
-      default:            return getSoftAlarm();
+      case WU_ALARM_SOFT:    return getSoftAlarm(start_time);
+      case WU_ALARM_MEDIUM:  return getMediumAlarm(start_time);
+      case WU_ALARM_HARD:    return getHardAlarm(start_time);
+      default:            return getSoftAlarm(start_time);
     }
   }
 
-  std::vector<ncAtomicInstruction> lucidDreamSequence(){
+  std::vector<ncAtomicInstruction> lucidDreamSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_pwr_led_frame[MASK_INSTRUCTION_LENGTH];
     char ble_red_blink_frame[MASK_INSTRUCTION_LENGTH];
     char ble_blue_blink_frame[MASK_INSTRUCTION_LENGTH];
@@ -289,17 +296,18 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_pwr_led_frame)); //Hardcoded sequence!!!
-    instructions.push_back(createAtomicInstruction(5000, ble_blue_blink_frame));
-    instructions.push_back(createAtomicInstruction(6000, ble_red_blink_frame));
-    instructions.push_back(createAtomicInstruction(7000, ble_blue_blink_frame));
-    instructions.push_back(createAtomicInstruction(8000, ble_blue_blink_frame));
-    instructions.push_back(createAtomicInstruction(9000, ble_red_blink_frame));
+    instructions.push_back(createAtomicInstruction(_start_time + 0, ble_pwr_led_frame)); //Hardcoded sequence!!!
+    instructions.push_back(createAtomicInstruction(_start_time + 5000, ble_blue_blink_frame));
+    instructions.push_back(createAtomicInstruction(_start_time + 6000, ble_red_blink_frame));
+    instructions.push_back(createAtomicInstruction(_start_time + 7000, ble_blue_blink_frame));
+    instructions.push_back(createAtomicInstruction(_start_time + 8000, ble_blue_blink_frame));
+    instructions.push_back(createAtomicInstruction(_start_time + 9000, ble_red_blink_frame));
 
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> circadianShiftSequence(){
+  std::vector<ncAtomicInstruction> circadianShiftSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_rgb_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
     rgb_led_set_func(ble_rgb_frame, &len,
@@ -312,10 +320,11 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_rgb_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_rgb_frame));
   }
 
-  std::vector<ncAtomicInstruction> noContactSequence(){
+  std::vector<ncAtomicInstruction> noContactSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_green_sin_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
     rgb_led_set_func(ble_green_sin_frame, &len,
@@ -328,7 +337,7 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_green_sin_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_green_sin_frame));
 
     return instructions;
   }
@@ -344,7 +353,8 @@ namespace sequence{
                     DEV_POWER_LED);
   }
 
-  std::vector<ncAtomicInstruction> killSequence(){
+  std::vector<ncAtomicInstruction> killSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_ramp_down_frame[MASK_INSTRUCTION_LENGTH];
     char ble_turn_off_frame[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -368,8 +378,8 @@ namespace sequence{
         0); //TODO: potrzebny mechanizm do inkrementowania ID
 
     std::vector<ncAtomicInstruction> instructions;
-    instructions.push_back(createAtomicInstruction(0, ble_ramp_down_frame));
-    instructions.push_back(createAtomicInstruction(2000, ble_turn_off_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_ramp_down_frame));
+    instructions.push_back(createAtomicInstruction(_start_time, ble_turn_off_frame));
 
     return instructions;
   }
@@ -377,7 +387,8 @@ namespace sequence{
 
 namespace msequence{
 
-  std::vector<ncAtomicInstruction> lucidDreamMocSequence(){
+  std::vector<ncAtomicInstruction> lucidDreamMocSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_frame_1[MASK_INSTRUCTION_LENGTH];
     char ble_frame_2[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -400,14 +411,15 @@ namespace msequence{
 
     std::vector<ncAtomicInstruction> instructions;
     for(unsigned int i = 0; i < 300000/2000; i++){
-      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
-      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000+1000, ble_frame_2));
     }
 
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> lightBoostMocSequence(){
+  std::vector<ncAtomicInstruction> lightBoostMocSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_frame_1[MASK_INSTRUCTION_LENGTH];
     char ble_frame_2[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -430,14 +442,15 @@ namespace msequence{
 
     std::vector<ncAtomicInstruction> instructions;
     for(unsigned int i = 0; i < 300000/2000; i++){
-      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
-      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000+1000, ble_frame_2));
     }
 
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> sleepMocSequence(){
+  std::vector<ncAtomicInstruction> sleepMocSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_frame_1[MASK_INSTRUCTION_LENGTH];
     char ble_frame_2[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -460,14 +473,15 @@ namespace msequence{
 
     std::vector<ncAtomicInstruction> instructions;
     for(unsigned int i = 0; i < 300000/2000; i++){
-      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
-      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000+1000, ble_frame_2));
     }
 
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> powerNapMocSequence(){
+  std::vector<ncAtomicInstruction> powerNapMocSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_frame_1[MASK_INSTRUCTION_LENGTH];
     char ble_frame_2[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -490,14 +504,15 @@ namespace msequence{
 
     std::vector<ncAtomicInstruction> instructions;
     for(unsigned int i = 0; i < 300000/2000; i++){
-      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
-      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000+1000, ble_frame_2));
     }
 
     return instructions;
   }
 
-  std::vector<ncAtomicInstruction> circadianRythmMocSequence(){
+  std::vector<ncAtomicInstruction> circadianRythmMocSequence(ncUnixTimestamp start_time){
+    unsigned int _start_time = static_cast<unsigned int>(start_time);
     char ble_frame_1[MASK_INSTRUCTION_LENGTH];
     char ble_frame_2[MASK_INSTRUCTION_LENGTH];
     size_t len = MASK_INSTRUCTION_LENGTH;
@@ -520,8 +535,8 @@ namespace msequence{
 
     std::vector<ncAtomicInstruction> instructions;
     for(unsigned int i = 0; i < 300000/2000; i++){
-      instructions.push_back(sequence::createAtomicInstruction(i*2000, ble_frame_1));
-      instructions.push_back(sequence::createAtomicInstruction(i*2000+1000, ble_frame_2));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000, ble_frame_1));
+      instructions.push_back(sequence::createAtomicInstruction(_start_time + i*2000+1000, ble_frame_2));
     }
 
     return instructions;

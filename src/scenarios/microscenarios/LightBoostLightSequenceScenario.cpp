@@ -52,10 +52,10 @@ LightBoostLightSequenceScenario::LightBoostLightSequenceScenario(
 
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_parametrizedSinusLikeSequence() const {
-  return {sequence::parametrizedSinusLikeSequence(m_ascendTimeMs, m_crestTimeMs, m_descendTimeMs, m_troughTimeMs, m_durationMs)};
+  return {sequence::parametrizedSinusLikeSequence(m_ascendTimeMs, m_crestTimeMs, m_descendTimeMs, m_troughTimeMs, m_durationMs, this->currentMoment())};
 }
 
 std::vector<ncAtomicInstruction>
 LightBoostLightSequenceScenario::_descendSequence() const {
-  return {sequence::killSequence()};
+  return {sequence::killSequence(this->currentMoment())};
 }

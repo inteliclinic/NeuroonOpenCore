@@ -22,23 +22,23 @@ typedef enum{
 
 namespace sequence{
 
-  std::vector<ncAtomicInstruction> descendSequence(unsigned int);
+  std::vector<ncAtomicInstruction> descendSequence(unsigned int, ncUnixTimestamp);
   std::vector<ncAtomicInstruction> parametrizedSinusLikeSequence(unsigned int, unsigned int,
-      unsigned int, unsigned int, unsigned int);
-  std::vector<ncAtomicInstruction> artificialDawnSequence(unsigned int);
-  std::vector<ncAtomicInstruction> wakeUpSequence(wakeUpSequenceIntensity);
-  std::vector<ncAtomicInstruction> lucidDreamSequence();
-  std::vector<ncAtomicInstruction> circadianShiftSequence();
-  std::vector<ncAtomicInstruction> noContactSequence();
-  std::vector<ncAtomicInstruction> killSequence();
+      unsigned int, unsigned int, unsigned int, ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> artificialDawnSequence(unsigned int, ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> wakeUpSequence(wakeUpSequenceIntensity, ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> lucidDreamSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> circadianShiftSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> noContactSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> killSequence(ncUnixTimestamp);
 }
 
 namespace msequence{
-  std::vector<ncAtomicInstruction> lucidDreamMocSequence();
-  std::vector<ncAtomicInstruction> lightBoostMocSequence();
-  std::vector<ncAtomicInstruction> sleepMocSequence();
-  std::vector<ncAtomicInstruction> powerNapMocSequence();
-  std::vector<ncAtomicInstruction> circadianRythmMocSequence();
+  std::vector<ncAtomicInstruction> lucidDreamMocSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> lightBoostMocSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> sleepMocSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> powerNapMocSequence(ncUnixTimestamp);
+  std::vector<ncAtomicInstruction> circadianRythmMocSequence(ncUnixTimestamp);
 }
 
 #endif /* !MICROSCENARIOSEQUENCELIBRARY_H */
