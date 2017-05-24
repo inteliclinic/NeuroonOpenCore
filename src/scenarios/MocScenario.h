@@ -19,11 +19,11 @@ class MocScenario : public MacroScenario {
     ncUpdateOutput update(const ncScenarioInput *inp) override;
 
   private:
-    const ncUnixTimestamp kLucidDelta = 10000;
-    const ncUnixTimestamp kLightBoostDelta = 9000;
-    const ncUnixTimestamp kSleepDelta = 8000;
-    const ncUnixTimestamp kPowerNapDelta = 7000;
-    const ncUnixTimestamp kCircadianDelta = 6000;
+    const ncUnixTimestamp kLucidDelta = 500000;
+    const ncUnixTimestamp kLightBoostDelta = 400000;
+    const ncUnixTimestamp kSleepDelta = 300000;
+    const ncUnixTimestamp kPowerNapDelta = 200000;
+    const ncUnixTimestamp kCircadianDelta = 100000;
 
     const long kNumberOfSeq = 10;
 
