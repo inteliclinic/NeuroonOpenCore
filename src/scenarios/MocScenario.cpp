@@ -40,19 +40,19 @@ ncUpdateOutput MocScenario::update(const ncScenarioInput *inp){
     if(_retVal == ncUpdateOutput::UPDATE_NEW_DATA)
       switch(m_scenario){
         case SCENARIO_LUCIDDREAM:
-          this->pushInstructions(msequence::lucidDreamMocSequence());
+          this->pushInstructions(msequence::lucidDreamMocSequence(this->currentMoment()));
           break;
         case SCENARIO_LIGHTBOOST:
-          this->pushInstructions(msequence::lightBoostMocSequence());
+          this->pushInstructions(msequence::lightBoostMocSequence(this->currentMoment()));
           break;
         case SCENARIO_SLEEP:
-          this->pushInstructions(msequence::sleepMocSequence());
+          this->pushInstructions(msequence::sleepMocSequence(this->currentMoment()));
           break;
         case SCENARIO_POWERNAP:
-          this->pushInstructions(msequence::powerNapMocSequence());
+          this->pushInstructions(msequence::powerNapMocSequence(this->currentMoment()));
           break;
         case SCENARIO_CIRCADIANRHYTHM:
-          this->pushInstructions(msequence::circadianRythmMocSequence());
+          this->pushInstructions(msequence::circadianRythmMocSequence(this->currentMoment()));
           break;
       }
     return _retVal;

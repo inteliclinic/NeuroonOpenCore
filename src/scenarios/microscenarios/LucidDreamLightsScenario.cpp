@@ -28,11 +28,11 @@ LucidDreamLightsScenario::update(bool did_activate, bool last_instructions) {
 
 
 std::vector<ncAtomicInstruction> LucidDreamLightsScenario::LucidSequence(){
-  return {sequence::lucidDreamSequence()};
+  return {sequence::lucidDreamSequence(this->currentMoment())};
 }
 
 
 std::vector<ncAtomicInstruction> LucidDreamLightsScenario::_desequence(){
-  return {sequence::killSequence()};
+  return {sequence::killSequence(this->currentMoment())};
 }
 
