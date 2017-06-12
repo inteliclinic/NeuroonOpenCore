@@ -29,13 +29,13 @@
  *  Enumeration of circadian events types.
  *  These are events with a potential to change circadian rhythm of a user.
  */
-enum CIRCADIAN_EVENT_TYPE {
-  NOCTURNAL_SLEEP = 0,
-  CROSSOVER_SHIFTING_THERAPY,
-  NAP,
-  LIGHT_BOOST,
-  LIGHT_SEEKING,
-  LIGHT_AVOIDING,
+enum ncCircadianEventType {
+  CET_NOCTURNAL_SLEEP = 0,
+  CET_CROSSOVER_SHIFTING_THERAPY,
+  CET_NAP,
+  CET_LIGHT_BOOST,
+  CET_LIGHT_SEEKING,
+  CET_LIGHT_AVOIDING,
 };
 
 /**
@@ -43,10 +43,10 @@ enum CIRCADIAN_EVENT_TYPE {
  *          These are events with a potential to change circadian rhythm
  *          of a user.
  */
-struct circadian_rhythm_event_t {
-  CIRCADIAN_EVENT_TYPE type;
-  unix_timestamp start;
-  unix_timestamp end;
+struct ncCircadianRhythmEvent {
+  ncCircadianEventType type;
+  ncUnixTimestamp start;
+  ncUnixTimestamp end;
 };
 
 /**
@@ -54,8 +54,7 @@ struct circadian_rhythm_event_t {
  *  @param[out]  usual_wake_up_time     Hour and minutes of a usual wake-up.
  *  @return Hour and minutes of estimated crossoverpoint.
  */
-day_time_instant_t
-estimate_crossover_time(day_time_instant_t usual_wake_up_time);
+ncDayTimeInstant ncEstimateCrossoverTime(ncDayTimeInstant usual_wake_up_time);
 
 /**
  *  @brief Computes crossover point using data about biorhythm affecting events.
@@ -69,27 +68,27 @@ estimate_crossover_time(day_time_instant_t usual_wake_up_time);
  *  @remark new_biorhythm_events should containt events passed
  *          SINCE LAST CROSSOVER COMPUTATION.
  */
-day_time_instant_t
-calculate_crossover_point(day_time_instant_t current_crossover,
-                          circadian_rhythm_event_t *new_biorhythm_events);
+ncDayTimeInstant
+ncCalculateCrossoverPoint(ncDayTimeInstant current_crossover,
+                          ncCircadianRhythmEvent *new_biorhythm_events);
 
 //  -------------------- Perfect napping schedule ------------------------------
 
 /**
  *  @struct A structure aggregating results from napping schedule computation.
  */
-struct napping_schedule_t {
-  day_time_instant_t power_nap_interval_start;
-  day_time_instant_t power_nap_interval_end;
+struct ncNappingSchedule {
+  ncDayTimeInstant power_nap_interval_start;
+  ncDayTimeInstant power_nap_interval_end;
 
-  day_time_instant_t body_nap_interval_start;
-  day_time_instant_t body_nap_interval_end;
+  ncDayTimeInstant body_nap_interval_start;
+  ncDayTimeInstant body_nap_interval_end;
 
-  day_time_instant_t rem_nap_interval_start;
-  day_time_instant_t rem_nap_interval_end;
+  ncDayTimeInstant rem_nap_interval_start;
+  ncDayTimeInstant rem_nap_interval_end;
 
-  day_time_instant_t ultimate_nap_interval_start;
-  day_time_instant_t ultimate_nap_interval_end;
+  ncDayTimeInstant ultimate_nap_interval_start;
+  ncDayTimeInstant ultimate_nap_interval_end;
 };
 
 /**
@@ -101,10 +100,10 @@ struct napping_schedule_t {
  *              affect the body clock.
  *  @return Hour and minutes of computed crossoverpoint.
  */
-napping_schedule_t
-compute_napping_schedule(day_time_instant_t current_crossover,
-                         circadian_rhythm_event_t *recent_biorhythm_events,
-                         staging_element_t **recent_nocturnal_sleeps);
+ncNappingSchedule
+compute_napping_schedule(ncDayTimeInstant current_crossover,
+                         ncCircadianRhythmEvent *recent_biorhythm_events,
+                         ncStagingElement **recent_nocturnal_sleeps);
 
 //  -------------------- Jetlag progress computation
 //  ----------------------------
@@ -112,7 +111,7 @@ compute_napping_schedule(day_time_instant_t current_crossover,
 /**
  *  @enum Directions of a flight.
  */
-enum DIRECTION { EASTWARDS, WESTWARDS };
+enum ncFlightDirection { FD_EASTWARDS, FD_WESTWARDS };
 
 /**
  *  @struct This structure contains all the data the library needs about jetlag
@@ -127,28 +126,28 @@ enum DIRECTION { EASTWARDS, WESTWARDS };
  *  The data can also be serialised to and from byte-string.
  */
 
-struct JetLagTherapyState;
+struct ncJetLagTherapyState;
 
 /**  @struct This structure holds public data of a jet lag therapy.
  */
-struct jet_lag_therapy_info_t {
+struct ncJetLagTherapyInfo {
   /**  When the first event will be scheduled by the therapy */
-  unix_timestamp therapy_start;
+  ncUnixTimestamp therapy_start;
 
   /**  The therapy estimated end date. This may change should the usser
    *     does not make use of therapy events. */
-  unix_timestamp therapy_end;
+  ncUnixTimestamp therapy_end;
 
   /** An immutable date passed when the therapy got created */
-  unix_timestamp flight_date;
+  ncUnixTimestamp flight_date;
 
   /**  An immutable date of a return flight. If its
    *  earlier than flight date the algorithm will
    *  assume that no return is planned. */
-  unix_timestamp return_date;
+  ncUnixTimestamp return_date;
 
   /** Direction of the flight. */
-  DIRECTION flight_direction;
+  ncFlightDirection flight_direction;
 
   /** Difference between timezones in hours.
    *     Should be no less than 3 hour.. */
@@ -177,10 +176,10 @@ struct jet_lag_therapy_info_t {
  *  @return  Pointer containing entire state of jetlag therapy. Do not modify it
  *           and use it as a token to jet lag therapy api functions.
  */
-JetLagTherapyState *create_jetlag_therapy(unix_timestamp flight_date,
-                                          unix_timestamp return_date,
-                                          DIRECTION flight_direction,
-                                          unsigned char timezone_difference);
+ncJetLagTherapyState *ncCreateJetlagTherapy(ncUnixTimestamp flight_date,
+                                            ncUnixTimestamp return_date,
+                                            ncFlightDirection flight_direction,
+                                            unsigned char timezone_difference);
 
 /**
  *
@@ -194,22 +193,22 @@ JetLagTherapyState *create_jetlag_therapy(unix_timestamp flight_date,
  *
  *
  */
-void destroy_jet_lag_therapy(JetLagTherapyState *therapy);
+void ncDestroyJetLagTherapy(ncJetLagTherapyState *therapy);
 
 /** This function provides main functionality of jetlag therapy
  *  by returning schedule of upcoming therapy events within nearest 24h.
  *
  *  @param[in]  therapy            Therapy state instance.
- *  @param[in]  unix_timestamp     Time of calling this function.
+ *  @param[in]  ncUnixTimestamp     Time of calling this function.
  *  @param[in]  current_crossover  Current and up-to-date cross-over point.
  *
  *  @return Newly allocated array of sheduled events.
  *
  *  @remark Always pass up-to-date crossover point.
  */
-circadian_rhythm_event_t *
-get_jetlag_events(JetLagTherapyState *state,
-                  day_time_instant_t current_crossover, unix_timestamp now);
+ncCircadianRhythmEvent *ncGetJetlagEvents(ncJetLagTherapyState *state,
+                                          ncDayTimeInstant current_crossover,
+                                          ncUnixTimestamp now);
 
 /**  @brief   Get public therapy information.
  *  @remark  Part of fields may change after updating the therapy with
@@ -220,14 +219,14 @@ get_jetlag_events(JetLagTherapyState *state,
  *  @return Information about passed therapy.
  */
 
-jet_lag_therapy_info_t get_jetlag_therapy_info(JetLagTherapyState *therapy);
+ncJetLagTherapyInfo getJetlagTherapyInfo(ncJetLagTherapyState *therapy);
 
 /**  Encodes jet lag therapy as a byte string.
  *
  *  @return  Pointer to the newly allocated array of charts containing the
  *           encoded therapy.
  */
-char *serialize_jetlag_therapy(JetLagTherapyState *state);
+char *ncSerializeJetlagTherapy(ncJetLagTherapyState *state);
 
 /**  Deserializes byte string to the before-encoded jet lag therapy state.
  *
@@ -235,6 +234,6 @@ char *serialize_jetlag_therapy(JetLagTherapyState *state);
  *           and use it as a token to jet lag therapy api functions.
  *           Or null if there was a problem with deserialization.
  */
-JetLagTherapyState *deserialize_jetlag_therapy(char *serialized_therapy);
+ncJetLagTherapyState *ncDeserializeJetlagTherapy(char *serialized_therapy);
 
 #endif
