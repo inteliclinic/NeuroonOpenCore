@@ -61,8 +61,7 @@ ncDayTimeInstant ncEstimateCrossoverTime(ncDayTimeInstant usual_wake_up_time);
  *  @param[in]  current_crossover  Current and up-to-date cross-over point.
  *  @param[in]  new_biorhythm_events Pointer to the array of events that might
  *              affect the body clock. These should be events that happened
- * since
- *              the last time the crossover point was calculated.
+ *              since the last time the crossover point was calculated.
  *  @return Hour and minutes of computed crossoverpoint.
  *
  *  @remark new_biorhythm_events should containt events passed
@@ -70,7 +69,8 @@ ncDayTimeInstant ncEstimateCrossoverTime(ncDayTimeInstant usual_wake_up_time);
  */
 ncDayTimeInstant
 ncCalculateCrossoverPoint(ncDayTimeInstant current_crossover,
-                          ncCircadianRhythmEvent *new_biorhythm_events);
+                          ncCircadianRhythmEvent *new_biorhythm_events,
+                          unsigned long events_count);
 
 //  -------------------- Perfect napping schedule ------------------------------
 
