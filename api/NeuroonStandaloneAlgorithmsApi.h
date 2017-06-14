@@ -22,8 +22,7 @@
 
 #include "NeuroonApiCommons.h"
 
-//  -------------------- Crossover time computation.
-//  ----------------------------
+//  -------------------- Crossover time computation. ---------------------------
 
 /**
  *  Enumeration of circadian events types.
@@ -91,22 +90,32 @@ struct ncNappingSchedule {
   ncDayTimeInstant ultimate_nap_interval_end;
 };
 
+struct ncSleepStaging {
+  ncStagingElement *epochs;
+  unsigned int epochs_count;
+};
+
 /**
  *  @brief Computes optimal napping schedule based on recent sleeps architecture
  *         user's crossover point.
  *  @param[in]  current_crossover  Current and up-to-date cross-over point.
+ *  @param[in]  now                Time of calling this function.
  *  @param[in]  recent_biorhythm_events Pointer to the array of events that
- * might
- *              affect the body clock.
+ *              might affect the body clock.
+ *  @param[in]  biorhythm_events_count Size of recent biorhythm events array,
+ *  @param[in]  recent_sleeps  Pointer to the array of recent sleep stagings
+ *  @param[in]  recent_sleeps_count  Size of recent sleeps array.
  *  @return Hour and minutes of computed crossoverpoint.
  */
 ncNappingSchedule
 compute_napping_schedule(ncDayTimeInstant current_crossover,
+                         ncUnixTimestamp now,
                          ncCircadianRhythmEvent *recent_biorhythm_events,
-                         ncStagingElement **recent_nocturnal_sleeps);
+                         unsigned int biorhythm_events_count,
+                         ncSleepStaging *recent_sleeps,
+                         unsigned int recent_sleeps_count);
 
-//  -------------------- Jetlag progress computation
-//  ----------------------------
+//  -------------------- Jetlag progress computation ---------------------------
 
 /**
  *  @enum Directions of a flight.
@@ -125,8 +134,7 @@ enum ncFlightDirection { FD_EASTWARDS, FD_WESTWARDS };
  *
  *  The data can also be serialised to and from byte-string.
  */
-
-struct ncJetLagTherapyState;
+typedef struct JetLagTherapyState ncJetLagTherapyState;
 
 /**  @struct This structure holds public data of a jet lag therapy.
  */
@@ -193,22 +201,27 @@ ncJetLagTherapyState *ncCreateJetlagTherapy(ncUnixTimestamp flight_date,
  *
  *
  */
-void ncDestroyJetLagTherapy(ncJetLagTherapyState *therapy);
+void ncDestroyJetlagTherapy(ncJetLagTherapyState *therapy);
 
 /** This function provides main functionality of jetlag therapy
  *  by returning schedule of upcoming therapy events within nearest 24h.
  *
- *  @param[in]  therapy            Therapy state instance.
- *  @param[in]  ncUnixTimestamp     Time of calling this function.
- *  @param[in]  current_crossover  Current and up-to-date cross-over point.
+ *  @param[in]     state              Therapy state instance.
+ *  @param[in]     current_crossover  Current and up-to-date cross-over point.
+ *  @param[in]     now                Time of calling this function.
+ *  @param[inout]  out_buffer         Pass allocated memory to be filled by
+ * events.
+ *  @param[in]     out_buffer_size    Time of calling this function.
  *
  *  @return Newly allocated array of sheduled events.
  *
  *  @remark Always pass up-to-date crossover point.
  */
-ncCircadianRhythmEvent *ncGetJetlagEvents(ncJetLagTherapyState *state,
-                                          ncDayTimeInstant current_crossover,
-                                          ncUnixTimestamp now);
+unsigned int ncGetJetlagEvents(ncJetLagTherapyState *state,
+                               ncDayTimeInstant current_crossover,
+                               ncUnixTimestamp now,
+                               ncCircadianRhythmEvent *out_buffer,
+                               unsigned int passed_buffer_size);
 
 /**  @brief   Get public therapy information.
  *  @remark  Part of fields may change after updating the therapy with
@@ -219,21 +232,33 @@ ncCircadianRhythmEvent *ncGetJetlagEvents(ncJetLagTherapyState *state,
  *  @return Information about passed therapy.
  */
 
-ncJetLagTherapyInfo getJetlagTherapyInfo(ncJetLagTherapyState *therapy);
+ncJetLagTherapyInfo ncGetJetlagTherapyInfo(ncJetLagTherapyState *therapy);
 
 /**  Encodes jet lag therapy as a byte string.
  *
- *  @return  Pointer to the newly allocated array of charts containing the
- *           encoded therapy.
- */
-char *ncSerializeJetlagTherapy(ncJetLagTherapyState *state);
-
-/**  Deserializes byte string to the before-encoded jet lag therapy state.
+ *  @param[in]     state            Therapy state instance.
+ *  @param[inout]  output_buffer    Allocated memory for resulting string.
+ *  @param[in]     sz               Size of allocated memory.
  *
- *  @return  Pointer containing entire state of jetlag therapy. Do not modify it
- *           and use it as a token to jet lag therapy api functions.
- *           Or null if there was a problem with deserialization.
+ *  @return Bytes needed for proper serialization. You can assume that if this
+ *          is longer than size of the allocated memory, the serialization was
+ *          interrupted.
  */
-ncJetLagTherapyState *ncDeserializeJetlagTherapy(char *serialized_therapy);
+unsigned int ncSerializeJetlagTherapy(ncJetLagTherapyState *state,
+                                      char *output_buffer, unsigned int sz);
+
+/**  Encodes jet lag therapy as a byte string.
+ *
+ *  @param[out]     state          Deserialised therapy state instance.
+ *                                 Memory for the state should be allocated.
+ *  @param[inout]  input_buffer    Allocated memory for resulting string.
+ *  @param[in]     sz              Size of allocated memory.
+ *
+ *  @return Bytes needed for proper serialization. You can assume that if this
+ *          is longer than size of the allocated memory, the serialization was
+ *          interrupted.
+ */
+unsigned int ncDeserializeJetlagTherapy(ncJetLagTherapyState *state,
+                                        char *input_buffer, unsigned int sz);
 
 #endif
