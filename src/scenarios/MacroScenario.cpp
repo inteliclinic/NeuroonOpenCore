@@ -1,4 +1,5 @@
 #include "MacroScenario.h"
+#include "logger.h"
 
 ScePrioPair MacroScenario::getHighestPriorityScenario(
     std::vector<ScePrioPair> scenarios) const {
@@ -40,10 +41,32 @@ ncUpdateOutput MacroScenario::update(const ncScenarioInput *inp) {
     scep.first->refresh(ts);
   }
 
+  switch (m_mute_state.getMuteOperation(ts)) {
+  case MuteOperation::SHOULD_MUTE: {
+    // stoping current scenario
+    auto instrs = this->_recently_used_scenario->stopUse();
+    this->pushInstructions(instrs, InstructionInsertMode::NOW);
+    return UPDATE_NEW_DATA;
+  }
+  case MuteOperation::SHOULD_UNMUTE: {
+    break;
+  }
+  case MuteOperation::MUTED: {
+    return UPDATE_OK;
+  }
+  case MuteOperation::UNMUTED: {
+    break;
+  }
+  default:
+    LOG(ERROR) << "Invalid mute operation - #wtf";
+    throw std::logic_error("Invalid mute operation - #wtf");
+    break;
+  }
+
   // finish if all microscenarios are finished
   auto finished = true;
   for (const auto &scep : scenarios) {
-    if (scep.first->getState() == MicroScenarioState::FINISHED) {
+    if (scep.first->getState() != MicroScenarioState::FINISHED) {
       finished = false;
       break;
     }
@@ -56,11 +79,12 @@ ncUpdateOutput MacroScenario::update(const ncScenarioInput *inp) {
   // that wants focus of the macroscenario
   auto sc = this->getHighestPriorityScenario(scenarios).first;
 
-  // no scenario is in use or same scenario will be used again
   bool new_instructions = false;
 
-  // [TODO][WARNING] i am not sure if this comparison works as expected
-  if (!sc || this->_recently_used_scenario == sc.get()) {
+  // same scenario will be used again
+  if (this->_recently_used_scenario &&
+      // [TODO][WARNING] i am not sure if this comparison works as expected
+      (!sc || this->_recently_used_scenario == sc.get())) {
     // in that case just use instructions from recently used
     auto instrs = this->_recently_used_scenario->use();
 
@@ -75,11 +99,14 @@ ncUpdateOutput MacroScenario::update(const ncScenarioInput *inp) {
     this->pushInstructions(instrs, InstructionInsertMode::NOW);
   }
 
-  // there is an active scenario, and it is different than
+  // there is active scenario, and it is different than
   // the one at the previous update
   else {
     // get new instructions from scenarios
-    auto instrs = this->_recently_used_scenario->stopUse();
+    std::vector<ncAtomicInstruction> instrs = {};
+    if(this->_recently_used_scenario){
+      instrs = this->_recently_used_scenario->stopUse();
+    }
     auto instrs2 = sc->use();
 
     // if there are new instructions

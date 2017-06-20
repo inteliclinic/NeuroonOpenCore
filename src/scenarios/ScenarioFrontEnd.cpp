@@ -48,6 +48,14 @@ ncAtomicInstruction ncDestroyScenario(ncScenario scenario){
   return {};
 }
 
+void ncMuteScenario(ncScenario scenario, unsigned int time_s){
+  reinterpret_cast<MacroScenario *>(scenario)->mute(time_s);
+}
+
+void ncUnmuteScenario(ncScenario scenario){
+  reinterpret_cast<MacroScenario *>(scenario)->unmute();
+}
+
 bool ncAvailableMaskInstruction(ncScenario scenario){
   return reinterpret_cast<MacroScenario *>(scenario)->availableMaskInstruction();
 }

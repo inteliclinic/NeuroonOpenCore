@@ -26,6 +26,62 @@ public:
 
   virtual ncUpdateOutput update(const ncScenarioInput *inp);
 
+  // ---------------- mute
+
+  enum class MuteOperation { SHOULD_MUTE, SHOULD_UNMUTE, MUTED, UNMUTED };
+
+  class {
+    bool m_muted;
+    bool m_confirmed;
+    unsigned int m_time_to_be_muted_sec;
+    ncUnixTimestamp m_unmute_ts;
+
+  public:
+    void mute(unsigned int t_sec) {
+      if (!m_muted) {
+        m_muted = true;
+        m_confirmed = false;
+        m_time_to_be_muted_sec = t_sec;
+      }
+    }
+
+    void unmute() {
+      if (m_muted) {
+        m_muted = false;
+        m_confirmed = false;
+      }
+    }
+
+    MuteOperation getMuteOperation(ncUnixTimestamp ts) {
+      if (ts >= m_unmute_ts) {
+        if (m_muted) {
+          m_muted = false;
+          m_confirmed = !m_confirmed;
+        }
+      }
+      if (!m_confirmed) {
+        if (m_muted) {
+          return MuteOperation::SHOULD_MUTE;
+        } else {
+          return MuteOperation::SHOULD_UNMUTE;
+        }
+      } else {
+        return (m_muted ? MuteOperation::MUTED : MuteOperation::UNMUTED);
+      }
+    }
+
+    void confirmOperation(ncUnixTimestamp ts) {
+      if (!m_confirmed) {
+        m_confirmed = true;
+        m_unmute_ts = ts + m_time_to_be_muted_sec;
+      }
+    }
+
+  } m_mute_state;
+
+  virtual void mute(unsigned int time_s) { m_mute_state.mute(time_s); }
+  virtual void unmute() { m_mute_state.unmute(); }
+
 private:
   struct Chronological {
     bool operator()(const ScePrioPair &lhs, const ScePrioPair &rhs) {
@@ -42,6 +98,10 @@ private:
   ScePrioPair
   getHighestPriorityScenario(std::vector<ScePrioPair> scenarios) const;
 
+  // muted
+  bool m_muted = false;
+  unsigned int m_unmute_time = 0;
+
 protected:
   virtual ncUnixTimestamp currentMoment() const { return _current_moment; }
 
@@ -52,7 +112,8 @@ protected:
     }
   }
 
-  void addScenarioWithPriority(std::shared_ptr<IMicroScenario> sc, int priority) {
+  void addScenarioWithPriority(std::shared_ptr<IMicroScenario> sc,
+                               int priority) {
     _scenario_queue.push_back(std::make_pair(sc, priority));
     std::make_heap(_scenario_queue.begin(), _scenario_queue.end(),
                    Chronological());

@@ -261,9 +261,19 @@ ncUpdateOutput ncScenarioUpdate(ncScenario scenario,
  * @param scenario
  * @param time_s
  *
- * @return Information regarding scenario state(@ref ncUpdateOutput)
  */
-ncUpdateOutput ncMuteScenario(ncScenario scenario, unsigned int time_s);
+void ncMuteScenario(ncScenario scenario, unsigned int time_s);
+
+
+// Reverses mute operation on scenario.
+/**
+ * @brief Reverses mute operation on scenario. Scenario will generate instruction normally.
+  *
+  * @param scenario
+  * @param time_s
+  *
+  */
+void ncUnmuteScenario(ncScenario scenario);
 
 /**
  * @brief Scenario destroyer
