@@ -1,3 +1,6 @@
 [submodule "api/unified_communication"]
 	path = external_modules/unified_communication
 	url = ssh://git@gitlab.inteliclinic.pl:7022/firmware/firmware-neuroon_unified_communication.git
+[submodule "3rd_party/dlib"]
+	path = 3rd_party/dlib
+	url = https://github.com/inteliclinic/dlib
