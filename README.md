@@ -3,6 +3,13 @@
 Core library for Neuroon's algorithms and signal processing.
 
 
+WATCH OUT - UNDER HEAVY DEVELOPMENT!
+======================
+
+**This library is by no means complete project. It's currently under heavy development. API's are unstable.  
+We welcome constructive criticism, so if you think we can make something better leave a note in the issues section.**
+
+
 High level description
 ======================
 
